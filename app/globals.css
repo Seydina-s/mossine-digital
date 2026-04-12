@@ -1,26 +1,128 @@
+/* Tailwind v4 — syntaxe correcte (remplace @tailwind base/components/utilities) */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* ---- COULEURS OFFICIELLES MOSSINE DIGITAL ---- */
+    --md-accent:           #FF5964;
+    --md-accent-hover:     #E8424D;
+    --md-accent-light:     #FFE8E9;
+    --md-primary:          #1B1F3B;
+    --md-primary-light:    #E8EAF6;
+    --md-secondary:        #35A7FF;
+    --md-secondary-hover:  #1A97F5;
+    --md-secondary-light:  #F0F7FF;
+    --md-bg:               #FFFFFF;
+    --md-bg-soft:          #F8F9FA;
+    --md-bg-dark:          #1B1F3B;
+    --md-bg-darker:        #10132A;
+    --md-bg-blue:          #F0F7FF;
+    --md-text:             #0D0D0D;
+    --md-text-muted:       #6B7280;
+    --md-text-light:       #9CA3AF;
+    --md-text-on-dark:     #FFFFFF;
+    --md-border:           #E5E7EB;
+    --md-border-strong:    #D1D5DB;
+    --md-border-focus:     #35A7FF;
+
+    /* ---- TYPOGRAPHIE ---- */
+    --md-font-display: var(--font-syne), 'Syne', system-ui, sans-serif;
+    --md-font-body:    var(--font-inter), 'Inter', system-ui, sans-serif;
+
+    /* ---- ESPACEMENTS ---- */
+    --md-space-section:        6rem;
+    --md-space-section-mobile: 4rem;
+
+    /* ---- TRANSITIONS ---- */
+    --md-ease:        cubic-bezier(0.4, 0, 0.2, 1);
+    --md-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --md-duration:      250ms;
+    --md-duration-slow: 400ms;
+
+    /* ---- CONTAINER ---- */
+    --md-container:         1280px;
+    --md-container-padding: 1.5rem;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--md-font-body);
+    color: var(--md-text);
+    background: var(--md-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--md-font-display);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  ::selection {
+    background: var(--md-secondary-light);
+    color: var(--md-primary);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--md-secondary);
+    outline-offset: 2px;
+  }
+
+  /* Respect du mouvement réduit */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Conteneur centré Mossine Digital */
+  .container-md {
+    max-width: var(--md-container);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--md-container-padding);
+    padding-right: var(--md-container-padding);
+  }
+
+  /* Espacements de section */
+  .section-padding {
+    padding-top: var(--md-space-section);
+    padding-bottom: var(--md-space-section);
+  }
+
+  .section-padding-mobile {
+    padding-top: var(--md-space-section-mobile);
+    padding-bottom: var(--md-space-section-mobile);
+  }
+
+  /* Équilibre typographique */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Masquer les scrollbars tout en gardant le scroll */
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
