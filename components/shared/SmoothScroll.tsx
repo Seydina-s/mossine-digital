@@ -17,11 +17,15 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
     if (prefersReduced) return
 
+    // Config réactive : duration courte + easing rapide + multiplicateur
+    // supérieur pour que la molette "colle" sans traîne.
     const lenis = new Lenis({
-      duration: 0.6,
-      easing: (t: number) => 1 - Math.pow(1 - t, 4),
+      duration: 0.9,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      wheelMultiplier: 1.25,
       touchMultiplier: 2,
       smoothWheel: true,
+      lerp: 0.12,
     })
 
     function raf(time: number) {

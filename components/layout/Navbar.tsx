@@ -20,10 +20,10 @@ import { ArrowUpRightIcon } from '@phosphor-icons/react'
 // ─────────────────────────────────────────────────────────────────
 
 const NAV_LINKS = [
-  { label: 'Services',  href: '/services' },
-  { label: 'Portfolio', href: '/portfolio' },
-  { label: "L'agence",  href: '/a-propos' },
-  { label: 'Blog',      href: '/blog' },
+  { label: 'Services', href: '/services' },
+  { label: "L'agence", href: '/a-propos' },
+  { label: 'Blog',     href: '/blog' },
+  { label: 'Contact',  href: '/contact' },
 ] as const
 
 // Distance de scroll sur laquelle le morph se déroule (en pixels)
@@ -174,14 +174,14 @@ export function Navbar() {
   const blurAmount = useTransform(progress, [0, 1], [0, 20])
   const backdropFilter = useTransform(blurAmount, (v) => `blur(${v}px) saturate(180%)`)
 
-  const shadowAlpha = useTransform(progress, [0, 1], [0, 0.12])
+  const shadowAlpha = useTransform(progress, [0, 1], [0, 0.14])
   const boxShadow = useTransform(
     shadowAlpha,
-    (a) => `0px 16px 48px -12px rgba(0, 54, 26, ${a})`,
+    (a) => `0px 16px 48px -12px rgba(27, 31, 59, ${a})`,
   )
 
-  const borderAlpha = useTransform(progress, [0, 1], [0, 0.08])
-  const borderColor = useTransform(borderAlpha, (a) => `rgba(0, 54, 26, ${a})`)
+  const borderAlpha = useTransform(progress, [0, 1], [0, 0.1])
+  const borderColor = useTransform(borderAlpha, (a) => `rgba(27, 31, 59, ${a})`)
 
   const logoHeight = useTransform(progress, [0, 1], [64, 36])
 
