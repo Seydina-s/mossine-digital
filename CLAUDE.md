@@ -307,9 +307,9 @@ Agents : Dev Sénior · Design/UI
 - [x] **Navbar v3.1 patch** (2026-04-15) — visibilité cross-page via `usePathname()` + hystérésis scroll 40/16 + transition-delay 60ms sur couleur texte + GPU hint étendu.
 - [x] **Navbar v3.2 "skin crossfade"** (2026-04-15) — architecture 3 couches : header anime uniquement `max-width`, 2 skins absolute-positioned crossfadent par `opacity` (GPU-pur), contenu en 3ème couche anime `padding + color` avec délai 60ms. `backdrop-blur-xl` n'est plus permanent → activé seulement dans le skin "glass". Overlay mobile : zoom-in 0.98→1 + stagger liens 40ms (respect `prefers-reduced-motion`). Résout le jank homepage documenté v3.1.
 - [x] **Régression stub pages résolue** (2026-04-15) — `lib/nav-config.ts` expose `DARK_HERO_PATHS` (allow-list positive typée readonly) + helper `hasDarkHero(pathname)`. Navbar démarre transparente uniquement sur les pathnames listés (`/`, `/services`, `/a-propos`, `/blog`, `/portfolio`). Partout ailleurs → glass blanc par défaut. Vaccin documenté : JSDoc explicite dans le fichier de config, toute nouvelle page à Hero sombre doit être ajoutée à la liste sous peine de régression logo invisible.
-- [ ] Test responsive complet : 320px → 2560px (QA final, après reprise navbar)
+- [x] **Test responsive complet 320→2560px** (2026-04-16) — `e2e/responsive.spec.ts` couvre 4 pages × 6 viewports + 2 tests breakpoint navbar (hamburger <1024px / liens desktop ≥1024px). 26/26 verts, zéro overflow horizontal détecté.
 - [ ] `+` Focus ring accessible sur tous les liens (WCAG 2.2)
-- [ ] `+` Skip-link "Aller au contenu principal" pour lecteurs d'écran
+- [x] **Skip-link "Aller au contenu principal"** (Sprint 2) — `#contenu-principal` wired dans layout.tsx + chaque page.
 
 **Hero Section (01)**
 - [x] Fond #1B1F3B + Aurora mesh CSS animé (3 halos, GPU compositing)
@@ -394,23 +394,24 @@ Agents : Dev Sénior · SEO
 - [ ] SEO : alt text descriptif métier sur images Services (pas juste le nom)
 - [ ] Cyber : documenter que `NEXT_PUBLIC_SITE_URL` DOIT être set en prod (sinon canonical/OG cassés)
 
-### SPRINT 4 — Sécurité + Performance + QA ⏳
+### SPRINT 4 — Sécurité + Performance + QA 🔵 EN COURS
 
 Agents : Cybersécurité · QA · SEO
 
-- [ ] Security Headers : CSP strict, HSTS, X-Frame-Options, Permissions-Policy
-- [ ] Rate limiting Upstash sur /api/* (anti-spam formulaires)
-- [ ] Audit OWASP Top 10 2025 complet + rapport écrit
-- [ ] `npm audit` → zéro vulnérabilité critique/haute
-- [ ] Tests Playwright E2E : toutes les pages, tous les formulaires
-- [ ] Tests unitaires Vitest sur les utilitaires critiques (validation, sanitization)
-- [ ] Tests cross-browser : Chrome, Firefox, Safari, Edge
-- [ ] Tests responsive : 320px / 375px / 768px / 1280px / 1920px / 2560px
-- [ ] Optimisation images : WebP/AVIF, next/image, compression squoosh
-- [ ] Partytown — scripts tiers dans web worker (analytics)
-- [ ] Lighthouse cible : Performance ≥ 90 mobile / 100 desktop · SEO 100 · A11y ≥ 95
-- [ ] `+` Audit Axe DevTools sur chaque page (accessibilité)
-- [ ] `+` Tests de charge basiques (k6 ou Artillery)
+- [x] **Security Headers** (2026-04-16) : CSP stricte marketing / relaxée studio, HSTS 2 ans + preload-ready, X-Frame-Options, Permissions-Policy exhaustive, COOP/CORP. Voir `next.config.ts`.
+- [ ] Rate limiting Upstash sur /api/* (anti-spam formulaires) — **BLOQUÉ** compte client Upstash.
+- [x] **Audit OWASP Top 10 2025** (2026-04-16) : rapport complet `.claude/session/AUDIT_OWASP.md` — 10 catégories + 2 émergentes (Supply Chain, AI/ML). Score Observatory cible : A.
+- [x] **`npm audit`** (2026-04-16) : HIGH résolu (Next 16.2.4 patche CVE GHSA-q4gf-8mx6-v5v3). 5 moderate restants circonscrits dev-only (chaîne @sanity/cli → js-yaml, non bundlé prod).
+- [x] **Tests Playwright E2E** (2026-04-16) : 14 tests pages complètes (/, /services, /contact, /a-propos stubs). `e2e/homepage.spec.ts`, `e2e/services.spec.ts`, `e2e/contact.spec.ts`, `e2e/stubs.spec.ts`. Smoke a11y axe-core inclus.
+- [x] **Tests unitaires Vitest** (2026-04-16) : 32 tests — contact-schema (25, Zod + honeypot + RGPD) + nav-config (7, snapshot DARK_HERO_PATHS). `lib/__tests__/`.
+- [ ] Tests cross-browser : Chrome, Firefox, Safari, Edge (Chrome fait, reste Firefox/WebKit/Edge — **CI Sprint 5**).
+- [x] **Tests responsive 320→2560** (2026-04-16) : `e2e/responsive.spec.ts`, 26/26 verts, 4 pages × 6 viewports. Zéro overflow horizontal.
+- [x] **Optimisation images** (2026-04-16, audit) : verdict no-op justifié — SVG logos (Navbar 3× + Footer 1×) n'ont rien à gagner de next/image (pas de resize/format conversion). Carrousel Hero 6 WebP déjà optimisées 17-35KB dans `motion.div` + `AnimatePresence` — migration casserait l'architecture crossfade pour gain LCP marginal.
+- [ ] Partytown — scripts tiers dans web worker (analytics) — **BLOQUÉ** creds Umami client.
+- [ ] Lighthouse cible : Performance ≥ 90 mobile / 100 desktop · SEO 100 · A11y ≥ 95 — nécessite prod déployée.
+- [x] **Audit Axe DevTools** (2026-04-16, partiel) : `@axe-core/playwright` intégré dans chaque spec E2E, règles wcag2aa + wcag21aa + wcag22aa. Violations bloquantes corrigées (contraste Footer/Hero/Services/CTAs + target-size dots Témoignages WCAG 2.2).
+- [ ] `+` **Dette palette `--md-secondary`** (identifiée 2026-04-16) — `#35A7FF` échoue AA 4.5:1 comme texte sur fond clair OU comme fond de texte blanc. 6 combinaisons signalées par axe. Fix demande décision designer/client (cf. section `.claude/session/AUDIT_OWASP.md` "Dette palette"). 3 tests `test.fixme` dans `e2e/*.spec.ts` réactivables dès résolution.
+- [ ] `+` Tests de charge basiques (k6 ou Artillery) — nécessite prod déployée.
 - [ ] `+` **Fluidité navbar homepage (dette v3.3)** — lag persistant du morph sur la home (autres pages fluides). Corrections v3.3 déjà appliquées sans succès : rAF throttle `useScroll`, `backdrop-filter` conditionnel (désactivé quand skin inactif), blur 24→20px, `translate-y` GPU-only. Hypothèses restantes à instrumenter avec DevTools Performance Profiler AVANT toute nouvelle tentative : (1) ScrollTrigger GSAP des stacking cards Services émet des listeners compétitifs, (2) Aurora mesh + carrousel Hero saturent le main thread, (3) stacking context incorrect de la navbar sous Lenis. **Interdiction de re-tenter à l'aveugle** — exiger profiler flamegraph + frame timing mesurés avant d'éditer.
 
 ### SPRINT 5 — Déploiement Hostinger & Go Live ⏳
@@ -447,8 +448,8 @@ Agents : Dev Sénior · Cybersécurité
 Mettre à jour manuellement après chaque session :
 
 - Sprint 0 : **100%** ████████████████████ ✅
-- Sprint 1 : **~95%** ███████████████████░ 🔵 (navbar v3 livrée, reste : favicon + test responsive QA final)
+- Sprint 1 : **~98%** ███████████████████░ 🔵 (responsive QA livré 2026-04-16, reste : favicon client + focus ring audit)
 - Sprint 2 : **~90%** ██████████████████░░ 🔵 (sections + SEO + error/404 livrés, reste LocalBusiness + assets client)
-- Sprint 3 : **0%**
-- Sprint 4 : **0%**
+- Sprint 3 : **~15%** ███░░░░░░░░░░░░░░░░░ 🔵 (pages /services + /a-propos + /contact + /politique-conf livrées, reste blog + portfolio + Sanity)
+- Sprint 4 : **~65%** █████████████░░░░░░░ 🔵 (CSP + OWASP + 72 tests verts livrés, reste : palette a11y + Upstash/hCaptcha/Partytown/Lighthouse — bloqués client ou prod)
 - Sprint 5 : **0%**

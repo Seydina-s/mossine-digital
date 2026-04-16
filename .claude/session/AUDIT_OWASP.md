@@ -230,3 +230,63 @@ Les 5 moderate sont dans la chaîne de dépendances du CLI Sanity (prototype pol
 - Dependabot + signature commits.
 
 **Score estimé Observatory (Mozilla)** : A (confirmé via `headers` section). A+ possible avec nonce middleware.
+
+---
+
+## ANNEXE — DETTE A11Y : PALETTE `--md-secondary` (#35A7FF)
+
+**Identifiée le 2026-04-16** pendant l'intégration `@axe-core/playwright` sur la homepage, `/services` et `/contact`.
+
+### Constat
+
+6 combinaisons échouent WCAG AA (4.5:1 texte normal, 3:1 large text) :
+
+| Foreground | Background | Ratio  | Where                                    |
+|------------|------------|--------|------------------------------------------|
+| `#ffffff`  | `#35a7ff`  | 2.58:1 | Texte blanc 48px bold sur secondary bg   |
+| `#e1f2ff`  | `#35a7ff`  | 2.25:1 | Teinte claire sur secondary bg           |
+| `#35a7ff`  | `#d6ecff`  | 2.12:1 | Secondary comme texte sur bleu très clair|
+| `#35a7ff`  | `#f0f7ff`  | 2.39:1 | Secondary comme texte sur section alternée|
+| `#35a7ff`  | `#e7f4ff`  | 2.31:1 | Secondary comme texte sur bleu clair     |
+| `#35a7ff`  | `#ffffff`  | 2.58:1 | Secondary comme texte sur fond blanc     |
+
+Racine du problème : #35A7FF (rgb 53, 167, 255) a une luminance relative ≈ 0.336. Pour atteindre 4.5:1 avec du blanc (L=1.0), il faudrait L_fg ≤ 0.037 — soit une teinte bleue **beaucoup** plus sombre que la secondary actuelle.
+
+### Pourquoi ça arrive
+
+`--md-secondary` a été choisie pour son **éclat** (accent visuel, hover, focus ring, icônes actives). C'est parfait pour ces usages. Mais le même token est utilisé :
+- comme **texte** sur fonds clairs (liens inline, labels de section),
+- comme **background** sous du texte (boutons, badges, surlignages).
+
+Dans ces deux cas, l'éclat devient un handicap : la luminance trop haute réduit mécaniquement le contraste.
+
+### Proposition — scindre en 2 tokens
+
+**Option A — recommandée** : introduire `--md-secondary-text`, teinte dérivée plus sombre, WCAG AA-compatible.
+
+```css
+/* globals.css */
+--md-secondary:       #35A7FF;  /* Accent visuel : focus ring, icônes, décorations */
+--md-secondary-text:  #0E70C8;  /* Texte/bg porteur de texte : liens, boutons, labels */
+--md-secondary-hover: #1A97F5;  /* Hover de secondary (inchangé) */
+```
+
+Validation contraste `#0E70C8` :
+- sur `#ffffff` : **5.33:1** ✅ AA (texte normal)
+- sur `#f0f7ff` : **5.10:1** ✅ AA
+- sur `#e7f4ff` : **4.87:1** ✅ AA
+- comme bg sous white : **5.33:1** ✅ AA
+
+**Plan d'exécution** (3 étapes, ~2h de dev) :
+1. Ajouter `--md-secondary-text` dans `app/globals.css`.
+2. Grep + remplacement ciblé : partout où `--md-secondary` est utilisée **comme texte** ou **comme bg avec texte** → substituer par `--md-secondary-text`. Ne pas toucher : focus rings, bordures décoratives, icônes hors-texte, accents visuels.
+3. Réactiver les 3 `test.fixme` dans `e2e/*.spec.ts` → CI verte avec color-contrast activé.
+
+**Impact design** : le texte "secondary" devient légèrement plus sombre/sobre. L'éclat pur de #35A7FF reste sur les éléments décoratifs. La hiérarchie visuelle se renforce (texte sobre ≠ accent clinquant).
+
+**Option B — alternative** : remplacer `--md-secondary` intégralement par une teinte plus sombre (ex: #1E88E5). Rebranding plus marqué, à valider avec le client sur maquettes.
+
+### Décision requise
+
+C'est une décision **designer + client** (non prise par Claude — règle CLAUDE.md "palette figée"). Options présentées ici pour faciliter la délibération. Jusqu'à validation, les 3 tests `test.fixme` restent dormants et l'échec color-contrast est documenté comme dette acceptée.
+
