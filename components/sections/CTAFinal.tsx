@@ -86,8 +86,9 @@ export function CTAFinal() {
             </Link>
           </div>
 
-          {/* Réassurance */}
-          <p className="text-xs text-white/40">
+          {/* Réassurance — texte primary pour contraste AA sur fond accent
+              (#FF5964 + white/40 ≈ 1.6:1, échec WCAG). */}
+          <p className="text-xs font-medium text-[var(--md-primary)]/85">
             Réponse sous 24h · Devis gratuit · Sans engagement
           </p>
         </div>

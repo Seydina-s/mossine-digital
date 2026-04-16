@@ -222,8 +222,9 @@ export function Temoignages() {
         {/* Navigation bas — points + boutons mobile */}
         <div className="mt-8 flex items-center justify-between">
 
-          {/* Points de navigation */}
-          <div className="flex items-center gap-2" role="tablist" aria-label="Indicateurs de position">
+          {/* Points de navigation — hit area 24×24 (WCAG 2.2 target-size)
+              tout en gardant un visuel compact via un indicateur enfant. */}
+          <div className="flex items-center" role="tablist" aria-label="Indicateurs de position">
             {TESTIMONIALS.map((_, i) => (
               <button
                 key={i}
@@ -231,12 +232,17 @@ export function Temoignages() {
                 aria-selected={i === current}
                 aria-label={`Aller au témoignage ${i + 1}`}
                 onClick={() => goTo(i, i > current ? 1 : -1)}
-                className={`rounded-full transition-all duration-300 ${
-                  i === current
-                    ? 'h-2 w-8 bg-[var(--md-secondary)]'
-                    : 'h-2 w-2 bg-white/20 hover:bg-white/40'
-                }`}
-              />
+                className="group flex h-6 w-6 items-center justify-center"
+              >
+                <span
+                  aria-hidden
+                  className={`rounded-full transition-all duration-300 ${
+                    i === current
+                      ? 'h-2 w-8 bg-[var(--md-secondary)]'
+                      : 'h-2 w-2 bg-white/20 group-hover:bg-white/40'
+                  }`}
+                />
+              </button>
             ))}
           </div>
 

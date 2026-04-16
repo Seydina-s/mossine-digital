@@ -175,7 +175,7 @@ export function Hero() {
             Démarrer un projet
             <ArrowUpRightIcon size={16} weight="bold" />
           </GlassCTA>
-          <p className="text-[11px] uppercase tracking-[0.22em] text-white/30">
+          <p className="text-[11px] uppercase tracking-[0.22em] text-white/55">
             Réponse sous 24h · Devis offert
           </p>
         </motion.div>
@@ -441,7 +441,7 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
               </AnimatePresence>
 
               {/* Compteur */}
-              <div className="hidden font-mono text-[10px] tabular-nums text-white/40 sm:block">
+              <div className="hidden font-mono text-[10px] tabular-nums text-white/65 sm:block">
                 <span className="text-white/80">{String(index + 1).padStart(2, '0')}</span>
                 <span className="mx-1">/</span>
                 <span>{String(SERVICES.length).padStart(2, '0')}</span>

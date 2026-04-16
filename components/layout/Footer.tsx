@@ -108,7 +108,7 @@ export function Footer() {
               />
             </Link>
 
-            <p className="mb-6 max-w-[260px] text-sm leading-relaxed text-white/45">
+            <p className="mb-6 max-w-[260px] text-sm leading-relaxed text-white/60">
               Agence de communication et marketing digital 360°. Branding,
               web, social media, Ads et SEO réunis pour construire votre
               marque et amplifier votre visibilité.
@@ -126,7 +126,7 @@ export function Footer() {
                     rel="noopener noreferrer"
                     aria-label={social.label}
                     role="listitem"
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/40 transition-colors duration-200 hover:border-[var(--md-secondary)]/40 hover:text-[var(--md-secondary)]"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/65 transition-colors duration-200 hover:border-[var(--md-secondary)]/40 hover:text-[var(--md-secondary)]"
                   >
                     <Icon size={16} weight="regular" />
                   </a>
@@ -137,7 +137,7 @@ export function Footer() {
 
           {/* ── Colonne 2 : Navigation ── */}
           <div>
-            <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/30">
+            <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/55">
               Navigation
             </h3>
             <nav aria-label="Navigation principale footer">
@@ -158,7 +158,7 @@ export function Footer() {
 
           {/* ── Colonne 3 : Services ── */}
           <div>
-            <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/30">
+            <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/55">
               Services
             </h3>
             <ul className="flex flex-col gap-3">
@@ -177,7 +177,7 @@ export function Footer() {
 
           {/* ── Colonne 4 : Contact ── */}
           <div>
-            <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/30">
+            <h3 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/55">
               Contact
             </h3>
             <ul className="mb-6 flex flex-col gap-4">
@@ -204,7 +204,7 @@ export function Footer() {
             {/* CTA contact */}
             <Link
               href="/contact"
-              className="group inline-flex items-center gap-2 rounded-full bg-[var(--md-accent)] px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[var(--md-accent-hover)]"
+              className="group inline-flex items-center gap-2 rounded-full bg-[var(--md-accent)] px-5 py-2.5 text-sm font-bold text-[var(--md-primary)] transition-colors duration-200 hover:bg-[var(--md-accent-hover)]"
             >
               Nous contacter
               <ArrowUpRightIcon
@@ -220,7 +220,7 @@ export function Footer() {
       {/* Barre basse — copyright & liens légaux */}
       <div className="border-t border-white/[0.06]">
         <div className="container-md flex flex-col items-center gap-3 py-6 text-center sm:flex-row sm:justify-between sm:text-left">
-          <p className="text-xs text-white/25">
+          <p className="text-xs text-white/60">
             © {new Date().getFullYear()} Mossine Digital. Tous droits réservés.
           </p>
           <nav aria-label="Liens légaux">
@@ -228,7 +228,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/mentions-legales"
-                  className="text-xs text-white/25 transition-colors duration-200 hover:text-white/50"
+                  className="text-xs text-white/60 transition-colors duration-200 hover:text-white"
                 >
                   Mentions légales
                 </Link>
@@ -236,7 +236,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/politique-confidentialite"
-                  className="text-xs text-white/25 transition-colors duration-200 hover:text-white/50"
+                  className="text-xs text-white/60 transition-colors duration-200 hover:text-white"
                 >
                   Politique de confidentialité
                 </Link>
@@ -244,7 +244,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/cgv"
-                  className="text-xs text-white/25 transition-colors duration-200 hover:text-white/50"
+                  className="text-xs text-white/60 transition-colors duration-200 hover:text-white"
                 >
                   CGV
                 </Link>

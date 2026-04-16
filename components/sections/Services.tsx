@@ -235,7 +235,7 @@ export function Services() {
               className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
           </Link>
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-white/65">
             Un service sur-mesure, adapté à votre situation
           </p>
         </div>
