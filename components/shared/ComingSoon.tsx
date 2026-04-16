@@ -111,14 +111,14 @@ export function ComingSoon({
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
           <Link
             href="/"
-            className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-[var(--md-primary)] shadow-[0_12px_28px_-10px_rgba(0,0,0,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[var(--md-secondary)] hover:text-white sm:w-auto"
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-[var(--md-primary)] shadow-[0_12px_28px_-10px_rgba(0,0,0,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[var(--md-secondary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-primary)] sm:w-auto"
           >
             <HouseIcon size={16} weight="bold" />
             Retour à l&apos;accueil
           </Link>
           <Link
             href={secondaryCtaHref}
-            className="group inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white/50 hover:bg-white/10 sm:w-auto"
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white/50 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-primary)] sm:w-auto"
           >
             {secondaryCtaHref === '/contact' ? (
               <EnvelopeSimpleIcon size={15} weight="bold" />

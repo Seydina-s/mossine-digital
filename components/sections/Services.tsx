@@ -226,7 +226,7 @@ export function Services() {
         <div className="container-md flex flex-col items-center gap-3">
           <Link
             href="/services"
-            className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white/50 hover:bg-white hover:text-[var(--md-primary)]"
+            className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white/50 hover:bg-white hover:text-[var(--md-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0e1c]"
           >
             Découvrir toutes nos offres
             <ArrowUpRightIcon
@@ -349,8 +349,8 @@ function ServiceCard({
             <Link
               href={service.href}
               aria-label={`En savoir plus sur ${service.title}`}
-              className="group inline-flex w-fit items-center gap-2 border-b-2 pb-1 text-sm font-semibold transition-all hover:gap-3"
-              style={{ borderColor: theme.accent, color: theme.accent }}
+              className="group inline-flex w-fit items-center gap-2 rounded-sm border-b-2 pb-1 text-sm font-semibold transition-all hover:gap-3 focus-visible:outline-2 focus-visible:outline-offset-4"
+              style={{ borderColor: theme.accent, color: theme.accent, outlineColor: theme.accent }}
             >
               En savoir plus
               <ArrowUpRightIcon

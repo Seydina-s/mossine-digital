@@ -151,10 +151,11 @@ export function ServiceDetailBlock({ service, reverse = false, tinted = false }:
               <Link
                 href={`/contact?service=${service.id}`}
                 aria-label={`Démarrer un projet ${service.title}`}
-                className="group inline-flex w-fit items-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
+                className="group inline-flex w-fit items-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4"
                 style={{
                   borderColor: service.accent,
                   color: service.accent,
+                  outlineColor: service.accent,
                 }}
               >
                 Démarrer ce projet

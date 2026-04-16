@@ -487,7 +487,7 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
               aria-selected={isActive}
               aria-label={s.label}
               onClick={() => go(i)}
-              className="group relative h-8 cursor-pointer px-1"
+              className="group relative h-8 cursor-pointer rounded-sm px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-primary)]"
             >
               <span
                 className={`block h-[3px] rounded-full transition-all duration-500 ${

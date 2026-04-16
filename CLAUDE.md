@@ -308,7 +308,7 @@ Agents : Dev Sénior · Design/UI
 - [x] **Navbar v3.2 "skin crossfade"** (2026-04-15) — architecture 3 couches : header anime uniquement `max-width`, 2 skins absolute-positioned crossfadent par `opacity` (GPU-pur), contenu en 3ème couche anime `padding + color` avec délai 60ms. `backdrop-blur-xl` n'est plus permanent → activé seulement dans le skin "glass". Overlay mobile : zoom-in 0.98→1 + stagger liens 40ms (respect `prefers-reduced-motion`). Résout le jank homepage documenté v3.1.
 - [x] **Régression stub pages résolue** (2026-04-15) — `lib/nav-config.ts` expose `DARK_HERO_PATHS` (allow-list positive typée readonly) + helper `hasDarkHero(pathname)`. Navbar démarre transparente uniquement sur les pathnames listés (`/`, `/services`, `/a-propos`, `/blog`, `/portfolio`). Partout ailleurs → glass blanc par défaut. Vaccin documenté : JSDoc explicite dans le fichier de config, toute nouvelle page à Hero sombre doit être ajoutée à la liste sous peine de régression logo invisible.
 - [x] **Test responsive complet 320→2560px** (2026-04-16) — `e2e/responsive.spec.ts` couvre 4 pages × 6 viewports + 2 tests breakpoint navbar (hamburger <1024px / liens desktop ≥1024px). 26/26 verts, zéro overflow horizontal détecté.
-- [ ] `+` Focus ring accessible sur tous les liens (WCAG 2.2)
+- [x] **Focus ring accessible sur tous les liens** (2026-04-16, WCAG 2.2) — standard 3 variantes : `ring-[var(--md-secondary)]` + `ring-offset-[var(--md-primary)]` sur fond dark (5.56:1 non-text contrast), `ring-[var(--md-accent)]` + `ring-offset-white` sur fond clair (le secondary échoue 3:1 sur blanc = cf. dette palette), `ring-white` + `ring-offset-[var(--md-accent)]` sur fond accent. 9 fichiers patchés : Footer (8 liens), Hero (tabs carrousel), Services (outro + 6 cards via outline natif pour fond themé variable), CTAFinal, ServiceDetailBlock (6×), ComingSoon, error.tsx, not-found.tsx, ContactForm (submit). Navbar/Temoignages/BackToTop/AboutMethod/ServicesPageHero/ServicesFAQ déjà compliants. 40/40 Playwright verts.
 - [x] **Skip-link "Aller au contenu principal"** (Sprint 2) — `#contenu-principal` wired dans layout.tsx + chaque page.
 
 **Hero Section (01)**
@@ -448,7 +448,7 @@ Agents : Dev Sénior · Cybersécurité
 Mettre à jour manuellement après chaque session :
 
 - Sprint 0 : **100%** ████████████████████ ✅
-- Sprint 1 : **~98%** ███████████████████░ 🔵 (responsive QA livré 2026-04-16, reste : favicon client + focus ring audit)
+- Sprint 1 : **~99%** ███████████████████░ 🔵 (focus ring WCAG 2.2 livré 2026-04-16, reste : favicon client)
 - Sprint 2 : **~90%** ██████████████████░░ 🔵 (sections + SEO + error/404 livrés, reste LocalBusiness + assets client)
 - Sprint 3 : **~15%** ███░░░░░░░░░░░░░░░░░ 🔵 (pages /services + /a-propos + /contact + /politique-conf livrées, reste blog + portfolio + Sanity)
 - Sprint 4 : **~65%** █████████████░░░░░░░ 🔵 (CSP + OWASP + 72 tests verts livrés, reste : palette a11y + Upstash/hCaptcha/Partytown/Lighthouse — bloqués client ou prod)

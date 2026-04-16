@@ -97,7 +97,7 @@ export function Footer() {
             {/* Logo SVG blanc */}
             <Link
               href="/"
-              className="mb-5 inline-block transition-opacity hover:opacity-80"
+              className="mb-5 inline-block rounded-sm transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-bg-darker)]"
               aria-label="Accueil Mossine Digital"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -126,7 +126,7 @@ export function Footer() {
                     rel="noopener noreferrer"
                     aria-label={social.label}
                     role="listitem"
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/65 transition-colors duration-200 hover:border-[var(--md-secondary)]/40 hover:text-[var(--md-secondary)]"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/65 transition-colors duration-200 hover:border-[var(--md-secondary)]/40 hover:text-[var(--md-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-bg-darker)]"
                   >
                     <Icon size={16} weight="regular" />
                   </a>
@@ -146,7 +146,7 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-white/50 transition-colors duration-200 hover:text-white"
+                      className="rounded-sm text-sm text-white/50 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-bg-darker)]"
                     >
                       {link.label}
                     </Link>
@@ -166,7 +166,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/50 transition-colors duration-200 hover:text-white"
+                    className="rounded-sm text-sm text-white/50 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-bg-darker)]"
                   >
                     {link.label}
                   </Link>
@@ -187,7 +187,7 @@ export function Footer() {
                   <li key={item.label}>
                     <a
                       href={item.href}
-                      className="group flex items-start gap-3 text-sm text-white/50 transition-colors duration-200 hover:text-white"
+                      className="group flex items-start gap-3 rounded-sm text-sm text-white/50 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-bg-darker)]"
                     >
                       <Icon
                         size={15}
@@ -204,7 +204,7 @@ export function Footer() {
             {/* CTA contact */}
             <Link
               href="/contact"
-              className="group inline-flex items-center gap-2 rounded-full bg-[var(--md-accent)] px-5 py-2.5 text-sm font-bold text-[var(--md-primary)] transition-colors duration-200 hover:bg-[var(--md-accent-hover)]"
+              className="group inline-flex items-center gap-2 rounded-full bg-[var(--md-accent)] px-5 py-2.5 text-sm font-bold text-[var(--md-primary)] transition-colors duration-200 hover:bg-[var(--md-accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-bg-darker)]"
             >
               Nous contacter
               <ArrowUpRightIcon
@@ -228,7 +228,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/mentions-legales"
-                  className="text-xs text-white/60 transition-colors duration-200 hover:text-white"
+                  className="rounded-sm text-xs text-white/60 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-bg-darker)]"
                 >
                   Mentions légales
                 </Link>
@@ -236,7 +236,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/politique-confidentialite"
-                  className="text-xs text-white/60 transition-colors duration-200 hover:text-white"
+                  className="rounded-sm text-xs text-white/60 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-bg-darker)]"
                 >
                   Politique de confidentialité
                 </Link>
@@ -244,7 +244,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/cgv"
-                  className="text-xs text-white/60 transition-colors duration-200 hover:text-white"
+                  className="rounded-sm text-xs text-white/60 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-bg-darker)]"
                 >
                   CGV
                 </Link>

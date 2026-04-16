@@ -245,7 +245,7 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
           <button
             type="submit"
             disabled={isPending}
-            className="group relative inline-flex items-center justify-center gap-2.5 rounded-full bg-[var(--md-accent)] px-7 py-3.5 text-sm font-bold text-[var(--md-primary)] shadow-[0_10px_30px_-10px_rgba(255,89,100,0.6)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_36px_-10px_rgba(255,89,100,0.75)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
+            className="group relative inline-flex items-center justify-center gap-2.5 rounded-full bg-[var(--md-accent)] px-7 py-3.5 text-sm font-bold text-[var(--md-primary)] shadow-[0_10px_30px_-10px_rgba(255,89,100,0.6)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_36px_-10px_rgba(255,89,100,0.75)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
           >
             {isPending ? (
               <>
