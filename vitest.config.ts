@@ -16,12 +16,13 @@ export default defineConfig({
     },
   },
   test: {
+    // Par défaut en Node (tests schémas / utilitaires). Pour les tests de
+    // composants React, créer un fichier *.dom.test.tsx avec la directive
+    // `// @vitest-environment jsdom` en tête de fichier (Vitest 4 a retiré
+    // `environmentMatchGlobs` — remplacé par directives par fichier).
     environment: 'node',
-    environmentMatchGlobs: [
-      ['**/*.dom.test.{ts,tsx}', 'jsdom'],
-    ],
     globals: true,
     include: ['**/*.test.{ts,tsx}'],
-    exclude: ['node_modules/**', '.next/**', 'sanity/dist/**'],
+    exclude: ['node_modules/**', '.next/**', 'sanity/dist/**', 'e2e/**'],
   },
 })
