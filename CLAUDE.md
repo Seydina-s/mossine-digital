@@ -57,6 +57,14 @@ en phase avec la vision. Ne jamais agir sans avoir assimilé le contexte complet
 - Commentaires en français dans le code
 - Zéro secret en dur dans le code (toujours .env.local)
 - Zéro logo, image ou asset créé de son propre chef — toujours demander au client
+- **🛡️ Règle vaccin RSC** : tout module dans `lib/` est potentiellement
+  consommé par un server component et traverse la frontière RSC. Ses
+  exports DOIVENT être 100 % sérialisables JSON. Interdit : composants
+  React, fonctions, classes, Map/Set, Date. Pour lier un visuel à une
+  donnée, utiliser une clé string littérale résolue côté consommateur
+  via `Record<Key, Component>` (TypeScript casse la build si la clé
+  manque dans le map — protection anti-régression). Référence :
+  `lib/services-data.ts` + `components/services/ServiceDetailBlock.tsx`.
 
 ### Workflow inter-agents
 - L'Orchestrateur décide des priorités et valide les livrables
@@ -64,6 +72,26 @@ en phase avec la vision. Ne jamais agir sans avoir assimilé le contexte complet
 - Le QA valide avant tout merge sur main
 - Le Cybersécurité audite avant tout déploiement
 - Un seul composant / une seule section à la fois — jamais tout coder d'un coup
+
+### Rituel de fin de sprint — Réunion d'audit inter-agents (obligatoire)
+Dès qu'un sprint atteint 100% dans la roadmap, avant de passer au sprint suivant,
+l'Orchestrateur convoque tous les agents pour un audit croisé.
+
+Déroulé :
+1. Chaque agent mène son propre audit dans son domaine d'intervention (Designer sur
+   l'UI/UX, Dev Sénior sur le code, Cybersécurité sur la sécu, QA sur les tests et la
+   conformité, SEO sur les métriques et la structure).
+2. Chaque agent recueille l'avis critique et constructif des autres — un agent peut
+   challenger le travail d'un autre sur son terrain.
+3. Objectif collectif : identifier ce qui ne fonctionne pas, ce qui sort de la vision,
+   améliorer ce qui marche déjà, corriger ce qui ne fonctionne pas.
+4. Sortie : une liste de tâches priorisées, ajoutée dans la Roadmap des sprints :
+   - Si la tâche complète un sprint déjà ouvert → ajoutée avec tag `+ Audit Sprint N`
+   - Sinon → nouvelle sous-section `Audit Sprint N` dans le sprint suivant
+5. Les tâches issues de l'audit sont exécutées automatiquement par ordre de priorité
+   dès que leur temps vient dans la planification.
+
+Ce rituel est déclenché sans attendre la demande du client.
 
 ### Conventions de nommage
 - Branches git : feat/nom-feature, fix/nom-bug, chore/nom-tache
@@ -90,17 +118,20 @@ en phase avec la vision. Ne jamais agir sans avoir assimilé le contexte complet
 - #FFE8E9 — fond léger accent (badges, tags sur fond clair)
 - #E8EAF6 — fond léger primary (badges, tags sur fond clair)
 
-### Rythme des sections — PAGE D'ACCUEIL
+### Rythme des sections — PAGE D'ACCUEIL (mis à jour 2026-04-14)
 ```
-01 Hero          → fond #1B1F3B (sombre bleu)
+01 Hero          → fond #1B1F3B + Aurora mesh CSS animé (halos #35A7FF/#FF5964/violet)
 02 Stats         → fond #FFFFFF (clair)
-03 Services      → fond #F0F7FF (bleu clair)
+03 Services      → fond #0a0e1c (sombre, stacking cards sticky themées)
 04 Processus     → fond #FFFFFF (clair)
 05 Témoignages   → fond #1B1F3B (sombre bleu)
 06 Portfolio     → fond #F0F7FF (bleu clair)
 07 CTA final     → fond #FF5964 (accent — unique)
 08 Footer        → fond #10132A (très sombre bleu)
 ```
+Note : Services est passé en sombre (décision client 2026-04-14) pour accueillir
+le stacking cards où chaque carte a son propre bg de palette. Alternance
+dark/light/dark/light/dark préservée.
 
 ### Typographie
 - Display (titres H1-H3) : Syne — variable --md-font-display
@@ -272,46 +303,60 @@ Agents : Dev Sénior · Design/UI
 - [x] Navbar v2 : full-width au top + pill compacte au scroll (morph 500ms)
 - [x] Intégration logo SVG client (logo-blanc.svg + logo-vert.svg, swap par opacity)
 - [x] Correction Phosphor Icons v2.1.10 (ArrowUpRightIcon)
-- [~] **Transition navbar v3 à REPRENDRE** — version Framer Motion jugée pire que v2 par le client (2026-04-11). Reprise à programmer avec skills design (frontend-design, ui-ux-pro-max, 21st.dev) + références concrètes (Studio Freight, Linear, Vercel) avant tout code. Voir memory `project_navbar_regression.md`.
+- [x] **Navbar v3 livrée** (2026-04-14) — morph pill anti-jank (5 props transitionnées, 300ms, `will-change: max-width`), underline centré, a11y mobile complète (focus-trap + Escape + aria-current + pastille active). Hooks : use-active-link, use-focus-trap, use-escape.
+- [x] **Navbar v3.1 patch** (2026-04-15) — visibilité cross-page via `usePathname()` + hystérésis scroll 40/16 + transition-delay 60ms sur couleur texte + GPU hint étendu.
+- [x] **Navbar v3.2 "skin crossfade"** (2026-04-15) — architecture 3 couches : header anime uniquement `max-width`, 2 skins absolute-positioned crossfadent par `opacity` (GPU-pur), contenu en 3ème couche anime `padding + color` avec délai 60ms. `backdrop-blur-xl` n'est plus permanent → activé seulement dans le skin "glass". Overlay mobile : zoom-in 0.98→1 + stagger liens 40ms (respect `prefers-reduced-motion`). Résout le jank homepage documenté v3.1.
+- [x] **Régression stub pages résolue** (2026-04-15) — `lib/nav-config.ts` expose `DARK_HERO_PATHS` (allow-list positive typée readonly) + helper `hasDarkHero(pathname)`. Navbar démarre transparente uniquement sur les pathnames listés (`/`, `/services`, `/a-propos`, `/blog`, `/portfolio`). Partout ailleurs → glass blanc par défaut. Vaccin documenté : JSDoc explicite dans le fichier de config, toute nouvelle page à Hero sombre doit être ajoutée à la liste sous peine de régression logo invisible.
 - [ ] Test responsive complet : 320px → 2560px (QA final, après reprise navbar)
 - [ ] `+` Focus ring accessible sur tous les liens (WCAG 2.2)
 - [ ] `+` Skip-link "Aller au contenu principal" pour lecteurs d'écran
 
 **Hero Section (01)**
-- [ ] Fond #1B1F3B, min-height 100vh, texte blanc
-- [ ] H1 copywrité (neurowriting) + sous-titre + badge "Agence 360°"
-- [ ] 2 CTAs : "Démarrer un projet" (#FF5964) + "Voir nos réalisations" (outline blanc)
-- [ ] Animation GSAP entrée (H1 stagger + fade in séquentiel)
-- [ ] Scroll indicator animé (flèche bas ou point pulsant)
-- [ ] Lenis smooth scroll configuré globalement
-- [ ] `+` Prefers-reduced-motion : désactiver les animations pour users sensibles
+- [x] Fond #1B1F3B + Aurora mesh CSS animé (3 halos, GPU compositing)
+- [x] H1 copywrité + sous-titre (badge retiré 2026-04-13)
+- [x] CTA "Démarrer un projet" GlassCTA tone=dark
+- [x] Animations d'entrée Framer Motion (stagger + fade séquentiel)
+- [x] Scroll indicator animé (ligne + point pulsant)
+- [x] Lenis smooth scroll configuré globalement
+- [x] Prefers-reduced-motion respecté (via `useReducedMotion` + globals.css)
+- [x] `+` Showcase carrousel services (crossfade + Ken Burns, rotation 2s)
 
 **Layout global**
-- [ ] Footer placeholder (structure HTML — contenu Sprint 2)
-- [ ] layout.tsx final avec metadata SEO de base + favicon
+- [x] Footer placeholder (structure complète, 4 colonnes)
+- [x] layout.tsx avec metadata SEO de base + skip-link a11y
+- [ ] `+` Favicon définitif (logo client à recevoir)
 - [ ] `+` Error boundary (error.tsx) + not-found.tsx personnalisés
 
-### SPRINT 2 — Page d'accueil · sections intermédiaires ⏳
+### SPRINT 2 — Page d'accueil · sections intermédiaires 🔵 EN COURS
 
 Agents : Dev Sénior · Design/UI · SEO
 
-- [ ] Section 02 Stats — fond #FFFFFF, 4 chiffres clés animés au scroll (CountUp)
-- [ ] Section 03 Services — fond #F0F7FF, 6 cards hover premium, icônes Phosphor
-- [ ] Section 04 Processus — fond #FFFFFF, 4 étapes numérotées, animation séquentielle
-- [ ] Section 05 Témoignages — fond #1B1F3B, carousel Framer Motion, 3 avis minimum
-- [ ] Section 06 Portfolio aperçu — fond #F0F7FF, 3 projets placeholder, hover overlay
-- [ ] Section 07 CTA final — fond #FF5964, titre blanc, 2 boutons
-- [ ] Section 08 Footer complet — fond #10132A, 4 colonnes, liens, réseaux sociaux
-- [ ] Schema.org JSON-LD : LocalBusiness + WebSite sur layout.tsx
-- [ ] Metadata SEO page d'accueil (title, description, OG image, Twitter Card)
-- [ ] `+` OG image 1200x630px à générer (demande client)
-- [ ] `+` Intersection Observer sur chaque section (lazy-load animations)
+- [x] Section 02 Stats — fond #FFFFFF, 4 chiffres clés animés au scroll (CountUp)
+- [x] Section 03 Services — **stacking cards sticky** themées (fond #0a0e1c), 6 cards palette
+- [x] Section 04 Processus — fond #FFFFFF, 4 étapes numérotées, animation séquentielle
+- [x] Section 05 Témoignages — fond #1B1F3B, carousel Framer Motion, 3 avis
+- [x] Section 06 Portfolio aperçu — fond #F0F7FF, 3 projets placeholder, hover overlay
+- [x] Section 07 CTA final — fond #FF5964, titre blanc, 2 boutons, grain
+- [x] Section 08 Footer complet — fond #10132A, 4 colonnes, liens, réseaux sociaux
+- [x] `+ Audit Sprint 2` — Photo Stratégie intégrée (2026-04-14)
+- [x] `+ Audit Sprint 2` — Hero background Aurora mesh CSS (Option A, 2026-04-14)
+- [x] `+ Audit Sprint 2` — Services refactor stacking cards (Option 2, 2026-04-14)
+- [x] `+ Audit Sprint 2` — GlassCTA unifié sur 4 emplacements (Hero, Navbar×2, CTAFinal)
+- [x] Schema.org JSON-LD `WebSite` (publisher Organization) sur layout.tsx
+- [x] Metadata SEO page d'accueil (title template, description, OG, Twitter, robots, keywords)
+- [x] `+` error.tsx (Error Boundary global) avec Aurora + reset
+- [x] `+` not-found.tsx (404 personnalisée) avec Aurora + CTAs
+- [ ] Schema.org JSON-LD `LocalBusiness` (besoin adresse/téléphone/horaires client)
+- [ ] `+` OG image 1200x630px à créer (demande client)
+- [ ] `+` Favicon + apple-touch-icon définitifs (à partir logo client)
+- [ ] `+` Données placeholder à remplacer (stats, témoignages, portfolio, footer contact)
+- [ ] `+` NEXT_PUBLIC_SITE_URL à configurer en prod (domaine final à confirmer)
 
 ### SPRINT 3 — Pages secondaires + CMS Sanity ⏳
 
 Agents : Dev Sénior · SEO
 
-- [ ] Page Services — détail complet des 6 offres
+- [x] Page Services — détail complet des 6 offres (2026-04-15) : hero dédié avec table des matières ancrée, 6 ServiceDetailBlock en layout alterné (text/visuel + fond blanc/#F0F7FF), problem statement éditorial + approche + livrables + délai + CTA `/contact?service=X` par service, ServicesFAQ en details/summary natif (7 questions), JSON-LD Service×6 + BreadcrumbList + FAQPage, metadata canonique.
 - [ ] Page À propos — histoire, équipe, valeurs, photo équipe
 - [ ] Page Contact — formulaire (Zod + hCaptcha + Resend + React Email)
 - [ ] Sanity v3 — schémas Article, Service, Portfolio, Témoignage, FAQ
@@ -323,6 +368,31 @@ Agents : Dev Sénior · SEO
 - [ ] Schema.org : Service, Article, FAQ, BreadcrumbList sur les bonnes pages
 - [ ] `+` RSS feed /feed.xml pour le blog
 - [ ] `+` Related articles dans chaque article de blog
+
+#### Audit Sprint 2 — tâches issues du rituel inter-agents (2026-04-14)
+
+**P0 — bloquant mise en ligne**
+- [x] 🚨 Stubs 5 routes créées via composant `ComingSoon` partagé : `/services`, `/a-propos`, `/blog`, `/portfolio` (pages minimalistes Aurora + `robots:noindex`). `/contact` monte directement le vrai `ContactForm` déjà bâti (gracieux si env Resend manquant).
+
+**P1 — UX/SEO fort**
+- [x] SEO : sitemap.xml dynamique (`app/sitemap.ts`)
+- [x] SEO : robots.txt dynamique (`app/robots.ts`)
+- [x] Designer : Temoignages auto-rotate 3s → 7s
+- [ ] QA : Lighthouse baseline homepage (vérifier claim "Score Lighthouse 90+") — à faire sur prod déployée
+
+**P2 — polish code & design**
+- [x] Dev : type `PhosphorIcon` extrait dans `lib/types.ts`
+- [x] Dev : constantes `EASE_OUT_EXPR` / `EASE_CSS` centralisées dans `lib/motion.ts`
+- [x] Dev : `useCountUp` — `rootMargin: '0px 0px -10% 0px'` ajouté (évite trigger prématuré)
+- [x] Designer : Processus — timeline connectrice dynamique (`100/STEPS.length/2%`)
+- [ ] Designer : composant `<SectionEyebrow>` partagé (nice-to-have, pas bloquant)
+- [ ] Designer : Stats — différenciation couleurs icônes (demande validation client sur quelle stat accentuer)
+- [ ] Dev : Temoignages — re-vérifier : `useEffect cleanup` gère déjà clearTimeout correctement, audit initial erroné
+
+**P3 — sécurité/QA en avance**
+- [ ] SEO : vérifier chaque page n'a qu'1 `<h1>` unique
+- [ ] SEO : alt text descriptif métier sur images Services (pas juste le nom)
+- [ ] Cyber : documenter que `NEXT_PUBLIC_SITE_URL` DOIT être set en prod (sinon canonical/OG cassés)
 
 ### SPRINT 4 — Sécurité + Performance + QA ⏳
 
@@ -341,6 +411,7 @@ Agents : Cybersécurité · QA · SEO
 - [ ] Lighthouse cible : Performance ≥ 90 mobile / 100 desktop · SEO 100 · A11y ≥ 95
 - [ ] `+` Audit Axe DevTools sur chaque page (accessibilité)
 - [ ] `+` Tests de charge basiques (k6 ou Artillery)
+- [ ] `+` **Fluidité navbar homepage (dette v3.3)** — lag persistant du morph sur la home (autres pages fluides). Corrections v3.3 déjà appliquées sans succès : rAF throttle `useScroll`, `backdrop-filter` conditionnel (désactivé quand skin inactif), blur 24→20px, `translate-y` GPU-only. Hypothèses restantes à instrumenter avec DevTools Performance Profiler AVANT toute nouvelle tentative : (1) ScrollTrigger GSAP des stacking cards Services émet des listeners compétitifs, (2) Aurora mesh + carrousel Hero saturent le main thread, (3) stacking context incorrect de la navbar sous Lenis. **Interdiction de re-tenter à l'aveugle** — exiger profiler flamegraph + frame timing mesurés avant d'éditer.
 
 ### SPRINT 5 — Déploiement Hostinger & Go Live ⏳
 
@@ -376,8 +447,8 @@ Agents : Dev Sénior · Cybersécurité
 Mettre à jour manuellement après chaque session :
 
 - Sprint 0 : **100%** ████████████████████ ✅
-- Sprint 1 : **~60%** ████████████░░░░░░░░ 🔵 (navbar finalisée, hero à venir)
-- Sprint 2 : **0%**
+- Sprint 1 : **~95%** ███████████████████░ 🔵 (navbar v3 livrée, reste : favicon + test responsive QA final)
+- Sprint 2 : **~90%** ██████████████████░░ 🔵 (sections + SEO + error/404 livrés, reste LocalBusiness + assets client)
 - Sprint 3 : **0%**
 - Sprint 4 : **0%**
 - Sprint 5 : **0%**

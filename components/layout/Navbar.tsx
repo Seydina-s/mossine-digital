@@ -2,18 +2,18 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import {
-  motion,
-  useScroll,
-  useSpring,
-  useTransform,
-  useMotionValue,
-  useReducedMotion,
-  type Variants,
-} from 'framer-motion'
+import { usePathname } from 'next/navigation'
+import { ArrowUpRightIcon } from '@phosphor-icons/react'
+import { useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { MenuToggleIcon } from '@/components/ui/menu-toggle-icon'
-import { ArrowUpRightIcon } from '@phosphor-icons/react'
+import { useScroll } from '@/components/ui/use-scroll'
+import { useActiveLink } from '@/components/ui/use-active-link'
+import { useFocusTrap } from '@/components/ui/use-focus-trap'
+import { useEscape } from '@/components/ui/use-escape'
+import { GlassCTA } from '@/components/ui/glass-cta'
+import { EASE_CSS as EASE } from '@/lib/motion'
+import { hasDarkHero } from '@/lib/nav-config'
 
 // ─────────────────────────────────────────────────────────────────
 //  CONFIGURATION
@@ -26,121 +26,41 @@ const NAV_LINKS = [
   { label: 'Contact',  href: '/contact' },
 ] as const
 
-// Distance de scroll sur laquelle le morph se déroule (en pixels)
-const MORPH_END = 120
-
-// Spring "scroll" : organique, légère traînée pour donner du poids physique
-const SCROLL_SPRING = { stiffness: 200, damping: 32, mass: 1 }
-
-// Spring "magnétique" : plus nerveux, retour rapide
-const MAGNETIC_SPRING = { stiffness: 220, damping: 18, mass: 0.5 }
-
-// Easing custom ressemblant à expo.out — sensation premium
-const EASE_PREMIUM = [0.22, 1, 0.36, 1] as const
+// Hystérésis : on passe en mode "scrolled" au-delà de 40px et on ne revient
+// à "top" qu'en-dessous de 16px. Évite le thrashing près du seuil unique
+// (Lenis + momentum scroll, stacking cards Services qui oscille autour de 40).
+const SCROLL_ENTER = 40
+const SCROLL_EXIT = 16
 
 // ─────────────────────────────────────────────────────────────────
-//  HOOK : effet magnétique sur le CTA
-// ─────────────────────────────────────────────────────────────────
-
-function useMagnetic<T extends HTMLElement>(strength: number) {
-  const ref = React.useRef<T>(null)
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-  const xSpring = useSpring(x, MAGNETIC_SPRING)
-  const ySpring = useSpring(y, MAGNETIC_SPRING)
-
-  React.useEffect(() => {
-    const el = ref.current
-    if (!el || strength === 0) return
-
-    const handleMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect()
-      const cx = rect.left + rect.width / 2
-      const cy = rect.top + rect.height / 2
-      x.set((e.clientX - cx) * strength)
-      y.set((e.clientY - cy) * strength)
-    }
-
-    const handleLeave = () => {
-      x.set(0)
-      y.set(0)
-    }
-
-    el.addEventListener('mousemove', handleMove)
-    el.addEventListener('mouseleave', handleLeave)
-    return () => {
-      el.removeEventListener('mousemove', handleMove)
-      el.removeEventListener('mouseleave', handleLeave)
-    }
-  }, [strength, x, y])
-
-  return { ref, x: xSpring, y: ySpring }
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  COMPOSANT : NavLink avec underline directionnel
+//  NavLink — underline centré + aria-current pour la page active
 // ─────────────────────────────────────────────────────────────────
 
 function NavLink({ href, label }: { href: string; label: string }) {
-  const ref = React.useRef<HTMLAnchorElement>(null)
-  const [hovered, setHovered] = React.useState(false)
-  const [originX, setOriginX] = React.useState(0)
-
-  // Détecte le côté d'entrée/sortie du curseur pour orienter l'underline
-  const updateOrigin = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!ref.current) return
-    const rect = ref.current.getBoundingClientRect()
-    setOriginX(e.clientX - rect.left < rect.width / 2 ? 0 : 1)
-  }
+  const isActive = useActiveLink(href)
 
   return (
     <Link
-      ref={ref}
       href={href}
-      onMouseEnter={(e) => { updateOrigin(e); setHovered(true) }}
-      onMouseLeave={(e) => { updateOrigin(e); setHovered(false) }}
-      className="relative inline-flex items-center px-1 py-2 text-[15px] font-medium tracking-tight whitespace-nowrap"
-      style={{ color: 'var(--nav-text-color)' }}
+      aria-current={isActive ? 'page' : undefined}
+      className="group relative inline-flex items-center py-2 text-[15px] font-medium tracking-tight rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2"
     >
-      <span className="relative inline-block">
+      <span className="relative">
         {label}
-        <motion.span
+        <span
           aria-hidden
-          className="absolute -bottom-0.5 left-0 right-0 h-px bg-current"
-          initial={false}
-          animate={{ scaleX: hovered ? 1 : 0 }}
-          style={{ originX }}
-          transition={{ duration: 0.55, ease: EASE_PREMIUM }}
+          className={cn(
+            'absolute left-1/2 -bottom-1 h-[2px] -translate-x-1/2 rounded-full bg-current',
+            'transition-[width,opacity] duration-[400ms]',
+            isActive
+              ? 'w-full opacity-60'
+              : 'w-0 opacity-0 group-hover:w-full group-hover:opacity-100 group-focus-visible:w-full group-focus-visible:opacity-100',
+          )}
+          style={{ transitionTimingFunction: EASE }}
         />
       </span>
     </Link>
   )
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  VARIANTS d'entrée orchestrée (mount uniquement)
-// ─────────────────────────────────────────────────────────────────
-
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: 0.6,
-      ease: EASE_PREMIUM,
-      delayChildren: 0.3,
-      staggerChildren: 0.08,
-    },
-  },
-}
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: -16 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: 'spring', stiffness: 340, damping: 28 },
-  },
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -149,194 +69,183 @@ const itemVariants: Variants = {
 
 export function Navbar() {
   const [open, setOpen] = React.useState(false)
+  const scrolled = useScroll(SCROLL_ENTER, SCROLL_EXIT)
+  const pathname = usePathname()
   const reducedMotion = useReducedMotion() ?? false
 
-  // ─── Source de progression : scroll-driven, spring-smoothed ───
-  const { scrollY } = useScroll()
-  const smoothScroll = useSpring(scrollY, SCROLL_SPRING)
-  const progress = useTransform(smoothScroll, [0, MORPH_END], [0, 1], {
-    clamp: true,
-  })
+  // 🛡️ Vaccin page-context : `DARK_HERO_PATHS` (lib/nav-config.ts) liste les
+  // pages dont le Hero est sombre — elles seules démarrent la navbar en mode
+  // transparent. Toute page non listée → glass blanc immédiat (lisible sur
+  // fond clair). Ajouter une nouvelle page à Hero sombre = mettre à jour
+  // nav-config.ts, sinon régression logo invisible garantie.
+  const darkHero = hasDarkHero(pathname)
+  const showGlass = scrolled || !darkHero
 
-  // ─── Interpolations continues du morph ───
-  const top = useTransform(progress, [0, 1], [0, 16])
-  const maxWidth = useTransform(progress, [0, 1], [1600, 920])
-  const paddingX = useTransform(progress, [0, 1], [56, 14])
-  const height = useTransform(progress, [0, 1], [104, 60])
-  const borderRadius = useTransform(progress, [0, 1], [0, 9999])
+  const overlayRef = React.useRef<HTMLDivElement>(null)
+  const closeMenu = React.useCallback(() => setOpen(false), [])
 
-  const bgColor = useTransform(
-    progress,
-    [0, 0.4, 1],
-    ['rgba(255,255,255,0)', 'rgba(255,255,255,0.4)', 'rgba(255,255,255,0.72)'],
-  )
+  // A11y : focus trap + Escape pendant que le menu mobile est ouvert
+  useFocusTrap(overlayRef, open)
+  useEscape(closeMenu, open)
 
-  const blurAmount = useTransform(progress, [0, 1], [0, 20])
-  const backdropFilter = useTransform(blurAmount, (v) => `blur(${v}px) saturate(180%)`)
-
-  const shadowAlpha = useTransform(progress, [0, 1], [0, 0.14])
-  const boxShadow = useTransform(
-    shadowAlpha,
-    (a) => `0px 16px 48px -12px rgba(27, 31, 59, ${a})`,
-  )
-
-  const borderAlpha = useTransform(progress, [0, 1], [0, 0.1])
-  const borderColor = useTransform(borderAlpha, (a) => `rgba(27, 31, 59, ${a})`)
-
-  const logoHeight = useTransform(progress, [0, 1], [64, 36])
-
-  // Couleur des liens : blanc → gris très clair → gris foncé
-  const textColor = useTransform(
-    progress,
-    [0, 0.5, 1],
-    ['rgba(255,255,255,0.96)', 'rgba(255,255,255,0.7)', 'rgba(31,41,55,1)'],
-  )
-
-  // Crossfade entre les deux variantes du logo
-  const logoVertOpacity = useTransform(progress, [0.4, 0.7], [0, 1])
-  const logoBlancOpacity = useTransform(progress, [0.4, 0.7], [1, 0])
-
-  // CTA magnétique
-  const cta = useMagnetic<HTMLAnchorElement>(reducedMotion ? 0 : 0.32)
-
-  // Empêche le scroll du body quand le menu mobile est ouvert
+  // Body scroll-lock quand menu mobile ouvert
   React.useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    return () => {
+      document.body.style.overflow = ''
+    }
   }, [open])
+
+  // Bypass — le Studio Sanity (/studio) a sa propre chrome. Placé APRÈS
+  // tous les hooks pour respecter les Rules of Hooks (ordre stable entre
+  // rendus, quelle que soit la route).
+  if (pathname?.startsWith('/studio')) return null
 
   return (
     <>
       {/* ═══════════════════════════════════════════════════════════ */}
-      {/*  DESKTOP : navbar morph spring-driven                       */}
+      {/*  DESKTOP v3.2 — architecture "skin crossfade"                */}
+      {/*                                                              */}
+      {/*  🛡️ Vaccin jank : on n'anime plus 5 propriétés en parallèle. */}
+      {/*  Seule `max-width` transitionne sur le header (géométrie).   */}
+      {/*  Le "look" (bg, border, blur, shadow) est dans DEUX skins    */}
+      {/*  absolute-positioned qui crossfadent par OPACITY (GPU-only). */}
+      {/*  Résultat : 1 prop layout + 2 props opacity → fluide 60fps   */}
+      {/*  même avec Lenis 120hz + stacking cards Services actifs.     */}
+      {/*                                                              */}
+      {/*  Bénéfice bonus : backdrop-blur-xl n'est PLUS permanent —    */}
+      {/*  il n'existe que dans le skin "glass", activé uniquement au  */}
+      {/*  scroll → zéro coût GPU au top.                              */}
       {/* ═══════════════════════════════════════════════════════════ */}
-      <motion.header
+      <header
         aria-label="Navigation principale"
-        className="fixed left-0 right-0 z-50 mx-auto hidden md:block"
+        className={cn(
+          'fixed left-1/2 top-4 z-50 hidden md:block',
+          'h-16 w-[calc(100%-2rem)]',
+          'transition-[max-width,transform] duration-300',
+          showGlass ? 'max-w-[960px]' : 'max-w-[1400px]',
+        )}
         style={{
-          top,
-          maxWidth,
-          height,
-          paddingLeft: paddingX,
-          paddingRight: paddingX,
-          borderRadius,
-          backgroundColor: bgColor,
-          backdropFilter,
-          WebkitBackdropFilter: backdropFilter,
-          boxShadow,
-          borderWidth: 1,
-          borderStyle: 'solid',
-          borderColor,
-          // CSS variable transmise aux enfants pour l'interpolation continue de leur color
-          '--nav-text-color': textColor,
-        } as unknown as React.CSSProperties}
+          transitionTimingFunction: EASE,
+          willChange: 'max-width, transform',
+          // translateX(-50%) centre le header (remplace Tailwind -translate-x-1/2
+          // pour éviter le conflit d'écrasement avec ce style inline).
+          // translateY(-6px) au top → effet "hug" / collé à la viewport.
+          // translateY(0) scrolled → détachement subtil vers le bas, feel premium.
+          // translateZ(0) → promotion GPU stable (pas de jank layer-switch).
+          transform: showGlass
+            ? 'translateX(-50%) translateY(0) translateZ(0)'
+            : 'translateX(-50%) translateY(-6px) translateZ(0)',
+        }}
       >
-        <motion.div
-          className="flex h-full w-full items-center justify-between"
-          variants={containerVariants}
-          initial={reducedMotion ? false : 'hidden'}
-          animate="visible"
+        {/* ─── Skin TOP : transparent, aucun blur ─── */}
+        <span
+          aria-hidden
+          className={cn(
+            'pointer-events-none absolute inset-0 rounded-full',
+            'transition-opacity duration-300',
+            showGlass ? 'opacity-0' : 'opacity-100',
+          )}
+          style={{ transitionTimingFunction: EASE }}
+        />
+        {/* ─── Skin GLASS : white + border + blur + shadow ─── */}
+        {/*  🛡️ Vaccin perf homepage : backdrop-filter désactivé quand  */}
+        {/*  skin invisible. Sans ça, blur 24px tourne en permanence    */}
+        {/*  sur le contenu dense en-dessous (Aurora, carrousel Hero,   */}
+        {/*  stacking cards Services) → lag perceptible au scroll.      */}
+        {/*  Le crossfade opacity masque le switch discret du filter.   */}
+        <span
+          aria-hidden
+          className={cn(
+            'pointer-events-none absolute inset-0 rounded-full',
+            'border border-[color:var(--md-border)] bg-white/85',
+            'shadow-[0_12px_32px_-12px_rgba(27,31,59,0.12)]',
+            'transition-opacity duration-300',
+            showGlass ? 'opacity-100' : 'opacity-0',
+          )}
+          style={{
+            transitionTimingFunction: EASE,
+            backdropFilter: showGlass ? 'blur(20px) saturate(150%)' : 'none',
+            WebkitBackdropFilter: showGlass ? 'blur(20px) saturate(150%)' : 'none',
+            willChange: showGlass ? 'opacity' : 'auto',
+          }}
+        />
+        {/* ─── Contenu — seul le color/padding transitionnent ici ─── */}
+        <div
+          className={cn(
+            'relative flex h-full w-full items-center justify-between',
+            'transition-[padding,color] duration-300',
+            showGlass
+              ? 'px-3 text-[var(--md-primary)] lg:px-4'
+              : 'px-6 text-white lg:px-8',
+          )}
+          style={{
+            transitionTimingFunction: EASE,
+            // Le texte prend 60ms de délai au scroll → évite le flash
+            // "blanc sur bg qui vient de devenir blanc" à mi-morph.
+            transitionDelay: showGlass ? '0ms, 60ms' : '0ms, 0ms',
+          }}
         >
-          {/* ─── LOGO ─── */}
-          <motion.div variants={itemVariants}>
-            <Link
-              href="/"
-              aria-label="Mossine Digital — accueil"
-              className="block transition-opacity hover:opacity-85"
-            >
-              <motion.span
-                className="relative block aspect-[4/1]"
-                style={{ height: logoHeight }}
-              >
-                {/* Variante bleue — visible quand scrollé sur fond clair */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <motion.img
-                  src="/images/logo/logo-bleu.svg"
-                  alt="Mossine Digital"
-                  className="absolute inset-0 h-full w-full object-contain object-left"
-                  style={{ opacity: logoVertOpacity }}
-                />
-                {/* Variante blanche — visible au top sur Hero sombre */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <motion.img
-                  src="/images/logo/logo-blanc.svg"
-                  alt=""
-                  aria-hidden="true"
-                  className="absolute inset-0 h-full w-full object-contain object-left"
-                  style={{ opacity: logoBlancOpacity }}
-                />
-              </motion.span>
-            </Link>
-          </motion.div>
+          {/* ─── LOGO : hauteur fixe, crossfade opacity ─── */}
+          <Link
+            href="/"
+            aria-label="Mossine Digital — accueil"
+            className="relative block rounded-sm transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2"
+          >
+            <span className="relative block h-9 aspect-[4/1] lg:h-10">
+              {/* Logo blanc — visible au top (Hero sombre) */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/logo/logo-blanc.svg"
+                alt="Mossine Digital"
+                className={cn(
+                  'absolute inset-0 h-full w-full object-contain object-left transition-opacity duration-300',
+                  showGlass ? 'opacity-0' : 'opacity-100',
+                )}
+                style={{ transitionTimingFunction: EASE }}
+              />
+              {/* Logo bleu — visible au scroll (glass blanc) */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/logo/logo-bleu.svg"
+                alt=""
+                aria-hidden="true"
+                className={cn(
+                  'absolute inset-0 h-full w-full object-contain object-left transition-opacity duration-300',
+                  showGlass ? 'opacity-100' : 'opacity-0',
+                )}
+                style={{ transitionTimingFunction: EASE }}
+              />
+            </span>
+          </Link>
 
           {/* ─── LIENS ─── */}
-          <motion.nav
-            aria-label="Menu principal"
-            className="flex items-center gap-8"
-            variants={containerVariants}
-          >
+          <nav aria-label="Menu principal" className="flex items-center gap-5 lg:gap-7">
             {NAV_LINKS.map((link) => (
-              <motion.div key={link.label} variants={itemVariants}>
-                <NavLink href={link.href} label={link.label} />
-              </motion.div>
+              <NavLink key={link.label} href={link.href} label={link.label} />
             ))}
-          </motion.nav>
+          </nav>
 
-          {/* ─── CTA MAGNÉTIQUE ─── */}
-          <motion.div variants={itemVariants}>
-            <motion.a
-              ref={cta.ref}
-              href="/contact"
-              style={{ x: cta.x, y: cta.y }}
-              initial="rest"
-              whileHover="hover"
-              whileTap={{ scale: 0.96 }}
-              animate="rest"
-              variants={{
-                rest: { scale: 1 },
-                hover: { scale: 1.04 },
-              }}
-              transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-              className="relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-[#FF5964] px-7 py-3.5 text-[15px] font-semibold text-white whitespace-nowrap shadow-[0_8px_24px_-8px_rgba(255,89,100,0.6)]"
-            >
-              {/* Halo radial blanc qui apparaît sur hover */}
-              <motion.span
-                aria-hidden
-                className="pointer-events-none absolute inset-0"
-                variants={{
-                  rest: { opacity: 0 },
-                  hover: { opacity: 1 },
-                }}
-                style={{
-                  background:
-                    'radial-gradient(circle at center, rgba(255,255,255,0.32) 0%, transparent 65%)',
-                }}
-                transition={{ duration: 0.5, ease: EASE_PREMIUM }}
-              />
-              <span className="relative">Démarrer un projet</span>
-              <motion.span
-                className="relative flex"
-                variants={{
-                  rest: { x: 0, y: 0 },
-                  hover: { x: 4, y: -4 },
-                }}
-                transition={{ type: 'spring', stiffness: 380, damping: 22 }}
-              >
-                <ArrowUpRightIcon size={18} weight="bold" />
-              </motion.span>
-            </motion.a>
-          </motion.div>
-        </motion.div>
-      </motion.header>
+          {/* ─── CTA — pas de magnetic, pas de spring ─── */}
+          <GlassCTA href="/contact" tone="brand" size="sm">
+            Démarrer un projet
+            <ArrowUpRightIcon size={14} weight="bold" />
+          </GlassCTA>
+        </div>
+      </header>
 
       {/* ═══════════════════════════════════════════════════════════ */}
-      {/*  MOBILE : header simple, full-width, fond blanc            */}
+      {/*  MOBILE — header compact fixe, full-width, fond glass blanc */}
       {/* ═══════════════════════════════════════════════════════════ */}
       <header
         aria-label="Navigation principale mobile"
-        className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center justify-between border-b border-[#E5E7EB] bg-white/95 px-4 backdrop-blur-md md:hidden"
+        className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center justify-between border-b border-[var(--md-border)] bg-white/95 px-4 backdrop-blur-md md:hidden"
       >
-        <Link href="/" aria-label="Mossine Digital — accueil" className="flex items-center">
+        <Link
+          href="/"
+          aria-label="Mossine Digital — accueil"
+          className="flex items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2"
+        >
           <span className="relative block h-9 aspect-[4/1]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -347,57 +256,133 @@ export function Navbar() {
           </span>
         </Link>
         <button
-          onClick={() => setOpen(!open)}
+          onClick={() => setOpen((v) => !v)}
           aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}
           aria-expanded={open}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E5E7EB] text-[#0D0D0D] transition-colors duration-200 hover:bg-[#F0F7FF]"
+          aria-controls="menu-mobile"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--md-border)] text-[var(--md-text)] transition-colors duration-200 hover:bg-[var(--md-secondary-light)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2"
         >
           <MenuToggleIcon open={open} className="h-[14px] w-[18px]" duration={280} />
         </button>
       </header>
 
       {/* ═══════════════════════════════════════════════════════════ */}
-      {/*  MENU MOBILE FULLSCREEN                                    */}
+      {/*  MENU MOBILE FULLSCREEN                                     */}
+      {/*  A11y : role=dialog + aria-modal + focus trap + Escape      */}
+      {/*  v3.2 : zoom-in 0.98 → 1 + stagger liens (reduced-motion OK)*/}
       {/* ═══════════════════════════════════════════════════════════ */}
       <div
+        id="menu-mobile"
+        ref={overlayRef}
         role="dialog"
         aria-modal="true"
         aria-label="Menu de navigation"
         aria-hidden={!open}
         className={cn(
-          'fixed top-14 right-0 bottom-0 left-0 z-40 flex flex-col bg-white transition-opacity duration-300 ease-out md:hidden',
-          open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
+          'fixed top-14 right-0 bottom-0 left-0 z-40 flex flex-col bg-white md:hidden',
+          'transition-[opacity,transform] duration-300 ease-out',
+          'origin-top',
+          open
+            ? 'pointer-events-auto opacity-100 scale-100'
+            : cn(
+                'pointer-events-none opacity-0',
+                reducedMotion ? 'scale-100' : 'scale-[0.98]',
+              ),
         )}
       >
         <div className="flex h-full w-full flex-col justify-between gap-y-2 p-4">
-          <div className="grid gap-y-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="rounded-2xl border-b border-[#F3F4F6] px-5 py-4 text-base font-medium text-[#0D0D0D] transition-colors duration-150 hover:bg-[#F0F7FF] hover:text-[#1B1F3B] last:border-none"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
+          <nav aria-label="Menu principal" className="grid gap-y-1">
+            {NAV_LINKS.map((link, i) => {
+              // Stagger éditorial : +40ms par lien à l'ouverture, zéro si reduced-motion
+              return (
+                <MobileNavLink
+                  key={link.label}
+                  href={link.href}
+                  label={link.label}
+                  onNavigate={closeMenu}
+                  open={open}
+                  index={i}
+                  stagger={!reducedMotion}
+                />
+              )
+            })}
+          </nav>
 
           <div className="flex flex-col gap-3 pb-4">
-            <Link
+            <GlassCTA
               href="/contact"
-              onClick={() => setOpen(false)}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#FF5964] px-6 py-4 text-base font-semibold text-white transition-colors duration-200 hover:bg-[#E8424D]"
+              tone="brand"
+              size="lg"
+              fullWidth
+              onClick={closeMenu}
             >
               Démarrer un projet
               <ArrowUpRightIcon size={18} weight="bold" />
-            </Link>
-            <p className="text-center text-xs text-[#9CA3AF]">
+            </GlassCTA>
+            <p className="text-center text-xs text-[var(--md-text-light)]">
               Réponse sous 24h · Sans engagement
             </p>
           </div>
         </div>
       </div>
     </>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  MobileNavLink — lien plein largeur avec indicateur page active
+// ─────────────────────────────────────────────────────────────────
+
+function MobileNavLink({
+  href,
+  label,
+  onNavigate,
+  open,
+  index,
+  stagger,
+}: {
+  href: string
+  label: string
+  onNavigate: () => void
+  open: boolean
+  index: number
+  stagger: boolean
+}) {
+  const isActive = useActiveLink(href)
+
+  // Stagger : chaque lien entre 40ms après le précédent à l'ouverture.
+  // En fermeture ou si reduced-motion actif, aucun délai.
+  const delayMs = open && stagger ? index * 40 : 0
+
+  return (
+    <Link
+      href={href}
+      onClick={onNavigate}
+      aria-current={isActive ? 'page' : undefined}
+      style={{
+        transitionDelay: `${delayMs}ms`,
+      }}
+      className={cn(
+        'flex items-center justify-between rounded-2xl border-b border-[#F3F4F6] px-5 py-4 text-base font-medium last:border-none',
+        'transition-[opacity,transform,background-color,color] duration-300 ease-out',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2 focus-visible:ring-inset',
+        open
+          ? 'translate-y-0 opacity-100'
+          : stagger
+            ? '-translate-y-1 opacity-0'
+            : 'opacity-0',
+        isActive
+          ? 'bg-[var(--md-secondary-light)] text-[var(--md-primary)]'
+          : 'text-[var(--md-text)] hover:bg-[var(--md-secondary-light)] hover:text-[var(--md-primary)]',
+      )}
+    >
+      <span>{label}</span>
+      {isActive && (
+        <span
+          aria-hidden
+          className="h-1.5 w-1.5 rounded-full bg-[var(--md-secondary)]"
+        />
+      )}
+    </Link>
   )
 }
