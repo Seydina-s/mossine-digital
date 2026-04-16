@@ -1,7 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import Link from 'next/link'
 import {
   motion,
   AnimatePresence,
@@ -10,25 +9,22 @@ import {
 } from 'framer-motion'
 import {
   ArrowUpRightIcon,
-  PenNibIcon,
   GlobeIcon,
   PaletteIcon,
   RocketIcon,
   ChatCircleDotsIcon,
+  ChartLineUpIcon,
+  MagnifyingGlassIcon,
 } from '@phosphor-icons/react'
+import { GlassCTA } from '@/components/ui/glass-cta'
+import { EASE_OUT_EXPR as EASE } from '@/lib/motion'
+import type { PhosphorIcon as PhosphorIcon } from '@/lib/types'
 
 // ─────────────────────────────────────────────────────────────────
 //  Hero — minimalisme éditorial + showcase carrousel premium
 // ─────────────────────────────────────────────────────────────────
 
-const EASE = [0.22, 1, 0.36, 1] as const
-const INTERVAL_MS = 3600
-
-type PhosphorIcon = React.ComponentType<{
-  size?: number | string
-  weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone'
-  className?: string
-}>
+const INTERVAL_MS = 2000
 
 interface Service {
   label: string
@@ -37,36 +33,45 @@ interface Service {
   image: string
 }
 
+// Showcase Hero — 6 services canoniques, alignés sur SERVICES_DETAIL.
+// Ordre pensé pour la rotation : identité → web → community → ads →
+// SEO → stratégie (la flagship en fin pour clôturer la promesse 360°).
 const SERVICES: Service[] = [
   {
-    label: 'Création de site web',
-    tag: '01 — Web',
-    icon: GlobeIcon,
-    image: '/images/hero/service-web.webp',
-  },
-  {
-    label: 'Identité visuelle',
-    tag: '02 — Identité',
+    label: 'Identité visuelle & Branding',
+    tag: '01 — Branding',
     icon: PaletteIcon,
     image: '/images/hero/service-identite.webp',
   },
   {
-    label: 'Création de logo',
-    tag: '03 — Logo',
-    icon: PenNibIcon,
-    image: '/images/hero/service-logo.webp',
+    label: 'Création de site web',
+    tag: '02 — Web',
+    icon: GlobeIcon,
+    image: '/images/hero/service-web.webp',
   },
   {
-    label: 'Boost de publication',
-    tag: '04 — Social Ads',
+    label: 'Community Management',
+    tag: '03 — Gestion communauté',
+    icon: ChatCircleDotsIcon,
+    image: '/images/hero/service-community.webp',
+  },
+  {
+    label: 'Campagnes Ads',
+    tag: '04 — Publicité',
     icon: RocketIcon,
     image: '/images/hero/service-social-media.webp',
   },
   {
-    label: 'Community management',
-    tag: '05 — Community',
-    icon: ChatCircleDotsIcon,
-    image: '/images/hero/service-community.webp',
+    label: 'SEO & SEA',
+    tag: '05 — Référencement',
+    icon: MagnifyingGlassIcon,
+    image: '/images/hero/service-logo.webp',
+  },
+  {
+    label: 'Stratégie communication & marketing digitale',
+    tag: '06 — Stratégie',
+    icon: ChartLineUpIcon,
+    image: '/images/hero/service-strategie.webp',
   },
 ]
 
@@ -97,43 +102,38 @@ export function Hero() {
       <Atmosphere reduced={reduced} />
 
       <motion.div
-        className="relative z-10 mx-auto max-w-[1400px] px-5 pt-28 pb-0 sm:px-8 sm:pt-32 lg:px-12 lg:pt-40"
+        className="relative z-10 mx-auto max-w-[1400px] px-5 pt-20 pb-0 sm:px-8 sm:pt-24 lg:px-12 lg:pt-28"
         variants={container}
         initial={reduced ? false : 'hidden'}
         animate="visible"
       >
-        {/* ─── EYEBROW ─── */}
-        <motion.div variants={item} className="flex justify-center">
-          <span className="inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.03] px-4 py-1.5 backdrop-blur-sm">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--md-accent)] opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--md-accent)]" />
-            </span>
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/70">
-              Agence 360° · Nouveaux projets 2026
-            </span>
-          </span>
-        </motion.div>
+        {/* ─── EYEBROW SEO — keywords métier au-dessus du H1 ─── */}
+        <motion.p
+          variants={item}
+          className="text-center font-[family-name:var(--md-font-body)] text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--md-secondary)] sm:text-xs"
+        >
+          Agence Communication &amp; Marketing Digital <span aria-hidden>·</span> 360°
+        </motion.p>
 
         {/* ─── TITRE ─── */}
         <motion.h1
           variants={item}
-          className="mt-8 text-center font-[family-name:var(--md-font-display)] text-white"
+          className="mt-5 text-center font-[family-name:var(--md-font-display)] text-white"
           style={{
-            fontSize: 'clamp(2.4rem, 6vw + 0.5rem, 5.75rem)',
-            lineHeight: 0.98,
+            fontSize: 'clamp(2.25rem, 5.6vw + 0.4rem, 5.5rem)',
+            lineHeight: 1.0,
             letterSpacing: '-0.04em',
             fontWeight: 700,
           }}
         >
-          <span className="block">On crée des marques</span>
+          <span className="block">On rend visibles les marques, les causes</span>
           <span className="block">
-            que vos clients{' '}
+            et les idées{' '}
             <span
               className="relative inline-block italic"
               style={{ color: 'var(--md-secondary)' }}
             >
-              n&apos;oublient pas
+              qui comptent
               <svg
                 aria-hidden
                 viewBox="0 0 300 12"
@@ -156,33 +156,25 @@ export function Hero() {
           </span>
         </motion.h1>
 
-        {/* ─── SOUS-TITRE ─── */}
+        {/* ─── SOUS-TITRE — double public (entreprises + ONG) ─── */}
         <motion.p
           variants={item}
-          className="mx-auto mt-6 max-w-xl text-center font-[family-name:var(--md-font-body)] text-base leading-relaxed text-white/55 sm:text-[17px]"
+          className="mx-auto mt-5 max-w-2xl text-center font-[family-name:var(--md-font-body)] text-base leading-relaxed text-white/60 sm:text-[17px]"
         >
-          De l&apos;identité visuelle au site web, de la stratégie au
-          community management — chaque détail est pensé pour transformer
-          votre présence en avantage concret.
+          Branding, site web, SEO, ads et community management. De
+          l&apos;entreprise ambitieuse à l&apos;ONG engagée, on transforme
+          votre présence en influence concrète.
         </motion.p>
 
         {/* ─── CTA ─── */}
         <motion.div
           variants={item}
-          className="mt-10 flex flex-col items-center gap-4"
+          className="mt-7 flex flex-col items-center gap-3"
         >
-          <Link
-            href="/contact"
-            className="group relative inline-flex items-center gap-2.5 rounded-full bg-[var(--md-accent)] px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_-8px_rgba(255,89,100,0.55)] transition-all duration-300 hover:shadow-[0_14px_40px_-8px_rgba(255,89,100,0.7)]"
-          >
-            <span className="pointer-events-none absolute inset-0 rounded-full bg-white/0 transition-colors duration-300 group-hover:bg-white/[0.08]" />
-            <span className="relative">Démarrer un projet</span>
-            <ArrowUpRightIcon
-              size={16}
-              weight="bold"
-              className="relative transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            />
-          </Link>
+          <GlassCTA href="/contact" tone="dark" size="default">
+            Démarrer un projet
+            <ArrowUpRightIcon size={16} weight="bold" />
+          </GlassCTA>
           <p className="text-[11px] uppercase tracking-[0.22em] text-white/30">
             Réponse sous 24h · Devis offert
           </p>
@@ -191,7 +183,7 @@ export function Hero() {
         {/* ─── SCROLL INDICATOR ─── */}
         <motion.div
           variants={item}
-          className="mt-12 flex justify-center"
+          className="mt-8 flex justify-center"
           aria-hidden
         >
           <motion.div
@@ -234,7 +226,7 @@ export function Hero() {
         {/* ─── SHOWCASE CARROUSEL ─── */}
         <motion.div
           variants={item}
-          className="relative mx-auto mt-16 max-w-[1080px] sm:mt-20 lg:mt-24"
+          className="relative mx-auto mt-10 max-w-[820px] sm:mt-12 lg:mt-14"
         >
           <ShowcaseCarousel reduced={reduced} />
         </motion.div>
@@ -253,9 +245,11 @@ export function Hero() {
 //  Atmosphère : grille + halo bleu/coral + grain + vignette
 // ─────────────────────────────────────────────────────────────────
 
+// Aurora mesh : 3 halos animés en pur CSS (GPU compositing, zéro JS par frame)
 function Atmosphere({ reduced }: { reduced: boolean }) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* Grille éditoriale en masque radial */}
       <div
         className="absolute inset-0 opacity-[0.06]"
         style={{
@@ -269,39 +263,48 @@ function Atmosphere({ reduced }: { reduced: boolean }) {
         }}
       />
 
-      <motion.div
-        className="absolute -left-1/4 top-0 h-[90%] w-[70%] rounded-full blur-[140px]"
-        style={{
-          background:
-            'radial-gradient(circle, rgba(53,167,255,0.28) 0%, transparent 60%)',
-        }}
-        animate={reduced ? undefined : { x: [0, 40, 0], y: [0, 20, 0] }}
-        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
-      <motion.div
-        className="absolute -right-1/4 top-1/4 h-[70%] w-[60%] rounded-full blur-[140px]"
-        style={{
-          background:
-            'radial-gradient(circle, rgba(255,89,100,0.22) 0%, transparent 65%)',
-        }}
-        animate={reduced ? undefined : { x: [0, -30, 0], y: [0, -20, 0] }}
-        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
+      {/* Halo bleu #35A7FF — dérive lente haut-gauche */}
       <div
-        className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
+        className={`absolute -left-1/4 top-0 h-[90%] w-[70%] rounded-full blur-[140px] ${reduced ? '' : 'md-aurora-1'}`}
+        style={{
+          background:
+            'radial-gradient(circle, rgba(53,167,255,0.34) 0%, transparent 60%)',
+        }}
+      />
+
+      {/* Halo corail #FF5964 — dérive lente droite/milieu */}
+      <div
+        className={`absolute -right-1/4 top-1/4 h-[70%] w-[60%] rounded-full blur-[140px] ${reduced ? '' : 'md-aurora-2'}`}
+        style={{
+          background:
+            'radial-gradient(circle, rgba(255,89,100,0.26) 0%, transparent 65%)',
+        }}
+      />
+
+      {/* Halo violet profond — point d'équilibre bas-centre */}
+      <div
+        className={`absolute left-1/4 bottom-0 h-[60%] w-[60%] rounded-full blur-[160px] ${reduced ? '' : 'md-aurora-3'}`}
+        style={{
+          background:
+            'radial-gradient(circle, rgba(105,88,255,0.18) 0%, transparent 60%)',
+        }}
+      />
+
+      {/* Grain organique (SVG turbulence inline) */}
+      <div
+        className="absolute inset-0 opacity-[0.06] mix-blend-overlay"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
         }}
       />
 
+      {/* Vignette : assombrit les bords pour focus central */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse at 50% 40%, transparent 50%, rgba(16,19,42,0.55) 100%)',
+            'radial-gradient(ellipse at 50% 40%, transparent 50%, rgba(16,19,42,0.6) 100%)',
         }}
       />
     </div>
@@ -352,28 +355,19 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
         }}
       />
 
-      {/* Flottement doux */}
-      <motion.div
-        className="relative"
-        animate={reduced ? undefined : { y: [0, -6, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        {/* Cadre premium */}
+      {/* Cadre premium — pas de flottement (évite les repaints pendant le scroll) */}
+      <div className="relative">
         <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.7)]">
-          {/* Ratio 16/10 — cohérent avec les assets service */}
-          <div className="relative aspect-[16/10] w-full">
+          {/* Ratio 21/9 — plus compact pour rester above the fold */}
+          <div className="relative aspect-[21/9] w-full">
             <AnimatePresence initial={false}>
               <motion.div
                 key={active.image}
-                className="absolute inset-0"
-                initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 1.06 }}
+                className="absolute inset-0 will-change-[opacity,transform]"
+                initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 1.04 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 1.02, filter: 'blur(6px)' }}
-                transition={{
-                  opacity: { duration: 1.1, ease: EASE },
-                  scale: { duration: INTERVAL_MS / 1000 + 1, ease: 'linear' },
-                  filter: { duration: 0.6, ease: EASE },
-                }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 1.01 }}
+                transition={{ duration: 0.9, ease: EASE }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -422,10 +416,10 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active.label}
-                  initial={reduced ? false : { opacity: 0, y: 14, filter: 'blur(4px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8, filter: 'blur(4px)' }}
-                  transition={{ duration: 0.7, ease: EASE }}
+                  initial={reduced ? false : { opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reduced ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                  transition={{ duration: 0.55, ease: EASE }}
                   className="flex items-center gap-3"
                 >
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/[0.08] backdrop-blur-md">
@@ -475,7 +469,7 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
           aria-hidden
           className="mx-auto mt-2 h-6 w-[85%] rounded-[50%] bg-black/40 blur-2xl"
         />
-      </motion.div>
+      </div>
 
       {/* ─── Thumbnails / Dots navigation ─── */}
       <div

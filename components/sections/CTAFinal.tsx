@@ -3,6 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { ArrowUpRightIcon } from '@phosphor-icons/react'
+import { GlassCTA } from '@/components/ui/glass-cta'
 
 // ─────────────────────────────────────────────────────────────────
 //  COMPOSANT : CTAFinal — Section d'appel à l'action principal
@@ -73,17 +74,10 @@ export function CTAFinal() {
 
           {/* Boutons CTA — principal + secondaire */}
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link
-              href="/contact"
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-[var(--md-accent)] shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/25"
-            >
+            <GlassCTA href="/contact" tone="accent" size="lg">
               Démarrer un projet
-              <ArrowUpRightIcon
-                size={15}
-                weight="bold"
-                className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </Link>
+              <ArrowUpRightIcon size={15} weight="bold" />
+            </GlassCTA>
             <Link
               href="/portfolio"
               className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-8 py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:border-white/60 hover:bg-white/10"

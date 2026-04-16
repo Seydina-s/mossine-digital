@@ -8,18 +8,12 @@ import {
   PencilRulerIcon,
   RocketLaunchIcon,
 } from '@phosphor-icons/react'
-
-const EASE = [0.22, 1, 0.36, 1] as const
+import { EASE_OUT_EXPR as EASE } from '@/lib/motion'
+import type { PhosphorIcon } from '@/lib/types'
 
 // ─────────────────────────────────────────────────────────────────
 //  DONNÉES — Les 4 étapes du processus Mossine Digital
 // ─────────────────────────────────────────────────────────────────
-
-type PhosphorIcon = React.ComponentType<{
-  size?: number
-  weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone'
-  className?: string
-}>
 
 interface Step {
   number: string
@@ -86,9 +80,8 @@ export function Processus() {
         <motion.div
           className="mb-16 max-w-2xl"
           initial={reduced ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7, ease: EASE }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
         >
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary)]">
             Comment on travaille
@@ -117,19 +110,22 @@ export function Processus() {
         <motion.div
           className="relative grid grid-cols-1 gap-0 md:grid-cols-4"
           initial={reduced ? false : 'hidden'}
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
+          animate="visible"
           variants={{
             hidden: {},
-            visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+            visible: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
           }}
         >
 
-          {/* Ligne connectrice horizontale (desktop uniquement) */}
+          {/* Ligne connectrice horizontale (desktop uniquement)
+              — position calculée dynamiquement : centre de la 1re col → centre de la dernière,
+              décalée du rayon du cercle (20px). Robuste à un changement de STEPS.length. */}
           <div
             aria-hidden
-            className="absolute top-[52px] left-[calc(12.5%+20px)] right-[calc(12.5%+20px)] hidden h-[2px] md:block"
+            className="absolute top-[52px] hidden h-[2px] md:block"
             style={{
+              left: `calc(${100 / STEPS.length / 2}% + 20px)`,
+              right: `calc(${100 / STEPS.length / 2}% + 20px)`,
               background:
                 'linear-gradient(to right, var(--md-secondary-light), var(--md-secondary), var(--md-secondary-light))',
             }}

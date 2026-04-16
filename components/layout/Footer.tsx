@@ -28,10 +28,10 @@ const NAV_LINKS = [
 const SERVICE_LINKS = [
   { label: 'Identité visuelle & Branding', href: '/services' },
   { label: 'Création de site web', href: '/services' },
-  { label: 'Community management', href: '/services' },
-  { label: 'Publicité digitale (Ads)', href: '/services' },
-  { label: 'SEO & Référencement', href: '/services' },
-  { label: 'Stratégie digitale 360°', href: '/services' },
+  { label: 'Community Management', href: '/services' },
+  { label: 'Campagnes Ads', href: '/services' },
+  { label: 'SEO & SEA', href: '/services' },
+  { label: 'Stratégie communication & marketing digitale', href: '/services' },
 ]
 
 // ⚠️ TODO_CLIENT : liens réels à fournir (Facebook, Instagram, TikTok, LinkedIn, WhatsApp)
@@ -109,9 +109,9 @@ export function Footer() {
             </Link>
 
             <p className="mb-6 max-w-[260px] text-sm leading-relaxed text-white/45">
-              Agence de communication et marketing digital 360. Stratégie,
-              branding, web et social media réunis pour construire votre
-              présence digitale.
+              Agence de communication et marketing digital 360°. Branding,
+              web, social media, Ads et SEO réunis pour construire votre
+              marque et amplifier votre visibilité.
             </p>
 
             {/* Réseaux sociaux */}

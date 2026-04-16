@@ -2,237 +2,391 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { motion, useReducedMotion } from 'framer-motion'
+import Image from 'next/image'
 import {
-  PenNibIcon,
+  motion,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+  type MotionValue,
+} from 'framer-motion'
+import {
+  PaletteIcon,
   GlobeIcon,
   ChatCircleDotsIcon,
   MegaphoneSimpleIcon,
   MagnifyingGlassIcon,
   ChartLineUpIcon,
-  ArrowRightIcon,
+  ArrowUpRightIcon,
 } from '@phosphor-icons/react'
-
-const EASE = [0.22, 1, 0.36, 1] as const
+import { EASE_OUT_EXPR as EASE } from '@/lib/motion'
 
 // ─────────────────────────────────────────────────────────────────
-//  DONNÉES — Offres de services Mossine Digital
+//  DONNÉES — 6 services + thèmes de couleur Mossine Digital
 // ─────────────────────────────────────────────────────────────────
 
 type PhosphorIcon = React.ComponentType<{
-  size?: number
+  size?: number | string
   weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone'
   className?: string
 }>
 
+interface ServiceTheme {
+  bg: string          // fond de la carte
+  text: string        // texte principal
+  textMuted: string   // texte secondaire (desc)
+  accent: string      // liens, bordures, icône
+  accentOnBg: string  // fond des micro-éléments (tag)
+}
+
 interface Service {
-  icon: PhosphorIcon
+  id: string
   title: string
-  description: string
+  summary: string
   href: string
-  highlight?: boolean
+  image: string
+  icon: PhosphorIcon
+  theme: ServiceTheme
 }
 
 const SERVICES: Service[] = [
   {
-    icon: PenNibIcon,
+    id: 'identite',
     title: 'Identité visuelle & Branding',
-    description:
-      'Logo, charte graphique, typographies et couleurs : créons ensemble une identité qui vous distingue et inspire confiance dès le premier regard.',
+    summary:
+      'Logo, charte graphique et système de marque cohérent pour imposer votre signature visuelle partout où vos clients vous rencontrent.',
     href: '/services',
+    image: '/images/hero/service-identite.webp',
+    icon: PaletteIcon,
+    theme: {
+      bg: '#1B1F3B',
+      text: '#FFFFFF',
+      textMuted: 'rgba(255,255,255,0.72)',
+      accent: '#35A7FF',
+      accentOnBg: 'rgba(53,167,255,0.14)',
+    },
   },
   {
-    icon: GlobeIcon,
+    id: 'web',
     title: 'Création de site web',
-    description:
-      'Des sites performants, accessibles et optimisés pour convertir — de la landing page au site e-commerce, codés avec les meilleures technologies.',
+    summary:
+      'Sites vitrine, landing et e-commerce ultra-rapides, accessibles et pensés pour convertir — Core Web Vitals au vert, design sur-mesure.',
     href: '/services',
-    highlight: true,
+    image: '/images/hero/service-web.webp',
+    icon: GlobeIcon,
+    theme: {
+      bg: '#35A7FF',
+      text: '#FFFFFF',
+      textMuted: 'rgba(255,255,255,0.85)',
+      accent: '#1B1F3B',
+      accentOnBg: 'rgba(27,31,59,0.14)',
+    },
   },
   {
-    icon: ChatCircleDotsIcon,
+    id: 'community',
     title: 'Community Management',
-    description:
-      'Gérez et animez votre présence sur les réseaux sociaux avec une stratégie éditoriale cohérente qui engage votre audience et nourrit votre communauté.',
+    summary:
+      'Stratégie éditoriale, création de contenus et animation de communauté au quotidien. On parle comme vos clients, on répond comme vous.',
     href: '/services',
+    image: '/images/hero/service-community.webp',
+    icon: ChatCircleDotsIcon,
+    theme: {
+      bg: '#F0F7FF',
+      text: '#1B1F3B',
+      textMuted: 'rgba(27,31,59,0.7)',
+      accent: '#35A7FF',
+      accentOnBg: 'rgba(53,167,255,0.14)',
+    },
   },
   {
+    id: 'ads',
+    title: 'Campagnes Ads',
+    summary:
+      'Campagnes Meta, Google et TikTok Ads ciblées, pilotées par la donnée, optimisées ROI. Chaque franc CFA investi est tracé, mesuré, amplifié.',
+    href: '/services',
+    image: '/images/hero/service-social-media.webp',
     icon: MegaphoneSimpleIcon,
-    title: 'Publicité digitale (Ads)',
-    description:
-      'Campagnes Meta Ads, Google Ads et TikTok Ads ciblées et optimisées pour maximiser votre visibilité, vos leads et votre retour sur investissement.',
-    href: '/services',
+    theme: {
+      bg: '#10132A',
+      text: '#FFFFFF',
+      textMuted: 'rgba(255,255,255,0.7)',
+      accent: '#FF5964',
+      accentOnBg: 'rgba(255,89,100,0.16)',
+    },
   },
   {
+    id: 'seo',
+    title: 'SEO & SEA',
+    summary:
+      'Audit technique, contenus optimisés, gestion campagne, optimisation ROI et netlinking pour un trafic organique durable. Le Graal : apparaître avant vos concurrents.',
+    href: '/services',
+    image: '/images/hero/service-logo.webp',
     icon: MagnifyingGlassIcon,
-    title: 'SEO & Référencement',
-    description:
-      'Audit technique, optimisation on-page, netlinking et création de contenu : grimpez dans les résultats Google et générez un trafic organique durable.',
-    href: '/services',
+    theme: {
+      bg: '#FFFFFF',
+      text: '#1B1F3B',
+      textMuted: 'rgba(27,31,59,0.65)',
+      accent: '#35A7FF',
+      accentOnBg: 'rgba(53,167,255,0.12)',
+    },
   },
   {
-    icon: ChartLineUpIcon,
-    title: 'Stratégie digitale 360°',
-    description:
-      'Une roadmap sur mesure qui aligne tous vos canaux — branding, web, social, SEO et ads — en une vision cohérente pour accélérer votre croissance.',
+    id: 'strategie',
+    title: 'Stratégie communication & marketing digitale',
+    summary:
+      'Une roadmap sur-mesure qui aligne branding, web, social media, SEO et ads autour de vos objectifs business — l\u2019approche signature Mossine, 360° et pilotée par la donnée.',
     href: '/services',
+    image: '/images/hero/service-strategie.webp',
+    icon: ChartLineUpIcon,
+    theme: {
+      bg: '#FF5964',
+      text: '#FFFFFF',
+      textMuted: 'rgba(255,255,255,0.88)',
+      accent: '#FFFFFF',
+      accentOnBg: 'rgba(255,255,255,0.16)',
+    },
   },
 ]
 
 // ─────────────────────────────────────────────────────────────────
-//  SOUS-COMPOSANT — Carte de service individuelle
-// ─────────────────────────────────────────────────────────────────
-
-function ServiceCard({ service }: { service: Service }) {
-  const Icon = service.icon
-
-  return (
-    <div
-      className={`group relative flex flex-col gap-4 rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
-        service.highlight
-          ? 'border-[var(--md-secondary)] bg-white shadow-sm shadow-[var(--md-secondary-light)]'
-          : 'border-[var(--md-border)] bg-white hover:border-[var(--md-secondary)]'
-      }`}
-    >
-      {/* Badge "Populaire" sur la carte highlight */}
-      {service.highlight && (
-        <span className="absolute right-5 top-5 rounded-full bg-[var(--md-secondary-light)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--md-secondary)]">
-          Populaire
-        </span>
-      )}
-
-      {/* Icône */}
-      <div
-        className={`flex h-12 w-12 items-center justify-center rounded-xl transition-colors duration-300 ${
-          service.highlight
-            ? 'bg-[var(--md-secondary)] text-white'
-            : 'bg-[var(--md-secondary-light)] text-[var(--md-secondary)] group-hover:bg-[var(--md-secondary)] group-hover:text-white'
-        }`}
-      >
-        <Icon size={24} weight="regular" />
-      </div>
-
-      {/* Contenu texte */}
-      <div className="flex flex-1 flex-col gap-2">
-        <h3
-          className="font-[family-name:var(--md-font-display)] font-semibold text-[var(--md-primary)]"
-          style={{ fontSize: 'clamp(1rem, 1vw + 0.5rem, 1.125rem)' }}
-        >
-          {service.title}
-        </h3>
-        <p className="flex-1 text-sm leading-relaxed text-[var(--md-text-muted)]">
-          {service.description}
-        </p>
-      </div>
-
-      {/* Lien "En savoir plus" */}
-      <Link
-        href={service.href}
-        className="group/link mt-1 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--md-secondary)] transition-all duration-200"
-        aria-label={`En savoir plus sur ${service.title}`}
-      >
-        En savoir plus
-        <ArrowRightIcon
-          size={14}
-          weight="bold"
-          className="transition-transform duration-200 group-hover/link:translate-x-0.5"
-        />
-      </Link>
-    </div>
-  )
-}
-
-// ─────────────────────────────────────────────────────────────────
-//  COMPOSANT PRINCIPAL : Services
+//  COMPOSANT RACINE — Section sombre + stacking sticky scroll
 // ─────────────────────────────────────────────────────────────────
 
 export function Services() {
   const reduced = useReducedMotion() ?? false
+  const container = React.useRef<HTMLDivElement>(null)
+
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ['start start', 'end end'],
+  })
 
   return (
     <section
       id="services"
       aria-label="Nos services"
-      className="bg-[var(--md-bg-blue)]"
-      style={{
-        paddingTop: 'var(--md-space-section)',
-        paddingBottom: 'var(--md-space-section)',
-      }}
+      className="relative bg-[#0a0e1c]"
     >
-      <div className="container-md">
-        {/* En-tête de section */}
-        <motion.div
-          className="mb-14 max-w-2xl"
-          initial={reduced ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7, ease: EASE }}
-        >
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary)]">
-            Ce que nous faisons
-          </p>
-          <h2
-            className="font-[family-name:var(--md-font-display)] text-[var(--md-primary)]"
-            style={{
-              fontSize: 'clamp(1.75rem, 3vw + 0.5rem, 2.75rem)',
-              fontWeight: 700,
-              letterSpacing: '-0.025em',
-              lineHeight: 1.15,
-            }}
+      {/* ─── En-tête — sticky pendant le stacking pour garder le contexte ─── */}
+      <div className="relative pt-[var(--md-space-section)] pb-8">
+        <div className="container-md">
+          <motion.div
+            className="max-w-2xl"
+            initial={reduced ? false : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.7, ease: EASE }}
           >
-            Tous vos besoins digitaux,{' '}
-            <span className="text-[var(--md-secondary)]">réunis en un seul endroit</span>
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-[var(--md-text-muted)]">
-            De la création de votre identité visuelle au déploiement de vos
-            campagnes publicitaires, chaque service est pensé pour fonctionner
-            ensemble et maximiser votre impact.
-          </p>
-        </motion.div>
-
-        {/* Grille des services — stagger à l'entrée dans le viewport */}
-        <motion.div
-          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-          initial={reduced ? false : 'hidden'}
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          variants={{
-            hidden: {},
-            visible: {
-              transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-            },
-          }}
-        >
-          {SERVICES.map((service) => (
-            <motion.div
-              key={service.title}
-              variants={{
-                hidden: { opacity: 0, y: 28 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary)]">
+              Ce que nous faisons
+            </p>
+            <h2
+              className="font-[family-name:var(--md-font-display)] text-white"
+              style={{
+                fontSize: 'clamp(1.75rem, 3vw + 0.5rem, 2.75rem)',
+                fontWeight: 700,
+                letterSpacing: '-0.025em',
+                lineHeight: 1.15,
               }}
             >
-              <ServiceCard service={service} />
-            </motion.div>
-          ))}
-        </motion.div>
+              Tous vos besoins digitaux,{' '}
+              <span className="text-[var(--md-secondary)]">
+                réunis en un seul endroit.
+              </span>
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-white/60">
+              De l&apos;identité visuelle au déploiement de vos campagnes,
+              chaque service est pensé pour fonctionner avec les autres —
+              et maximiser votre impact.
+            </p>
+          </motion.div>
+        </div>
+      </div>
 
-        {/* CTA secondaire */}
-        <motion.div
-          className="mt-12 text-center"
-          initial={reduced ? false : { opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.2 }}
-        >
+      {/* ─── Zone de stacking — chaque carte sticky, scale progressive ─── */}
+      <div ref={container} className="relative">
+        {SERVICES.map((service, i) => {
+          const targetScale = 1 - (SERVICES.length - i) * 0.035
+          return (
+            <ServiceCard
+              key={service.id}
+              service={service}
+              index={i}
+              progress={scrollYProgress}
+              range={[i * (1 / SERVICES.length), 1]}
+              targetScale={targetScale}
+              reduced={reduced}
+            />
+          )
+        })}
+      </div>
+
+      {/* ─── CTA — sous le stacking ─── */}
+      <div className="relative pb-[var(--md-space-section)] pt-20">
+        <div className="container-md flex flex-col items-center gap-3">
           <Link
             href="/services"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--md-secondary)] px-7 py-3 text-sm font-semibold text-[var(--md-secondary)] transition-colors duration-200 hover:bg-[var(--md-secondary)] hover:text-white"
+            className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white/50 hover:bg-white hover:text-[var(--md-primary)]"
           >
             Découvrir toutes nos offres
-            <ArrowRightIcon size={14} weight="bold" />
+            <ArrowUpRightIcon
+              size={14}
+              weight="bold"
+              className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
           </Link>
-        </motion.div>
+          <p className="text-xs text-white/40">
+            Un service sur-mesure, adapté à votre situation
+          </p>
+        </div>
       </div>
     </section>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  CARTE — sticky + scale animée sur scroll
+// ─────────────────────────────────────────────────────────────────
+
+function ServiceCard({
+  service,
+  index,
+  progress,
+  range,
+  targetScale,
+  reduced,
+}: {
+  service: Service
+  index: number
+  progress: MotionValue<number>
+  range: [number, number]
+  targetScale: number
+  reduced: boolean
+}) {
+  const cardRef = React.useRef<HTMLDivElement>(null)
+  const { scrollYProgress: cardScroll } = useScroll({
+    target: cardRef,
+    offset: ['start end', 'start start'],
+  })
+
+  // Mouvement reduced → désactive scale/zoom
+  const scale = useTransform(
+    progress,
+    range,
+    reduced ? [1, 1] : [1, targetScale],
+  )
+  const imageScale = useTransform(
+    cardScroll,
+    [0, 1],
+    reduced ? [1, 1] : [1.25, 1],
+  )
+
+  const Icon = service.icon
+  const { theme } = service
+
+  return (
+    <div
+      ref={cardRef}
+      className="sticky flex items-center justify-center px-4 sm:px-6"
+      style={{
+        top: 0,
+        height: '100vh',
+      }}
+    >
+      <motion.article
+        style={{
+          backgroundColor: theme.bg,
+          color: theme.text,
+          scale,
+          top: `calc(4vh + ${index * 18}px)`,
+        }}
+        className="relative h-[82vh] w-full max-w-[1200px] origin-top overflow-hidden rounded-[28px] shadow-[0_40px_100px_-30px_rgba(0,0,0,0.6)]"
+      >
+        {/* ─── Layout desktop : 40% texte / 60% image ─── */}
+        <div className="relative flex h-full flex-col lg:grid lg:grid-cols-[1fr_1.25fr] lg:gap-0">
+          {/* ─── Bloc texte ─── */}
+          <div className="flex flex-col justify-between p-7 sm:p-10 lg:p-12">
+            {/* Tag haut */}
+            <div className="flex items-center justify-between">
+              <span
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em]"
+                style={{
+                  backgroundColor: theme.accentOnBg,
+                  color: theme.accent,
+                }}
+              >
+                <Icon size={14} weight="regular" />
+                0{index + 1} — Service
+              </span>
+              <span
+                className="hidden font-mono text-[11px] tabular-nums sm:inline"
+                style={{ color: theme.textMuted }}
+              >
+                {String(index + 1).padStart(2, '0')} / {String(SERVICES.length).padStart(2, '0')}
+              </span>
+            </div>
+
+            {/* Titre + description */}
+            <div className="py-6 lg:py-0">
+              <h3
+                className="font-[family-name:var(--md-font-display)] font-bold leading-[1.05]"
+                style={{
+                  fontSize: 'clamp(1.75rem, 3.2vw + 0.5rem, 3.25rem)',
+                  letterSpacing: '-0.03em',
+                }}
+              >
+                {service.title}
+              </h3>
+              <p
+                className="mt-5 max-w-md text-[15px] leading-relaxed sm:text-base"
+                style={{ color: theme.textMuted }}
+              >
+                {service.summary}
+              </p>
+            </div>
+
+            {/* CTA bas */}
+            <Link
+              href={service.href}
+              aria-label={`En savoir plus sur ${service.title}`}
+              className="group inline-flex w-fit items-center gap-2 border-b-2 pb-1 text-sm font-semibold transition-all hover:gap-3"
+              style={{ borderColor: theme.accent, color: theme.accent }}
+            >
+              En savoir plus
+              <ArrowUpRightIcon
+                size={16}
+                weight="bold"
+                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </Link>
+          </div>
+
+          {/* ─── Bloc image ─── */}
+          <div className="relative h-[40%] overflow-hidden lg:h-full lg:rounded-r-[28px]">
+            <motion.div
+              style={{ scale: imageScale }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={service.image}
+                alt=""
+                fill
+                sizes="(max-width: 1024px) 100vw, 60vw"
+                className="object-cover"
+                priority={index < 2}
+              />
+            </motion.div>
+            {/* Voile subtil cohérent avec le thème */}
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(135deg, ${theme.bg}00 45%, ${theme.bg}30 100%)`,
+              }}
+            />
+          </div>
+        </div>
+      </motion.article>
+    </div>
   )
 }

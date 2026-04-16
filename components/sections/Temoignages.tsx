@@ -61,9 +61,14 @@ const TESTIMONIALS: Testimonial[] = [
 //  COMPOSANT PRINCIPAL : Temoignages
 // ─────────────────────────────────────────────────────────────────
 
+// Durée volontairement longue pour laisser le temps de lire un témoignage
+// complet (~250 mots). Pause au hover/focus + respect reduced-motion.
+const AUTO_INTERVAL_MS = 7000
+
 export function Temoignages() {
   const [current, setCurrent] = React.useState(0)
   const [direction, setDirection] = React.useState<1 | -1>(1)
+  const [isPaused, setIsPaused] = React.useState(false)
   const reducedMotion = useReducedMotion() ?? false
 
   const total = TESTIMONIALS.length
@@ -75,6 +80,16 @@ export function Temoignages() {
 
   const prev = () => goTo((current - 1 + total) % total, -1)
   const next = () => goTo((current + 1) % total, 1)
+
+  // Défilement automatique — pause au survol/focus et si reduced motion
+  React.useEffect(() => {
+    if (reducedMotion || isPaused) return
+    const id = setTimeout(() => {
+      setDirection(1)
+      setCurrent((c) => (c + 1) % total)
+    }, AUTO_INTERVAL_MS)
+    return () => clearTimeout(id)
+  }, [current, isPaused, reducedMotion, total])
 
   // Variants d'animation pour le slide
   const variants = {
@@ -144,8 +159,14 @@ export function Temoignages() {
           </div>
         </div>
 
-        {/* Zone du témoignage */}
-        <div className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.04] p-8 sm:p-12 md:p-14">
+        {/* Zone du témoignage — pause auto-rotation au hover/focus */}
+        <div
+          className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.04] p-8 sm:p-12 md:p-14"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onFocus={() => setIsPaused(true)}
+          onBlur={() => setIsPaused(false)}
+        >
 
           {/* Icône guillemet décorative */}
           <QuotesIcon

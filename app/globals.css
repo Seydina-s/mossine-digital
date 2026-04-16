@@ -125,4 +125,237 @@
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+
+  /* ─── Aurora Hero : halos animés (GPU compositing uniquement) ─── */
+  .md-aurora-1 {
+    animation: md-aurora-drift-1 22s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .md-aurora-2 {
+    animation: md-aurora-drift-2 28s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .md-aurora-3 {
+    animation: md-aurora-drift-3 34s ease-in-out infinite alternate;
+    will-change: transform, opacity;
+  }
+}
+
+@keyframes md-aurora-drift-1 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(6%, 4%, 0) scale(1.08); }
+  100% { transform: translate3d(-3%, 8%, 0) scale(0.96); }
+}
+@keyframes md-aurora-drift-2 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(-5%, -3%, 0) scale(1.1); }
+  100% { transform: translate3d(4%, -6%, 0) scale(0.94); }
+}
+@keyframes md-aurora-drift-3 {
+  0%   { transform: translate3d(0, 0, 0) scale(0.9); opacity: 0.2; }
+  50%  { transform: translate3d(2%, -4%, 0) scale(1.05); opacity: 0.35; }
+  100% { transform: translate3d(-4%, 2%, 0) scale(0.95); opacity: 0.22; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GLASS CTA — Glassmorphism button pour les CTA "Démarrer un projet"
+   Variantes : tone "dark" (sur fond sombre) / "light" (sur fond clair)
+   Tailles   : sm / default / lg
+═══════════════════════════════════════════════════════════════ */
+@layer components {
+  .glass-cta {
+    position: relative;
+    display: inline-flex;
+    isolation: isolate;
+    font-weight: 600;
+    font-family: var(--md-font-body);
+    letter-spacing: -0.005em;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .glass-cta__surface {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.875rem 1.625rem;
+    overflow: hidden;
+    border: 1px solid transparent;
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.3s ease,
+      border-color 0.3s ease;
+    will-change: transform;
+  }
+
+  /* Taille SM */
+  .glass-cta[data-size='sm'] .glass-cta__surface {
+    padding: 0.5rem 1.125rem;
+    font-size: 0.8125rem;
+  }
+  /* Taille DEFAULT */
+  .glass-cta[data-size='default'] .glass-cta__surface {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+  }
+  /* Taille LG */
+  .glass-cta[data-size='lg'] .glass-cta__surface {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+
+  /* ─── TONE DARK : glass blanc sur fond sombre/coloré ─── */
+  .glass-cta[data-tone='dark'] .glass-cta__surface {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    border-color: rgba(255, 255, 255, 0.26);
+    color: #ffffff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.32),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+      0 10px 28px -10px rgba(0, 0, 0, 0.5);
+  }
+  .glass-cta[data-tone='dark']:hover .glass-cta__surface,
+  .glass-cta[data-tone='dark']:focus-visible .glass-cta__surface {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+      0 18px 38px -10px rgba(0, 0, 0, 0.55);
+  }
+  .glass-cta[data-tone='dark']:active .glass-cta__surface {
+    transform: translateY(0);
+  }
+
+  /* ─── TONE LIGHT : glass teinté sombre sur fond clair ─── */
+  .glass-cta[data-tone='light'] .glass-cta__surface {
+    background: rgba(27, 31, 59, 0.06);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    border-color: rgba(27, 31, 59, 0.12);
+    color: var(--md-primary);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      inset 0 -1px 0 rgba(27, 31, 59, 0.05),
+      0 10px 28px -10px rgba(16, 19, 42, 0.15);
+  }
+  .glass-cta[data-tone='light']:hover .glass-cta__surface,
+  .glass-cta[data-tone='light']:focus-visible .glass-cta__surface {
+    background: rgba(27, 31, 59, 0.09);
+    border-color: rgba(27, 31, 59, 0.2);
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      0 18px 38px -10px rgba(16, 19, 42, 0.2);
+  }
+
+  /* ─── TONE BRAND : rouge dégradé + glint glass (Navbar) ───
+     Rouge solide visible sur tous les fonds (morph dark ↔ white pill),
+     avec reflet et halo glass pour cohérence visuelle. */
+  .glass-cta[data-tone='brand'] .glass-cta__surface {
+    background: linear-gradient(135deg, #FF5964 0%, #E8424D 100%);
+    border-color: rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.42),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+      0 10px 28px -10px rgba(255, 89, 100, 0.55);
+  }
+  .glass-cta[data-tone='brand']:hover .glass-cta__surface,
+  .glass-cta[data-tone='brand']:focus-visible .glass-cta__surface {
+    background: linear-gradient(135deg, #FF6B75 0%, #E8424D 100%);
+    border-color: rgba(255, 255, 255, 0.42);
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 18px 38px -10px rgba(255, 89, 100, 0.7);
+  }
+
+  /* ─── TONE ACCENT : glass sur fond #FF5964 (CTA final) ─── */
+  .glass-cta[data-tone='accent'] .glass-cta__surface {
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    border-color: rgba(255, 255, 255, 0.38);
+    color: #ffffff;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+      0 12px 32px -10px rgba(0, 0, 0, 0.35);
+  }
+  .glass-cta[data-tone='accent']:hover .glass-cta__surface,
+  .glass-cta[data-tone='accent']:focus-visible .glass-cta__surface {
+    background: rgba(255, 255, 255, 0.24);
+    border-color: rgba(255, 255, 255, 0.55);
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 20px 42px -10px rgba(0, 0, 0, 0.4);
+  }
+
+  /* ─── Glint diagonal (reflet lumineux) ─── */
+  .glass-cta__glint {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0) 38%,
+      rgba(255, 255, 255, 0) 62%,
+      rgba(255, 255, 255, 0.12) 100%
+    );
+    mix-blend-mode: overlay;
+    opacity: 0.85;
+    transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .glass-cta:hover .glass-cta__glint {
+    opacity: 1;
+  }
+
+  /* ─── Halo coloré projeté (sous le bouton) ─── */
+  .glass-cta__shadow {
+    position: absolute;
+    inset: 4px;
+    z-index: -1;
+    border-radius: 9999px;
+    background: linear-gradient(
+      135deg,
+      rgba(53, 167, 255, 0.45) 0%,
+      rgba(255, 89, 100, 0.35) 100%
+    );
+    filter: blur(22px);
+    opacity: 0.45;
+    transform: translateY(10px) scale(0.94);
+    transition:
+      opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .glass-cta:hover .glass-cta__shadow,
+  .glass-cta:focus-visible .glass-cta__shadow {
+    opacity: 0.75;
+    transform: translateY(14px) scale(0.98);
+  }
+
+  .glass-cta__content {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Full-width (utile en menu mobile) */
+  .glass-cta--full,
+  .glass-cta--full .glass-cta__surface {
+    width: 100%;
+  }
 }

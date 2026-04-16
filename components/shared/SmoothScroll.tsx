@@ -1,44 +1,17 @@
 'use client'
 
 import * as React from 'react'
-import Lenis from 'lenis'
 
 /**
- * Provider global Lenis — smooth scroll organique.
- * Monté une seule fois dans layout.tsx, enveloppe tout le contenu.
- * Respecte prefers-reduced-motion en désactivant le smooth si activé.
+ * SmoothScroll — DÉSACTIVÉ DÉFINITIVEMENT (2026-04-13).
+ *
+ * Lenis créait une traîne perceptible sur le Hero (scroll "qui bug").
+ * On repasse sur le scroll natif du navigateur : prévisible, instantané,
+ * zéro overhead GPU. Pour un scroll doux sur les ancres internes,
+ * `scroll-behavior: smooth` dans globals.css suffit.
+ *
+ * Ne PAS réactiver sans audit perf sur Hero + bench sur machine lente.
  */
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
-  React.useEffect(() => {
-    // Respecte la préférence utilisateur pour le mouvement réduit
-    const prefersReduced = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
-
-    if (prefersReduced) return
-
-    // Config réactive : duration courte + easing rapide + multiplicateur
-    // supérieur pour que la molette "colle" sans traîne.
-    const lenis = new Lenis({
-      duration: 0.9,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      wheelMultiplier: 1.25,
-      touchMultiplier: 2,
-      smoothWheel: true,
-      lerp: 0.12,
-    })
-
-    function raf(time: number) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
-    }
-
-    requestAnimationFrame(raf)
-
-    return () => {
-      lenis.destroy()
-    }
-  }, [])
-
   return <>{children}</>
 }

@@ -8,19 +8,13 @@ import {
   GlobeHemisphereWestIcon,
   ShieldCheckIcon,
 } from '@phosphor-icons/react'
-
-const EASE = [0.22, 1, 0.36, 1] as const
+import { EASE_OUT_EXPR as EASE } from '@/lib/motion'
+import type { PhosphorIcon } from '@/lib/types'
 
 // ─────────────────────────────────────────────────────────────────
 //  DONNÉES — Engagements (pas chiffres de track-record)
 //  Promesses opérationnelles vérifiables, valides avant 1er client.
 // ─────────────────────────────────────────────────────────────────
-
-type PhosphorIcon = React.ComponentType<{
-  size?: number
-  weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone'
-  className?: string
-}>
 
 interface Stat {
   value: number
@@ -87,6 +81,8 @@ function useCountUp(end: number, duration = 1800) {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !hasAnimated.current) {
+          // rootMargin négatif évite le trigger trop précoce ; threshold complémentaire
+          // (0.4) dans les options ci-dessous.
           hasAnimated.current = true
           const startTime = performance.now()
 
@@ -103,7 +99,7 @@ function useCountUp(end: number, duration = 1800) {
           requestAnimationFrame(update)
         }
       },
-      { threshold: 0.4 },
+      { threshold: 0.4, rootMargin: '0px 0px -10% 0px' },
     )
 
     observer.observe(el)
@@ -199,9 +195,8 @@ export function Stats() {
         <motion.div
           className="mb-14 text-center"
           initial={reduced ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7, ease: EASE }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
         >
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary)]">
             Nos engagements
@@ -230,12 +225,11 @@ export function Stats() {
         <motion.div
           className="grid grid-cols-1 divide-y divide-[var(--md-border)] sm:grid-cols-2 sm:divide-y-0 sm:[&>*:nth-child(n+3)]:border-t sm:[&>*:nth-child(n+3)]:border-[var(--md-border)] md:grid-cols-4 md:[&>*:nth-child(n+3)]:border-t-0 md:divide-x"
           initial={reduced ? false : 'hidden'}
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
+          animate="visible"
           variants={{
             hidden: {},
             visible: {
-              transition: { staggerChildren: 0.1, delayChildren: 0.15 },
+              transition: { staggerChildren: 0.1, delayChildren: 0.3 },
             },
           }}
         >
