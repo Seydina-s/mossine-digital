@@ -20,7 +20,7 @@ export function ServicesFAQ() {
       <div className="container-md">
         <div className="mx-auto max-w-3xl">
           {/* Header */}
-          <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary)]">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary-text)]">
             Questions fréquentes
           </p>
           <h2
@@ -34,12 +34,12 @@ export function ServicesFAQ() {
             }}
           >
             Les réponses aux questions{' '}
-            <span className="italic text-[var(--md-secondary)]">
+            <span className="italic text-[var(--md-secondary-text)]">
               qu&rsquo;on nous pose vraiment
             </span>
             .
           </h2>
-          <p className="mt-5 text-center text-base leading-relaxed text-[var(--md-primary)]/60">
+          <p className="mt-5 text-center text-base leading-relaxed text-[var(--md-primary)]/70">
             Si votre question n&rsquo;est pas ici, elle mérite une réponse
             personnalisée. Contactez-nous — on répond sous 24 h.
           </p>
@@ -49,12 +49,12 @@ export function ServicesFAQ() {
             {SERVICES_FAQ.map((item) => (
               <details
                 key={item.question}
-                className="group/faq py-5 [&[open]>summary>svg]:rotate-45 [&[open]>summary>svg]:text-[var(--md-secondary)]"
+                className="group/faq py-5 [&[open]>summary>svg]:rotate-45 [&[open]>summary>svg]:text-[var(--md-secondary-text)]"
               >
                 <summary
                   className="flex cursor-pointer items-start justify-between gap-4 list-none rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4"
                 >
-                  <span className="text-[16px] font-medium leading-snug text-[var(--md-primary)] group-hover/faq:text-[var(--md-secondary)] sm:text-[17px]">
+                  <span className="text-[16px] font-medium leading-snug text-[var(--md-primary)] group-hover/faq:text-[var(--md-secondary-text)] sm:text-[17px]">
                     {item.question}
                   </span>
                   <PlusIcon

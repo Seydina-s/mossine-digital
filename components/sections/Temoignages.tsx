@@ -251,14 +251,14 @@ export function Temoignages() {
             <button
               onClick={prev}
               aria-label="Témoignage précédent"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/50 hover:border-white/40 hover:text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/50 transition-colors duration-200 hover:border-white/40 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--md-secondary)]"
             >
               <ArrowLeftIcon size={16} weight="regular" />
             </button>
             <button
               onClick={next}
               aria-label="Témoignage suivant"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/50 hover:border-white/40 hover:text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/50 transition-colors duration-200 hover:border-white/40 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--md-secondary)]"
             >
               <ArrowRightIcon size={16} weight="regular" />
             </button>

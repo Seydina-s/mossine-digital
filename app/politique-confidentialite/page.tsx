@@ -51,7 +51,7 @@ export default function PolitiqueConfidentialitePage() {
         {/* ─── En-tête éditorial ─── */}
         <div className="container-md relative">
           <div className="mx-auto max-w-3xl">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--md-secondary)]">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--md-secondary-text)]">
               Mentions & vie privée
             </p>
             <h1
@@ -94,7 +94,7 @@ export default function PolitiqueConfidentialitePage() {
                 Contact :{' '}
                 <a
                   href="mailto:contact@mossinedigital.com"
-                  className="text-[var(--md-secondary)] underline underline-offset-2 hover:text-[var(--md-secondary-hover)]"
+                  className="text-[var(--md-secondary-text)] underline underline-offset-2 hover:text-[var(--md-secondary-hover)]"
                 >
                   contact@mossinedigital.com
                 </a>
@@ -107,7 +107,7 @@ export default function PolitiqueConfidentialitePage() {
                 nécessaires</strong> pour répondre à vos demandes ou fournir
                 nos services.
               </p>
-              <ul className="mt-4 list-disc space-y-2 pl-5 marker:text-[var(--md-secondary)]">
+              <ul className="mt-4 list-disc space-y-2 pl-5 marker:text-[var(--md-secondary-text)]">
                 <li>
                   <strong>Formulaire de contact</strong> : nom, email,
                   téléphone (optionnel), entreprise (optionnel), service
@@ -130,7 +130,7 @@ export default function PolitiqueConfidentialitePage() {
             </Section>
 
             <Section number="03" title="Pourquoi nous collectons ces données">
-              <ul className="list-disc space-y-2 pl-5 marker:text-[var(--md-secondary)]">
+              <ul className="list-disc space-y-2 pl-5 marker:text-[var(--md-secondary-text)]">
                 <li>
                   <strong>Répondre à vos demandes</strong> — devis, rendez-vous,
                   questions commerciales.
@@ -161,7 +161,7 @@ export default function PolitiqueConfidentialitePage() {
                 </abbr>{' '}
                 européen (pour nos interlocuteurs de l’UE) :
               </p>
-              <ul className="mt-4 list-disc space-y-2 pl-5 marker:text-[var(--md-secondary)]">
+              <ul className="mt-4 list-disc space-y-2 pl-5 marker:text-[var(--md-secondary-text)]">
                 <li>
                   <strong>Consentement explicite</strong> via la case à cocher
                   du formulaire de contact.
@@ -184,7 +184,7 @@ export default function PolitiqueConfidentialitePage() {
                 utilisons quelques prestataires techniques, strictement
                 nécessaires à l’exploitation du site :
               </p>
-              <ul className="mt-4 list-disc space-y-2 pl-5 marker:text-[var(--md-secondary)]">
+              <ul className="mt-4 list-disc space-y-2 pl-5 marker:text-[var(--md-secondary-text)]">
                 <li>
                   <strong>Resend</strong> (service d’envoi d’emails
                   transactionnels) — pour transmettre votre message à notre
@@ -206,7 +206,7 @@ export default function PolitiqueConfidentialitePage() {
             </Section>
 
             <Section number="06" title="Durée de conservation">
-              <ul className="list-disc space-y-2 pl-5 marker:text-[var(--md-secondary)]">
+              <ul className="list-disc space-y-2 pl-5 marker:text-[var(--md-secondary-text)]">
                 <li>
                   <strong>Messages via le formulaire</strong> : 3 ans à
                   compter du dernier contact, puis suppression automatique.
@@ -226,7 +226,7 @@ export default function PolitiqueConfidentialitePage() {
                 Vous disposez, à tout moment, des droits suivants sur vos
                 données personnelles :
               </p>
-              <ul className="mt-4 list-disc space-y-2 pl-5 marker:text-[var(--md-secondary)]">
+              <ul className="mt-4 list-disc space-y-2 pl-5 marker:text-[var(--md-secondary-text)]">
                 <li>
                   <strong>Accès</strong> — obtenir une copie des données
                   vous concernant.
@@ -260,7 +260,7 @@ export default function PolitiqueConfidentialitePage() {
                 Pour exercer l’un de ces droits, écrivez-nous à{' '}
                 <a
                   href="mailto:contact@mossinedigital.com"
-                  className="text-[var(--md-secondary)] underline underline-offset-2 hover:text-[var(--md-secondary-hover)]"
+                  className="text-[var(--md-secondary-text)] underline underline-offset-2 hover:text-[var(--md-secondary-hover)]"
                 >
                   contact@mossinedigital.com
                 </a>
@@ -274,7 +274,7 @@ export default function PolitiqueConfidentialitePage() {
                   href="https://www.cdp.sn"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[var(--md-secondary)] underline underline-offset-2 hover:text-[var(--md-secondary-hover)]"
+                  className="text-[var(--md-secondary-text)] underline underline-offset-2 hover:text-[var(--md-secondary-hover)]"
                 >
                   Commission de Protection des Données Personnelles (CDP) du
                   Sénégal
@@ -329,7 +329,7 @@ export default function PolitiqueConfidentialitePage() {
                 faisons de vos données ?{' '}
                 <Link
                   href="/contact"
-                  className="font-medium text-[var(--md-secondary)] underline underline-offset-2 hover:text-[var(--md-secondary-hover)]"
+                  className="font-medium text-[var(--md-secondary-text)] underline underline-offset-2 hover:text-[var(--md-secondary-hover)]"
                 >
                   Écrivez-nous
                 </Link>
@@ -369,7 +369,7 @@ function Section({
       <div className="mb-4 flex items-baseline gap-4">
         <span
           aria-hidden
-          className="font-mono text-[13px] font-semibold tracking-[0.15em] text-[var(--md-secondary)]"
+          className="font-mono text-[13px] font-semibold tracking-[0.15em] text-[var(--md-secondary-text)]"
         >
           {number}
         </span>

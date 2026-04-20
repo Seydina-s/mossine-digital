@@ -57,7 +57,7 @@ export function AboutMethod() {
     >
       <div className="container-md relative">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--md-secondary)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--md-secondary-text)]">
             Notre méthode
           </p>
           <h2
@@ -91,7 +91,7 @@ export function AboutMethod() {
               >
                 <div className="flex items-center justify-between">
                   <span
-                    className="font-mono text-[13px] font-semibold tracking-[0.15em] text-[var(--md-secondary)]"
+                    className="font-mono text-[13px] font-semibold tracking-[0.15em] text-[var(--md-secondary-text)]"
                     aria-hidden
                   >
                     {step.label}
@@ -131,7 +131,7 @@ export function AboutMethod() {
           </p>
           <Link
             href="/services"
-            className="group inline-flex items-center gap-2 rounded-full border-2 border-[var(--md-secondary)] px-6 py-3 text-sm font-semibold text-[var(--md-secondary)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[var(--md-secondary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2"
+            className="group inline-flex items-center gap-2 rounded-full border-2 border-[var(--md-secondary-text)] px-6 py-3 text-sm font-semibold text-[var(--md-secondary-text)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[var(--md-secondary-text)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary-text)] focus-visible:ring-offset-2"
           >
             Voir la méthode par service
             <ArrowUpRightIcon

@@ -88,7 +88,7 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
         >
           <span
             aria-hidden
-            className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--md-secondary)]/15 text-[var(--md-secondary)]"
+            className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--md-secondary)]/15 text-[var(--md-secondary-text)]"
           >
             {PreselectedIcon ? (
               <PreselectedIcon size={16} weight="regular" />
@@ -179,7 +179,7 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
           name="message"
           required
           error={errorFor('message')}
-          placeholder="Contexte, objectifs, échéance souhaitée, exemples inspirants…"
+          placeholder="Décrivez votre projet, vos objectifs et votre délai souhaité…"
           minLength={20}
           maxLength={4000}
         />
@@ -197,7 +197,7 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
             ma demande, conformément à la{' '}
             <a
               href="/politique-confidentialite"
-              className="text-[var(--md-secondary)] underline underline-offset-2 hover:text-[var(--md-secondary-hover)]"
+              className="text-[var(--md-secondary-text)] underline underline-offset-2 hover:text-[var(--md-secondary-hover)]"
             >
               politique de confidentialité
             </a>

@@ -29,7 +29,7 @@ export function AboutManifesto() {
         <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[minmax(0,1fr)_1.5fr] lg:gap-20">
           {/* Colonne gauche : titre + citation signature */}
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--md-secondary)]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--md-secondary-text)]">
               Notre manifeste
             </p>
             <h2
@@ -43,7 +43,7 @@ export function AboutManifesto() {
               }}
             >
               Nous croyons que la clarté est plus{' '}
-              <span className="italic text-[var(--md-secondary)]">
+              <span className="italic text-[var(--md-secondary-text)]">
                 précieuse
               </span>{' '}
               que la performance.

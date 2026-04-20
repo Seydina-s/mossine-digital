@@ -10,6 +10,11 @@
     --md-primary:          #1B1F3B;
     --md-primary-light:    #E8EAF6;
     --md-secondary:        #35A7FF;
+    /* Texte porteur de sens sur fond clair — #0E70C8 donne 5.33:1 sur blanc
+       (AA texte normal). #35A7FF échoue 2.58:1 sur blanc. Ne remplace PAS
+       --md-secondary pour les focus rings / icônes décoratives / fonds sombres
+       (où l'éclat reste lisible). Ref : .claude/session/AUDIT_OWASP.md §Annexe. */
+    --md-secondary-text:   #0E70C8;
     --md-secondary-hover:  #1A97F5;
     --md-secondary-light:  #F0F7FF;
     --md-bg:               #FFFFFF;
@@ -42,6 +47,9 @@
     /* ---- CONTAINER ---- */
     --md-container:         1280px;
     --md-container-padding: 1.5rem;
+
+    /* ---- GRAIN ORGANIQUE (SVG turbulence inline, réutilisé dans Hero / CTAFinal / ComingSoon) ---- */
+    --md-grain-url: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   *,

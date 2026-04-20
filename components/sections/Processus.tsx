@@ -83,7 +83,7 @@ export function Processus() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
         >
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary)]">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary-text)]">
             Comment on travaille
           </p>
           <h2
@@ -96,7 +96,7 @@ export function Processus() {
             }}
           >
             Un processus{' '}
-            <span className="text-[var(--md-secondary)]">transparent</span>
+            <span className="text-[var(--md-secondary-text)]">transparent</span>
             {', '}de bout en bout
           </h2>
           <p className="mt-4 text-base leading-relaxed text-[var(--md-text-muted)]">
@@ -146,7 +146,7 @@ export function Processus() {
                 <div className="relative z-10 mb-6 flex items-center gap-4 md:flex-col md:gap-3">
                   {/* Cercle numéroté */}
                   <div
-                    className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border-2 border-[var(--md-secondary)] bg-white font-[family-name:var(--md-font-display)] text-sm font-bold text-[var(--md-secondary)]"
+                    className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border-2 border-[var(--md-secondary)] bg-white font-[family-name:var(--md-font-display)] text-sm font-bold text-[var(--md-secondary-text)]"
                     aria-hidden
                   >
                     {step.number}
@@ -161,13 +161,13 @@ export function Processus() {
                   )}
 
                   {/* Icône */}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--md-secondary-light)] text-[var(--md-secondary)] md:hidden">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--md-secondary-light)] text-[var(--md-secondary-text)] md:hidden">
                     <Icon size={20} weight="regular" />
                   </div>
                 </div>
 
                 {/* Icône desktop (centrée) */}
-                <div className="mb-4 hidden h-10 w-10 items-center justify-center rounded-xl bg-[var(--md-secondary-light)] text-[var(--md-secondary)] md:flex">
+                <div className="mb-4 hidden h-10 w-10 items-center justify-center rounded-xl bg-[var(--md-secondary-light)] text-[var(--md-secondary-text)] md:flex">
                   <Icon size={20} weight="regular" />
                 </div>
 
@@ -179,7 +179,7 @@ export function Processus() {
                   >
                     {step.title}
                   </h3>
-                  <p className="mb-2 text-sm font-medium text-[var(--md-secondary)]">
+                  <p className="mb-2 text-sm font-medium text-[var(--md-secondary-text)]">
                     {step.description}
                   </p>
                   <p className="text-sm leading-relaxed text-[var(--md-text-muted)]">

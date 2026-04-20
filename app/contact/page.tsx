@@ -130,7 +130,7 @@ export default async function ContactPage({
       {/* ─── En-tête éditorial ─── */}
       <div className="container-md relative">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--md-secondary)]">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--md-secondary-text)]">
             Démarrer un projet
           </p>
           <h1
@@ -143,7 +143,7 @@ export default async function ContactPage({
             }}
           >
             Parlons de votre{' '}
-            <span className="italic text-[var(--md-secondary)]">projet</span>.
+            <span className="italic text-[var(--md-secondary-text)]">projet</span>.
           </h1>
           <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-[var(--md-text-muted)] sm:text-[17px]">
             Un brief, une question, une envie de refonte ? Remplissez ce
@@ -167,7 +167,7 @@ export default async function ContactPage({
                   key={item.title}
                   className="flex gap-4 rounded-2xl border border-[var(--md-border)] bg-white p-5"
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--md-secondary-light)] text-[var(--md-secondary)]">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--md-secondary-light)] text-[var(--md-secondary-text)]">
                     <Icon size={20} weight="regular" />
                   </div>
                   <div>

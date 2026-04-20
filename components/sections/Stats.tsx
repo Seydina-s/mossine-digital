@@ -22,6 +22,8 @@ interface Stat {
   label: string
   description: string
   icon: PhosphorIcon
+  iconBg: string
+  iconColor: string
 }
 
 const STATS: Stat[] = [
@@ -31,6 +33,8 @@ const STATS: Stat[] = [
     label: 'Réponse garantie',
     description: 'Un retour humain sous 24h ouvrées, devis inclus',
     icon: ClockCountdownIcon,
+    iconBg: 'var(--md-secondary-light)',
+    iconColor: 'var(--md-secondary)',
   },
   {
     value: 100,
@@ -38,6 +42,8 @@ const STATS: Stat[] = [
     label: 'Sur-mesure',
     description: 'Zéro template, chaque projet est conçu de zéro',
     icon: SparkleIcon,
+    iconBg: 'var(--md-accent-light)',
+    iconColor: 'var(--md-accent)',
   },
   {
     value: 360,
@@ -45,6 +51,8 @@ const STATS: Stat[] = [
     label: 'Communication intégrée',
     description: 'Branding, web, social media et SEO pensés ensemble',
     icon: GlobeHemisphereWestIcon,
+    iconBg: 'var(--md-primary-light)',
+    iconColor: 'var(--md-primary)',
   },
   {
     value: 90,
@@ -52,6 +60,8 @@ const STATS: Stat[] = [
     label: 'Score Lighthouse',
     description: 'Performance, SEO et accessibilité audités avant chaque mise en ligne',
     icon: ShieldCheckIcon,
+    iconBg: 'var(--md-secondary-light)',
+    iconColor: 'var(--md-secondary-hover)',
   },
 ]
 
@@ -122,13 +132,13 @@ function StatCard({ stat }: { stat: Stat }) {
       ref={ref}
       className="flex flex-col items-center gap-3 px-8 py-10 text-center md:items-start md:text-left"
     >
-      {/* Icône dans un conteneur coloré */}
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--md-secondary-light)]">
-        <Icon
-          size={22}
-          weight="regular"
-          className="text-[var(--md-secondary)]"
-        />
+      {/* Icône dans un conteneur coloré — couleur unique par stat.
+          `color` sur le wrapper est hérité via currentColor par le SVG Phosphor. */}
+      <div
+        className="flex h-11 w-11 items-center justify-center rounded-xl"
+        style={{ backgroundColor: stat.iconBg, color: stat.iconColor }}
+      >
+        <Icon size={22} weight="regular" />
       </div>
 
       {/* Nombre animé + suffixe */}
@@ -198,7 +208,7 @@ export function Stats() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
         >
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary)]">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary-text)]">
             Nos engagements
           </p>
           <h2
@@ -211,7 +221,7 @@ export function Stats() {
             }}
           >
             Ce qu&apos;on vous promet,{' '}
-            <span className="text-[var(--md-secondary)]">
+            <span className="text-[var(--md-secondary-text)]">
               noir sur blanc
             </span>
           </h2>

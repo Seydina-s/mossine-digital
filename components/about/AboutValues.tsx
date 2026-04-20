@@ -64,7 +64,7 @@ export function AboutValues() {
     >
       <div className="container-md relative">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--md-secondary)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--md-secondary-text)]">
             Nos principes
           </p>
           <h2

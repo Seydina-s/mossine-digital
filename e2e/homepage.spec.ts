@@ -56,12 +56,12 @@ test.describe('Homepage /', () => {
     ).toEqual([])
   })
 
-  // DETTE PALETTE : `--md-secondary` (#35A7FF) est trop claire pour passer
-  // AA 4.5:1 comme texte sur fond clair OU comme fond de texte blanc. Fix
-  // demande une décision designer/client (introduction `--md-secondary-text`
-  // plus sombre, ou rebranding). Documenté dans CLAUDE.md Sprint 4+.
-  // Ce test reste en fixme jusqu'à résolution — à réactiver en ôtant .fixme.
-  test.fixme('a11y color-contrast (bloqué dette palette secondary)', async ({ page }) => {
+  // Dette palette "secondary as text" résolue via `--md-secondary-text: #0E70C8`
+  // (branche feat/md-secondary-text).
+  // Dette résiduelle : Services stacking cards themed (#35A7FF bg + white text = 2.58:1)
+  // et CTA accent (#FF5964 bg + white text = 3.05:1). Demande rebranding ou texte assombri.
+  // Doc : .claude/session/AUDIT_OWASP.md §Dette palette + Services themed.
+  test.fixme('a11y color-contrast (dette themed cards + accent CTA)', async ({ page }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 

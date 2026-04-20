@@ -3,6 +3,7 @@ import { Stats } from '@/components/sections/Stats'
 import { Services } from '@/components/sections/Services'
 import { Processus } from '@/components/sections/Processus'
 import { Temoignages } from '@/components/sections/Temoignages'
+import { Portfolio } from '@/components/sections/Portfolio'
 import { CTAFinal } from '@/components/sections/CTAFinal'
 import { Footer } from '@/components/layout/Footer'
 
@@ -16,7 +17,7 @@ export default function Home() {
         {/* 02 — Chiffres clés (#FFFFFF) */}
         <Stats />
 
-        {/* 03 — Services (#F0F7FF) */}
+        {/* 03 — Services stacking cards (#0a0e1c) */}
         <Services />
 
         {/* 04 — Processus (#FFFFFF) */}
@@ -25,7 +26,10 @@ export default function Home() {
         {/* 05 — Témoignages clients (#1B1F3B) */}
         <Temoignages />
 
-        {/* 06 — CTA final (#FF5964) */}
+        {/* 06 — Portfolio aperçu (#F0F7FF) */}
+        <Portfolio />
+
+        {/* 07 — CTA final (#FF5964) */}
         <CTAFinal />
       </main>
 

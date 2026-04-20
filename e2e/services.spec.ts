@@ -61,8 +61,8 @@ test.describe('Page /services', () => {
     ).toEqual([])
   })
 
-  // Voir homepage.spec.ts pour la justification du fixme.
-  test.fixme('a11y color-contrast (bloqué dette palette secondary)', async ({ page }) => {
+  // Dette résiduelle : voir homepage.spec.ts (themed cards + FAQ primary/60).
+  test.fixme('a11y color-contrast (dette themed cards + accent CTA)', async ({ page }) => {
     await page.goto('/services')
     await page.waitForLoadState('networkidle')
 
