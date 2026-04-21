@@ -10,12 +10,16 @@ import { defineConfig, devices } from '@playwright/test'
 //  et pas `build && start` pour garder le feedback rapide — le CI
 //  Sprint 5 passera en build + start pour tester la vraie CSP.
 //
-//  Navigateurs : chromium seul en local (cross-browser déféré au CI
-//  Sprint 5 pour ne pas alourdir l'environnement dev).
+//  Navigateurs : chromium par défaut (rapide). Firefox + WebKit activés
+//  via `PLAYWRIGHT_CROSS_BROWSER=1` pour les campagnes cross-browser
+//  (Sprint 4 QA). Le CI Sprint 5 forcera les trois projets via `CI=1`.
 // ─────────────────────────────────────────────────────────────────
 
 const PORT = 3000
 const BASE_URL = `http://localhost:${PORT}`
+
+const CROSS_BROWSER =
+  !!process.env.CI || process.env.PLAYWRIGHT_CROSS_BROWSER === '1'
 
 export default defineConfig({
   testDir: './e2e',
@@ -31,12 +35,13 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
 
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ],
+  projects: CROSS_BROWSER
+    ? [
+        { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+        { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+        { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+      ]
+    : [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 
   webServer: {
     command: 'npm run dev',

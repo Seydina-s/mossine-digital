@@ -3,9 +3,18 @@ import { Stats } from '@/components/sections/Stats'
 import { Services } from '@/components/sections/Services'
 import { Processus } from '@/components/sections/Processus'
 import { Temoignages } from '@/components/sections/Temoignages'
-import { Portfolio } from '@/components/sections/Portfolio'
 import { CTAFinal } from '@/components/sections/CTAFinal'
 import { Footer } from '@/components/layout/Footer'
+
+// ─────────────────────────────────────────────────────────────────
+//  🛡️ Portfolio/Réalisations masqués tant que l'agence n'a pas de cas
+//  clients publiables. Le composant `components/sections/Portfolio.tsx`
+//  et la route `/portfolio` (stub ComingSoon + robots:noindex) restent
+//  en place en background. Réactivation : ré-importer + ré-insérer le
+//  <Portfolio /> entre <Temoignages /> et <CTAFinal /> dès que les
+//  projets sont livrables + remettre la route dans sitemap.ts + ajouter
+//  un CTA secondaire "Voir nos réalisations" dans CTAFinal.tsx.
+// ─────────────────────────────────────────────────────────────────
 
 export default function Home() {
   return (
@@ -26,14 +35,11 @@ export default function Home() {
         {/* 05 — Témoignages clients (#1B1F3B) */}
         <Temoignages />
 
-        {/* 06 — Portfolio aperçu (#F0F7FF) */}
-        <Portfolio />
-
-        {/* 07 — CTA final (#FF5964) */}
+        {/* 06 — CTA final (#FF5964) */}
         <CTAFinal />
       </main>
 
-      {/* 08 — Footer (#10132A) */}
+      {/* 07 — Footer (#10132A) */}
       <Footer />
     </>
   )

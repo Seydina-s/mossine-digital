@@ -263,21 +263,34 @@ function ServiceCard({
   targetScale: number
   reduced: boolean
 }) {
-  const cardRef = React.useRef<HTMLDivElement>(null)
-  const { scrollYProgress: cardScroll } = useScroll({
-    target: cardRef,
-    offset: ['start end', 'start start'],
-  })
-
   // Mouvement reduced → désactive scale/zoom
   const scale = useTransform(
     progress,
     range,
     reduced ? [1, 1] : [1, targetScale],
   )
+
+  // 🛡️ Vaccin jank navbar homepage : on DÉRIVE l'imageScale de la progress
+  // parente au lieu d'installer un `useScroll({ target: cardRef })` par carte.
+  //
+  // Cause racine diagnostiquée : chaque `useScroll` framer-motion avec `target`
+  // appelle `getBoundingClientRect(target)` sur chaque événement scroll, ce qui
+  // force un synchronous layout. Avec le pattern précédent (6 cartes × 1 per-card
+  // useScroll + 1 parent), on avait 7 reflows + 12 useTransform recomputes par
+  // scroll event → layout thrash qui retardait le callback rAF du `useScroll`
+  // custom de la Navbar → classe CSS changée 1-2 frames trop tard → retard
+  // visible de la morph navbar (dette v3.3 homepage documentée).
+  //
+  // Ratio après fix : 1 useScroll total sur la homepage (le parent, inévitable
+  // pour le stacking). Ken Burns dérivé mathématiquement depuis la progress
+  // parente → zéro subscriber supplémentaire, zéro reflow per-card.
+  const imageRange: [number, number] = [
+    Math.max(0, (index - 1) / SERVICES.length),
+    index / SERVICES.length,
+  ]
   const imageScale = useTransform(
-    cardScroll,
-    [0, 1],
+    progress,
+    imageRange,
     reduced ? [1, 1] : [1.25, 1],
   )
 
@@ -286,7 +299,6 @@ function ServiceCard({
 
   return (
     <div
-      ref={cardRef}
       className="sticky flex items-center justify-center px-4 sm:px-6"
       style={{
         top: 0,

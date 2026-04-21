@@ -357,17 +357,16 @@ Agents : Dev Sénior · Design/UI · SEO
 Agents : Dev Sénior · SEO
 
 - [x] Page Services — détail complet des 6 offres (2026-04-15) : hero dédié avec table des matières ancrée, 6 ServiceDetailBlock en layout alterné (text/visuel + fond blanc/#F0F7FF), problem statement éditorial + approche + livrables + délai + CTA `/contact?service=X` par service, ServicesFAQ en details/summary natif (7 questions), JSON-LD Service×6 + BreadcrumbList + FAQPage, metadata canonique.
-- [ ] Page À propos — histoire, équipe, valeurs, photo équipe
-- [ ] Page Contact — formulaire (Zod + hCaptcha + Resend + React Email)
-- [ ] Sanity v3 — schémas Article, Service, Portfolio, Témoignage, FAQ
-- [ ] Page Blog — liste articles paginée (données Sanity)
-- [ ] Page Blog/[slug] — article individuel + table des matières
-- [ ] Page Portfolio — liste projets filtrable (données Sanity)
-- [ ] Sanity Studio sur /studio (protégé par authentification)
-- [ ] Sitemap.xml dynamique + robots.txt
-- [ ] Schema.org : Service, Article, FAQ, BreadcrumbList sur les bonnes pages
-- [ ] `+` RSS feed /feed.xml pour le blog
-- [ ] `+` Related articles dans chaque article de blog
+- [x] Page À propos — AboutHero + AboutManifesto + AboutValues + AboutMethod livrés (histoire, valeurs, méthode). Photo équipe à livrer par client.
+- [x] Page Contact — ContactForm complet : Zod + honeypot + RGPD + prefill `?service=` + serveur Resend prêt (env manquant = mode gracieux).
+- [x] Sitemap.xml dynamique + robots.txt (livrés Audit Sprint 2).
+- [x] Schema.org Service + BreadcrumbList + FAQPage sur `/services`.
+- [ ] 🟡 **Reporté post-MVP** — Sanity v3 (schémas Article/Service/Portfolio/Témoignage/FAQ) + Studio `/studio` authentifié.
+- [ ] 🟡 **Reporté post-MVP** — Page Blog liste + Blog/[slug] (données Sanity).
+- [ ] 🟡 **Reporté post-MVP** — Page Portfolio filtrable (données Sanity).
+- [ ] 🟡 **Reporté post-MVP** — Schema.org Article + FAQ blog.
+- [ ] 🔴 **Supprimé** — RSS feed `/feed.xml` (pas de blog au MVP).
+- [ ] 🔴 **Supprimé** — Related articles (pas de blog au MVP).
 
 #### Audit Sprint 2 — tâches issues du rituel inter-agents (2026-04-14)
 
@@ -412,34 +411,104 @@ Agents : Cybersécurité · QA · SEO
 - [x] **Audit Axe DevTools** (2026-04-16, partiel) : `@axe-core/playwright` intégré dans chaque spec E2E, règles wcag2aa + wcag21aa + wcag22aa. Violations bloquantes corrigées (contraste Footer/Hero/Services/CTAs + target-size dots Témoignages WCAG 2.2).
 - [~] `+` **Dette palette `--md-secondary`** (2026-04-16 → partiellement résolue 2026-04-20, branche `feat/md-secondary-text`) — token `--md-secondary-text: #0E70C8` ajouté (5.33:1 sur blanc ✅ AA). 10 fichiers migrés pour usages "texte sur fond clair" : ContactForm, Portfolio, Stats, Processus, ServicesFAQ, AboutManifesto/Values/Method, pages /contact + /politique-confidentialite + skip-link layout. `--md-secondary` préservé pour focus-rings, fond sombres, icônes décoratives aria-hidden, list markers. **Dette résiduelle** : (a) Services stacking cards themed `#35A7FF` + white = 2.58:1, (b) CTA accent `#FF5964` + white = 3.05:1. Exigent rebranding ou assombrissement → décision designer. Les 3 `test.fixme` dans `e2e/*.spec.ts` reformulés avec scope réduit "themed cards + accent CTA". Merge de la branche en attente validation client/designer.
 - [ ] `+` Tests de charge basiques (k6 ou Artillery) — nécessite prod déployée.
-- [ ] `+` **Fluidité navbar homepage (dette v3.3)** — lag persistant du morph sur la home (autres pages fluides). Corrections v3.3 déjà appliquées sans succès : rAF throttle `useScroll`, `backdrop-filter` conditionnel (désactivé quand skin inactif), blur 24→20px, `translate-y` GPU-only. Hypothèses restantes à instrumenter avec DevTools Performance Profiler AVANT toute nouvelle tentative : (1) ScrollTrigger GSAP des stacking cards Services émet des listeners compétitifs, (2) Aurora mesh + carrousel Hero saturent le main thread, (3) stacking context incorrect de la navbar sous Lenis. **Interdiction de re-tenter à l'aveugle** — exiger profiler flamegraph + frame timing mesurés avant d'éditer.
+- [x] `+` **Fluidité navbar homepage (dette v3.3 — RÉSOLUE 2026-04-21)** — diagnostic définitif : `components/sections/Services.tsx` installait **7 subscribers `useScroll` framer-motion** sur la homepage (1 parent + 6 per-card pour le Ken Burns imageScale). Chaque `useScroll({ target })` appelle `getBoundingClientRect()` sur chaque event scroll → synchronous layout (reflow). 7 reflows + 12 `useTransform` recomputes/event → layout thrash qui retardait le callback rAF du `useScroll` custom de la Navbar → classe CSS changée 1-2 frames trop tard → retard visible de la morph. **Hypothèses précédentes invalidées** : (a) pas de GSAP ScrollTrigger ici — framer-motion seul, (b) Aurora = pur CSS `@keyframes`, zéro JS/frame, (c) Lenis émet les events mais la saturation vient bien des subscribers framer-motion. **Fix** : imageScale dérivé mathématiquement de la progress parente via `useTransform(progress, [(i-1)/n, i/n], [1.25, 1])` → ratio 7 → 1 useScroll. Zéro reflow per-card. Validé Playwright homepage (5/5 chromium). Vaccin documenté inline dans `ServiceCard` : interdiction d'ajouter un `useScroll({ target })` dans le rendu répété de la homepage sans budget profiler préalable.
 
-### SPRINT 5 — Déploiement Hostinger & Go Live ⏳
+---
 
-Agents : Dev Sénior · Cybersécurité
+## 🎯 TRIAGE MVP — Validé 2026-04-21
 
-- [ ] Node.js 20 LTS + PM2 configurés sur Hostinger Cloud
-- [ ] Nginx reverse proxy + compression gzip/brotli
-- [ ] SSL Let's Encrypt + Certbot (renouvellement auto) → score Qualys A+
-- [ ] Cloudflare configuré devant Hostinger (WAF + CDN + DDoS)
-- [ ] GitHub Actions CI/CD : lint → test → build → deploy SSH
-- [ ] Variables d'environnement production configurées (.env.production)
-- [ ] Umami analytics self-hosted (RGPD, sans cookies)
-- [ ] Sentry configuré (capture erreurs prod, source maps)
-- [ ] Backup automatique (cron + rsync + retention 30 jours)
-- [ ] Google Search Console soumis + sitemap indexé
-- [ ] Lighthouse final : validation des scores cibles en prod
-- [ ] `+` Monitoring uptime (UptimeRobot ou Better Stack)
-- [ ] `+` Plan de rollback documenté (procédure écrite)
-- [ ] `+` Documentation de déploiement pour le client (README_DEPLOY.md)
+Objectif client : **site light qui fonctionne très bien, ressources minimales, déployé vite**.
+Déploiement sur Hostinger Business NVMe (serveur déjà acheté). Les tâches indispensables
+avant go-live sont dans le BUCKET 1. Tout le reste attend un cas d'usage réel.
 
-### SPRINT 6 — Post Go-Live & maintenance ⏳ (optionnel, à valider)
+Avant d'attaquer chaque tâche, Claude explique **brièvement au client** (1-2 phrases) :
+à quoi elle sert + quelle valeur elle ajoute au site. Règle non-négociable.
 
-- [ ] Monitoring première semaine : logs, erreurs, performance
-- [ ] Ajustements UX basés sur les premiers retours utilisateurs
-- [ ] Optimisations SEO basées sur Search Console (requêtes, CTR)
-- [ ] Contenu éditorial : premiers articles de blog
-- [ ] Formation client : usage du Sanity Studio (1 session visio)
+### 🟢 BUCKET 1 — MVP CRITIQUE (à faire avant go-live)
+
+Sprint 5 consolidé — 18 tâches. Exécuter dans l'ordre présenté.
+
+**A. Finir le contenu du site (données client)**
+1. [ ] Remplacer placeholders stats (4 chiffres clés — Stats.tsx)
+2. [ ] Remplacer placeholders témoignages (3 avis — Temoignages.tsx)
+3. [ ] Compléter footer contact (adresse/téléphone/email/horaires — Footer.tsx)
+4. [ ] Favicon + apple-touch-icon définitifs (à partir logo client)
+5. [ ] OG image 1200×630px (demande client — brief visuel)
+6. [ ] JSON-LD `LocalBusiness` (adresse/téléphone/horaires client → layout.tsx)
+
+**B. Résoudre la dette a11y bloquante**
+7. [ ] Dette palette Services themed cards + CTA accent — décision designer (rebranding
+   ou assombrissement #35A7FF/#FF5964) puis merge `feat/md-secondary-text`
+
+**C. Anti-spam formulaire contact**
+8. [ ] hCaptcha côté client + validation serveur (clé hCaptcha gratuite — pas Upstash)
+9. [ ] Resend configuré (API key client + email expéditeur validé)
+
+**D. Déploiement Hostinger Business NVMe**
+10. [ ] Node.js 20 LTS + PM2 configurés sur Hostinger (via SSH)
+11. [ ] Nginx reverse proxy + compression gzip/brotli
+12. [ ] SSL Let's Encrypt + Certbot auto-renew → Qualys A+
+13. [ ] Variables d'environnement production (`.env.production` serveur)
+14. [ ] `NEXT_PUBLIC_SITE_URL` = domaine final (déjà SSoT dans `lib/site-config.ts`)
+15. [ ] GitHub Actions CI/CD minimal : lint → test → build → deploy SSH
+
+**E. Validation finale**
+16. [ ] Lighthouse prod : Performance ≥ 90 mobile / 100 desktop · SEO 100 · A11y ≥ 95
+17. [ ] Cross-browser manuel : Chrome + Firefox + Safari + Edge (`PLAYWRIGHT_CROSS_BROWSER=1`)
+18. [ ] Google Search Console + sitemap.xml indexé
+
+### 🟡 BUCKET 2 — POST-MVP (Sprint dédié, déclenché par un cas d'usage réel)
+
+On n'allume ces blocs **que si** un besoin client concret arrive (trafic à analyser,
+incident à investiguer, premier cas portfolio, premier article blog). Zéro prépa spéculative.
+
+- [ ] **CMS Sanity v3 + Studio** — schémas Article/Service/Portfolio/Témoignage/FAQ,
+   Studio sur `/studio` authentifié. Déclencheur : client prêt à rédiger du contenu lui-même.
+- [ ] **Page Blog liste + Blog/[slug]** — données Sanity, H1 SEO, OG par article.
+   Déclencheur : 3+ articles prêts à publier.
+- [ ] **Page Portfolio filtrable** — données Sanity, liste projets, pages cas. Déclencheur :
+   3+ cas clients publiables (aujourd'hui la section est masquée homepage + route background).
+- [ ] **Rate limiting Upstash** `/api/contact` — anti-spam avancé. Déclencheur : spam reçu
+   ou trafic formulaire > 100/jour.
+- [ ] **Sentry** — capture erreurs prod + source maps. Déclencheur : premier bug prod signalé.
+- [ ] **Umami analytics self-hosted** — RGPD sans cookies. Déclencheur : client demande
+   des données de trafic ou lance une campagne payante.
+- [ ] **Cloudflare devant Hostinger** — WAF + CDN + DDoS. Déclencheur : pic de trafic ou
+   attaque détectée dans les logs Nginx.
+- [ ] **Backup automatique** (cron rsync retention 30j). Déclencheur : après Sanity CMS
+   actif (aujourd'hui Git = source unique, `git clone` suffit).
+- [ ] **Monitoring uptime** (UptimeRobot gratuit). Déclencheur : premier incident de
+   disponibilité ressenti.
+- [ ] **Composant `<SectionEyebrow>` partagé** — refacto DRY. Déclencheur : 3ᵉ section
+   qui dupliquerait le pattern.
+- [ ] **Stats — différenciation couleurs icônes** — validation designer sur quelle stat
+   accentuer. Déclencheur : brief UX dédié.
+
+### 🔴 BUCKET 3 — SUPPRIMÉ (non indispensable, overkill pour un MVP)
+
+Rationalisé sur décision client 2026-04-21. **Ne pas les reprendre** sans demande explicite.
+
+- ~~Tests de charge k6/Artillery~~ — overkill pour site vitrine < 10k visites/mois.
+- ~~RSS feed `/feed.xml`~~ — pas de blog au MVP, et les RSS readers sont marginaux en 2026.
+- ~~Related articles dans blog~~ — pas de blog au MVP.
+- ~~Partytown scripts tiers~~ — pas d'analytics tiers au MVP (Umami est first-party quand
+   on l'activera, pas besoin de web worker).
+- ~~Sentry source maps upload~~ — premier bug = premier besoin, pas avant.
+- ~~Backup rsync retention 30 jours~~ — Git + Hostinger snapshots natifs suffisent tant
+   que Sanity CMS n'est pas actif.
+- ~~Plan de rollback documenté~~ — `git revert` + redeploy SSH = procédure évidente,
+   pas besoin d'un doc formel.
+- ~~Re-vérification Témoignages `useEffect` cleanup~~ — audit initial erroné, code OK.
+- ~~Documentation déploiement client README_DEPLOY.md~~ — remplacé par sessions live
+   de transfert à la livraison.
+
+### SPRINT 6 — Post-Go-Live immédiat (semaine 1) ⏳
+
+- [ ] Monitoring première semaine : Nginx logs, erreurs console, temps réponse
+- [ ] Ajustements UX sur retours utilisateurs réels
+- [ ] Optimisations SEO basées sur Search Console (requêtes indexées, CTR, erreurs)
+- [ ] Session de transfert client (1 visio ≤ 1h — comment mettre à jour les données
+   en dur avant l'arrivée éventuelle de Sanity)
 
 ---
 
@@ -448,8 +517,10 @@ Agents : Dev Sénior · Cybersécurité
 Mettre à jour manuellement après chaque session :
 
 - Sprint 0 : **100%** ████████████████████ ✅
-- Sprint 1 : **~99%** ███████████████████░ 🔵 (focus ring WCAG 2.2 livré 2026-04-16, reste : favicon client)
-- Sprint 2 : **~90%** ██████████████████░░ 🔵 (sections + SEO + error/404 livrés, reste LocalBusiness + assets client)
-- Sprint 3 : **~15%** ███░░░░░░░░░░░░░░░░░ 🔵 (pages /services + /a-propos + /contact + /politique-conf livrées, reste blog + portfolio + Sanity)
-- Sprint 4 : **~65%** █████████████░░░░░░░ 🔵 (CSP + OWASP + 72 tests verts livrés, reste : palette a11y + Upstash/hCaptcha/Partytown/Lighthouse — bloqués client ou prod)
-- Sprint 5 : **0%**
+- Sprint 1 : **~99%** ███████████████████░ 🔵 (focus ring WCAG 2.2 livré 2026-04-16, reste : favicon client — Bucket 1 #4)
+- Sprint 2 : **~93%** ██████████████████░░ 🔵 (Portfolio masqué homepage 2026-04-21 — reste LocalBusiness + placeholders + assets client = Bucket 1 A)
+- Sprint 3 : **~60%** ████████████░░░░░░░░ 🔵 (pages /services + /a-propos + /contact + /politique-conf livrées ; Blog/Portfolio/Sanity **reportés Bucket 2**)
+- Sprint 4 : **~75%** ███████████████░░░░░ 🔵 (dette v3.3 navbar résolue 2026-04-21 + Portfolio hidden ; reste palette a11y + Lighthouse prod = Bucket 1 B/E)
+- Bucket 1 MVP : **0/18** ░░░░░░░░░░░░░░░░░░░░ ⏳ (démarre dès accord sur les données client)
+- Bucket 2 Post-MVP : activé à la demande
+- Sprint 6 : **0%** (semaine 1 post go-live)

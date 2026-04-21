@@ -24,8 +24,6 @@ import type { PhosphorIcon as PhosphorIcon } from '@/lib/types'
 //  Hero — minimalisme éditorial + showcase carrousel premium
 // ─────────────────────────────────────────────────────────────────
 
-const INTERVAL_MS = 2000
-
 interface Service {
   label: string
   tag: string
@@ -180,18 +178,13 @@ export function Hero() {
           </p>
         </motion.div>
 
-        {/* ─── SCROLL INDICATOR ─── */}
+        {/* ─── SCROLL INDICATOR — 100% CSS (zéro Framer Motion tick) ─── */}
         <motion.div
           variants={item}
           className="mt-8 flex justify-center"
           aria-hidden
         >
-          <motion.div
-            className="flex flex-col items-center gap-1.5"
-            animate={reduced ? undefined : { y: [0, 6, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            {/* Ligne animée descendante */}
+          <div className="flex flex-col items-center gap-1.5 md-scroll-bounce">
             <svg
               width="2"
               height="32"
@@ -199,28 +192,25 @@ export function Hero() {
               fill="none"
               className="overflow-visible"
             >
-              <motion.line
+              <line
                 x1="1" y1="0" x2="1" y2="32"
                 stroke="rgba(255,255,255,0.15)"
                 strokeWidth="2"
                 strokeLinecap="round"
               />
-              <motion.line
+              <line
                 x1="1" y1="0" x2="1" y2="32"
                 stroke="rgba(255,255,255,0.6)"
                 strokeWidth="2"
                 strokeLinecap="round"
-                initial={reduced ? false : { pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: [0, 1, 0], opacity: [0, 1, 0] }}
-                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+                className="md-scroll-line"
               />
             </svg>
-            {/* Point pulsant */}
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/40" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white/50" />
             </span>
-          </motion.div>
+          </div>
         </motion.div>
 
         {/* ─── SHOWCASE CARROUSEL ─── */}
@@ -315,15 +305,17 @@ function Atmosphere({ reduced }: { reduced: boolean }) {
 
 function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
   const [index, setIndex] = React.useState(0)
-  const [isPaused, setIsPaused] = React.useState(false)
 
-  React.useEffect(() => {
-    if (reduced || isPaused) return
-    const timer = setTimeout(() => {
-      setIndex((i) => (i + 1) % SERVICES.length)
-    }, INTERVAL_MS)
-    return () => clearTimeout(timer)
-  }, [index, isPaused, reduced])
+  // 🛡️ Vaccin jank navbar homepage (dette v3.3, suite du fix Services) :
+  // - Auto-rotation retirée : la boucle Framer Motion continue (crossfade image
+  //   + tag + label toutes les 2s) tick sur le main thread même pour les props
+  //   GPU-composées (MV update → style assignment).
+  // - Progress bar retirée : animait `width` en linéaire sur 2s ×∞ → `width`
+  //   n'est pas composé, force un SYNCHRONOUS LAYOUT à chaque frame, saturait
+  //   le main thread en permanence, retardait le rAF callback du useScroll
+  //   custom de la Navbar.
+  // Navigation manuelle via les dots reste disponible : crossfade ponctuel au
+  // clic = main thread libre 99% du temps.
 
   const active = SERVICES[index]
   const ActiveIcon = active.icon
@@ -339,8 +331,6 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
       animate={{ opacity: 1, y: 0, rotateX: 0 }}
       transition={{ duration: 1.1, ease: EASE, delay: 0.5 }}
       style={{ transformPerspective: 1200 }}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
     >
       {/* Halo derrière le showcase */}
       <div
@@ -442,19 +432,6 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
               </div>
             </div>
 
-            {/* Barre de progression top */}
-            <div className="absolute inset-x-0 top-0 z-10 h-[2px] bg-white/[0.08]">
-              <motion.div
-                key={index + (isPaused ? '-paused' : '-running')}
-                className="h-full bg-gradient-to-r from-[var(--md-secondary)] to-[var(--md-accent)]"
-                initial={{ width: '0%' }}
-                animate={{ width: isPaused || reduced ? '0%' : '100%' }}
-                transition={{
-                  duration: reduced ? 0 : INTERVAL_MS / 1000,
-                  ease: 'linear',
-                }}
-              />
-            </div>
           </div>
         </div>
 
@@ -465,14 +442,17 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
         />
       </div>
 
-      {/* ─── Thumbnails / Dots navigation ─── */}
+      {/* ─── Navigation : une icône Phosphor par service ───
+           Carrés arrondis glass, état actif = fond white/12 + border marquée
+           + icône en weight régulier. Transitions CSS pures (zéro Framer). */}
       <div
-        className="mt-6 flex items-center justify-center gap-2"
+        className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5"
         role="tablist"
         aria-label="Naviguer entre les services"
       >
         {SERVICES.map((s, i) => {
           const isActive = i === index
+          const Icon = s.icon
           return (
             <button
               key={s.label}
@@ -481,13 +461,24 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
               aria-selected={isActive}
               aria-label={s.label}
               onClick={() => go(i)}
-              className="group relative h-8 cursor-pointer rounded-sm px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-primary)]"
+              className={`group relative flex h-11 w-11 items-center justify-center rounded-xl border backdrop-blur-md transition-[background-color,border-color,color,transform] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-primary)] ${
+                isActive
+                  ? 'border-white/30 bg-white/[0.12] text-white'
+                  : 'border-white/10 bg-white/[0.03] text-white/45 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.08] hover:text-white/80'
+              }`}
             >
+              <Icon
+                size={18}
+                weight={isActive ? 'regular' : 'light'}
+                aria-hidden
+              />
+              {/* Underline marker — pastille en bas qui matérialise l'actif */}
               <span
-                className={`block h-[3px] rounded-full transition-all duration-500 ${
+                aria-hidden
+                className={`pointer-events-none absolute -bottom-2 left-1/2 h-[3px] -translate-x-1/2 rounded-full transition-all duration-300 ${
                   isActive
-                    ? 'w-10 bg-white'
-                    : 'w-5 bg-white/15 group-hover:w-7 group-hover:bg-white/30'
+                    ? 'w-5 bg-gradient-to-r from-[var(--md-secondary)] to-[var(--md-accent)] opacity-100'
+                    : 'w-2 bg-white/20 opacity-0 group-hover:opacity-60'
                 }`}
               />
             </button>

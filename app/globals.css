@@ -165,6 +165,44 @@
   100% { transform: translate3d(-4%, 2%, 0) scale(0.95); opacity: 0.22; }
 }
 
+/* ─── Scroll indicator Hero — pure CSS (GPU compositing, zéro JS/frame) ───
+   🛡️ Vaccin jank navbar homepage : auparavant 2 boucles Framer Motion
+   `repeat: Infinity` (Y bounce container + SVG line pathLength) ticquaient
+   sur le main thread pour toujours. Migré en CSS @keyframes → le moteur
+   d'animation du navigateur gère sans toucher au main thread. */
+@layer utilities {
+  .md-scroll-bounce {
+    animation: md-scroll-bounce 2s ease-in-out infinite;
+    will-change: transform;
+  }
+  .md-scroll-line {
+    animation: md-scroll-line 1.8s ease-in-out infinite;
+    animation-delay: 0.3s;
+    stroke-dasharray: 32;
+    stroke-dashoffset: 32;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .md-scroll-bounce,
+    .md-scroll-line {
+      animation: none;
+    }
+    .md-scroll-line {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes md-scroll-bounce {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, 6px, 0); }
+}
+@keyframes md-scroll-line {
+  0%   { stroke-dashoffset: 32; opacity: 0; }
+  50%  { stroke-dashoffset: 0;  opacity: 1; }
+  100% { stroke-dashoffset: -32; opacity: 0; }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    GLASS CTA — Glassmorphism button pour les CTA "Démarrer un projet"
    Variantes : tone "dark" (sur fond sombre) / "light" (sur fond clair)
