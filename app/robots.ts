@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { SITE_URL as BASE_SITE_URL } from '@/lib/site-config'
 
 // ─────────────────────────────────────────────────────────────────
 //  robots.txt dynamique — généré par Next.js à /robots.txt
@@ -6,9 +7,7 @@ import type { MetadataRoute } from 'next'
 //  techniques (_next, api). Pointe vers le sitemap.
 // ─────────────────────────────────────────────────────────────────
 
-const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mossine-digital.com'
-).replace(/\/$/, '')
+const SITE_URL = BASE_SITE_URL.replace(/\/$/, '')
 
 export default function robots(): MetadataRoute.Robots {
   return {

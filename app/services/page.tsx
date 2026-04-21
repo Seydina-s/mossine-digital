@@ -5,6 +5,7 @@ import { ServicesFAQ } from '@/components/services/ServicesFAQ'
 import { CTAFinal } from '@/components/sections/CTAFinal'
 import { Footer } from '@/components/layout/Footer'
 import { SERVICES_DETAIL, SERVICES_FAQ } from '@/lib/services-data'
+import { SITE_URL } from '@/lib/site-config'
 
 // ─────────────────────────────────────────────────────────────────
 //  SEO — Metadata page /services
@@ -34,9 +35,6 @@ export const metadata: Metadata = {
 //  JSON-LD : Service × 6 + BreadcrumbList + FAQPage
 //  Provider Organization = Mossine Digital (cross-ref layout.tsx)
 // ─────────────────────────────────────────────────────────────────
-
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mossine-digital.com'
 
 const servicesJsonLd = {
   '@context': 'https://schema.org',

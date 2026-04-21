@@ -369,7 +369,7 @@ function ServiceCard({
             >
               <Image
                 src={service.image}
-                alt=""
+                alt={`Illustration du service ${service.title}`}
                 fill
                 sizes="(max-width: 1024px) 100vw, 60vw"
                 className="object-cover"

@@ -2,16 +2,14 @@ import type { Metadata, Viewport } from 'next'
 import { syne, inter } from '@/lib/fonts'
 import { Navbar } from '@/components/layout/Navbar'
 import { BackToTop } from '@/components/ui/BackToTop'
+import { SITE_URL } from '@/lib/site-config'
 import './globals.css'
 
 // ─────────────────────────────────────────────────────────────────
 //  SEO — Métadonnées globales + Open Graph + Twitter Card
-//  Domaine de production : à confirmer avec le client avant mise en
-//  ligne (fallback sur NEXT_PUBLIC_SITE_URL si défini).
+//  `SITE_URL` est résolu dans `lib/site-config.ts` (SSoT).
 // ─────────────────────────────────────────────────────────────────
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mossine-digital.com'
 const SITE_NAME = 'Mossine Digital'
 // Description SEO — tonalité inclusive (marques + causes + ONG / organisations).
 // Option D validée client 2026-04-15 : cible commerciale ET institutionnelle.

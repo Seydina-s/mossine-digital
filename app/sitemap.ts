@@ -1,15 +1,14 @@
 import type { MetadataRoute } from 'next'
+import { SITE_URL as BASE_SITE_URL } from '@/lib/site-config'
 
 // ─────────────────────────────────────────────────────────────────
 //  Sitemap dynamique — généré par Next.js à /sitemap.xml
-//  Utilise NEXT_PUBLIC_SITE_URL (fallback : https://mossine-digital.com)
+//  URL résolue dans lib/site-config.ts (SSoT NEXT_PUBLIC_SITE_URL).
 //  /blog et /portfolio sont encore des stubs (robots:noindex côté
 //  page) mais listés pour faciliter l'exploration — Google ignorera.
 // ─────────────────────────────────────────────────────────────────
 
-const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mossine-digital.com'
-).replace(/\/$/, '')
+const SITE_URL = BASE_SITE_URL.replace(/\/$/, '')
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()

@@ -5,6 +5,7 @@ import { AboutValues } from '@/components/about/AboutValues'
 import { AboutMethod } from '@/components/about/AboutMethod'
 import { CTAFinal } from '@/components/sections/CTAFinal'
 import { Footer } from '@/components/layout/Footer'
+import { SITE_URL } from '@/lib/site-config'
 
 // ─────────────────────────────────────────────────────────────────
 //  SEO — Metadata page /a-propos
@@ -33,9 +34,6 @@ export const metadata: Metadata = {
 // ─────────────────────────────────────────────────────────────────
 //  JSON-LD : AboutPage + BreadcrumbList + Organization (cross-ref layout)
 // ─────────────────────────────────────────────────────────────────
-
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mossine-digital.com'
 
 const aboutJsonLd = {
   '@context': 'https://schema.org',

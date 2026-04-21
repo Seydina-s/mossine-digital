@@ -7,6 +7,7 @@ import {
 import { ContactForm } from '@/components/sections/ContactForm'
 import { Footer } from '@/components/layout/Footer'
 import { contactSchema, type ContactPayload } from '@/lib/contact-schema'
+import { SITE_URL } from '@/lib/site-config'
 
 // ─────────────────────────────────────────────────────────────────
 //  SEO — Metadata page /contact
@@ -36,9 +37,6 @@ export const metadata: Metadata = {
 //  JSON-LD : ContactPage + BreadcrumbList
 //  Cross-ref Organization sur layout.tsx (déjà présent globalement).
 // ─────────────────────────────────────────────────────────────────
-
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mossine-digital.com'
 
 const contactJsonLd = {
   '@context': 'https://schema.org',

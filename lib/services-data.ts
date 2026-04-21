@@ -52,6 +52,8 @@ export interface ServiceDetail {
   timeline: string
   /** Image d'illustration (déjà présente dans public/images/hero/) */
   image: string
+  /** Alt descriptif métier (a11y + SEO) — décrit l'intention de l'offre, pas la composition visuelle */
+  imageAlt: string
   /** Clé d'icône — résolue par le composant via SERVICE_ICON_MAP (cf. règle vaccin) */
   iconKey: ServiceIconKey
   /** Couleur d'accent de la section (choisie dans la palette Mossine) */
@@ -86,6 +88,8 @@ export const SERVICES_DETAIL: ServiceDetail[] = [
     ],
     timeline: '3 à 5 semaines',
     image: '/images/hero/service-identite.webp',
+    imageAlt:
+      'Illustration du service Identité visuelle & Branding — construction d\u2019un système de marque cohérent : logo, palette, typographie et guidelines.',
     iconKey: 'palette',
     accent: '#35A7FF',
   },
@@ -115,6 +119,8 @@ export const SERVICES_DETAIL: ServiceDetail[] = [
     ],
     timeline: '6 à 10 semaines',
     image: '/images/hero/service-web.webp',
+    imageAlt:
+      'Illustration du service Création de site web — conception d\u2019interfaces sur-mesure, performantes et sécurisées sous Next.js.',
     iconKey: 'globe',
     accent: '#35A7FF',
   },
@@ -144,6 +150,8 @@ export const SERVICES_DETAIL: ServiceDetail[] = [
     ],
     timeline: 'Engagement mensuel (3 mois minimum)',
     image: '/images/hero/service-community.webp',
+    imageAlt:
+      'Illustration du service Community Management — animation éditoriale régulière sur les réseaux sociaux, création de contenus et modération.',
     iconKey: 'chat',
     accent: '#35A7FF',
   },
@@ -173,6 +181,8 @@ export const SERVICES_DETAIL: ServiceDetail[] = [
     ],
     timeline: 'Setup 2 à 3 semaines + gestion mensuelle',
     image: '/images/hero/service-social-media.webp',
+    imageAlt:
+      'Illustration du service Campagnes Ads — pilotage de campagnes publicitaires Meta, Google et TikTok avec tracking avancé.',
     iconKey: 'megaphone',
     accent: '#FF5964',
   },
@@ -202,6 +212,8 @@ export const SERVICES_DETAIL: ServiceDetail[] = [
     ],
     timeline: 'Résultats visibles 3 à 6 mois — engagement 6 mois minimum',
     image: '/images/hero/service-logo.webp',
+    imageAlt:
+      'Illustration du service Référencement SEO & SEA — construction d\u2019un trafic organique durable, audit technique et stratégie de mots-clés.',
     iconKey: 'magnifier',
     accent: '#35A7FF',
   },
@@ -231,6 +243,8 @@ export const SERVICES_DETAIL: ServiceDetail[] = [
     ],
     timeline: 'Mission stratégique 6 à 8 semaines + accompagnement annuel',
     image: '/images/hero/service-strategie.webp',
+    imageAlt:
+      'Illustration du service Stratégie communication & marketing digitale — roadmap 360° alignant branding, web, social, SEO et ads.',
     iconKey: 'chart',
     accent: '#FF5964',
     flagship: true,

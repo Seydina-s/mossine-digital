@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mossine Digital
 
-## Getting Started
+Site vitrine premium de l'agence Mossine Digital — communication et marketing digital 360°.
 
-First, run the development server:
+Stack : Next.js 16 (App Router) · React 19 · TypeScript strict · Tailwind v4 · Framer Motion · Sanity (CMS) · Resend.
+
+Toute la vision, la roadmap, les standards de qualité et le protocole multi-agents sont décrits dans [`CLAUDE.md`](./CLAUDE.md).
+
+---
+
+## Démarrage local
 
 ```bash
+cp .env.example .env.local       # puis remplir les variables
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Le site tourne sur `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tests
 
-## Learn More
+```bash
+npm run test               # Vitest (unitaires — contact-schema, nav-config)
+npx playwright test        # Playwright E2E (pages, a11y axe-core, responsive)
+```
 
-To learn more about Next.js, take a look at the following resources:
+Couverture actuelle : 48 tests Playwright (+3 skipped documentés) + 32 tests Vitest.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Variables d'environnement critiques
 
-## Deploy on Vercel
+### `NEXT_PUBLIC_SITE_URL` (OBLIGATOIRE en production)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Résolue en **source unique de vérité** dans [`lib/site-config.ts`](./lib/site-config.ts).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Utilisée pour :
+- **Canonical URLs** — balises `<link rel="canonical">` sur toutes les pages
+- **Open Graph / Twitter Card** — URLs absolues dans les previews sociales
+- **sitemap.xml** — URLs listées pour Google Search Console
+- **robots.txt** — directive `Sitemap:` + `Host:`
+- **JSON-LD** — `@id` des entités Schema.org (`Organization`, `ContactPage`, `Service`, etc.)
+
+Sans cette variable en production, le fallback `https://mossine-digital.com` est utilisé. Si le domaine final diffère :
+- Google indexera les mauvaises URLs (duplicate content, perte de trust SEO)
+- Les previews LinkedIn/Twitter/Facebook pointeront vers un domaine inexistant
+- Le sitemap annoncera des URLs inaccessibles
+
+Un `console.warn` est émis au build/runtime en production si la variable est absente.
+
+### Autres variables
+
+Voir [`.env.example`](./.env.example) pour la liste complète (Sanity, Resend, etc.).
+
+---
+
+## Structure
+
+```
+app/          Routes Next.js (App Router) — pages + sitemap + robots + layout
+components/   UI par zone : layout, sections, services, about, shared, ui
+lib/          Utilitaires pur-TS (SSoT : site-config, services-data, etc.)
+e2e/          Tests Playwright E2E + axe-core
+public/       Assets statiques (images WebP, logos SVG)
+.claude/      Contexte agents + sessions + audits
+```
+
+Règle CLAUDE.md : tout module dans `lib/` est potentiellement consommé par un RSC, donc ses exports doivent être 100 % JSON-sérialisables.
+
+---
+
+## Déploiement
+
+Documentation complète à venir au Sprint 5 (`README_DEPLOY.md`). Cibles : Hostinger Cloud + Nginx + PM2 + Cloudflare WAF.
+
+Pré-requis mise en ligne :
+- `NEXT_PUBLIC_SITE_URL` renseigné avec le domaine final
+- Domaine validé DKIM/SPF côté Resend (expéditeur du formulaire contact)
+- Sanity project ID + read token générés
+- SSL Let's Encrypt configuré (score Qualys cible A+)

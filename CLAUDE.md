@@ -390,9 +390,9 @@ Agents : Dev Sénior · SEO
 - [ ] Dev : Temoignages — re-vérifier : `useEffect cleanup` gère déjà clearTimeout correctement, audit initial erroné
 
 **P3 — sécurité/QA en avance**
-- [ ] SEO : vérifier chaque page n'a qu'1 `<h1>` unique
-- [ ] SEO : alt text descriptif métier sur images Services (pas juste le nom)
-- [ ] Cyber : documenter que `NEXT_PUBLIC_SITE_URL` DOIT être set en prod (sinon canonical/OG cassés)
+- [x] SEO : H1 unique par page (2026-04-21) — 9 pages auditées, 1 H1 chacune. Verrouillage Playwright via `e2e/seo.spec.ts` (8 tests sur toutes les routes + 404).
+- [x] SEO : alt text descriptif métier sur images Services (2026-04-21) — champ `imageAlt` ajouté à `ServiceDetail` (6 services décrits par intention métier), consommé par `ServiceDetailBlock`. Stacking cards homepage : `alt="Illustration du service ${title}"`.
+- [x] Cyber : `NEXT_PUBLIC_SITE_URL` documenté (2026-04-21) — SSoT dans `lib/site-config.ts` (console.warn prod si absent), 6 fichiers migrés (layout, contact, a-propos, services, sitemap, robots). README.md remplacé avec section "Variables d'environnement critiques" expliquant l'impact (canonical/OG/sitemap/JSON-LD).
 
 ### SPRINT 4 — Sécurité + Performance + QA 🔵 EN COURS
 
