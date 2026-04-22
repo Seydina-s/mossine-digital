@@ -21,6 +21,16 @@ const HCAPTCHA = 'https://hcaptcha.com https://*.hcaptcha.com'
 const RESEND = 'https://api.resend.com'
 const SENTRY = 'https://*.ingest.sentry.io https://js.sentry-cdn.com'
 const UMAMI = 'https://*.umami.is'
+// ─── Google Tag Manager + Google Analytics 4 ────────────────────
+//  Découpé par directive CSP pour rester lisible. GTM charge gtag.js
+//  qui à son tour ingère des données vers google-analytics.com. Quand
+//  on ajoutera Google Ads / remarketing, ajouter doubleclick.net et
+//  www.google.com dans img-src + connect-src.
+const GTM_SCRIPT   = 'https://www.googletagmanager.com'
+const GTM_IMG      = 'https://www.googletagmanager.com'
+const GTM_FRAME    = 'https://www.googletagmanager.com'
+const GA_IMG       = 'https://*.google-analytics.com https://*.analytics.google.com'
+const GA_CONNECT   = 'https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com'
 
 // ─── CSP marketing (pages publiques) ─────────────────────────────
 // 'unsafe-inline' reste nécessaire sur script-src tant qu'on n'a
@@ -29,12 +39,12 @@ const UMAMI = 'https://*.umami.is'
 // + CSS-in-JS Framer Motion en prod).
 const marketingCsp = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} ${HCAPTCHA} ${SENTRY}`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} ${HCAPTCHA} ${SENTRY} ${GTM_SCRIPT}`,
   `style-src 'self' 'unsafe-inline'`,
-  `img-src 'self' data: blob: https://cdn.sanity.io ${HCAPTCHA}`,
+  `img-src 'self' data: blob: https://cdn.sanity.io ${HCAPTCHA} ${GTM_IMG} ${GA_IMG}`,
   `font-src 'self' data:`,
-  `connect-src 'self' ${SANITY} ${RESEND} ${HCAPTCHA} ${SENTRY} ${UMAMI}`,
-  `frame-src 'self' ${HCAPTCHA}`,
+  `connect-src 'self' ${SANITY} ${RESEND} ${HCAPTCHA} ${SENTRY} ${UMAMI} ${GA_CONNECT}`,
+  `frame-src 'self' ${HCAPTCHA} ${GTM_FRAME}`,
   `frame-ancestors 'none'`,
   `form-action 'self'`,
   `base-uri 'self'`,

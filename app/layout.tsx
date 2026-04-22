@@ -3,7 +3,16 @@ import { syne, inter } from '@/lib/fonts'
 import { Navbar } from '@/components/layout/Navbar'
 import { BackToTop } from '@/components/ui/BackToTop'
 import { SITE_URL } from '@/lib/site-config'
+import {
+  GoogleTagManagerScript,
+  GoogleTagManagerNoscript,
+} from '@/components/analytics/GoogleTagManager'
 import './globals.css'
+
+// GTM container ID — public, injecté côté client. `undefined` en local
+// tant que `NEXT_PUBLIC_GTM_ID` n'est pas dans .env.local → les scripts
+// GTM ne se chargent pas (mode gracieux, cohérent avec Resend/hCaptcha).
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID
 
 // ─────────────────────────────────────────────────────────────────
 //  SEO — Métadonnées globales + Open Graph + Twitter Card
@@ -186,6 +195,10 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
+        {/* Google Tag Manager — chargé en `afterInteractive` pour ne pas
+            bloquer le rendu initial. Conteneur unique : GA4, Meta Pixel
+            et toute autre balise sont configurés dans l'UI GTM. */}
+        <GoogleTagManagerScript gtmId={GTM_ID} />
         {/* Schema.org LocalBusiness — NAP + horaires + zone desservie */}
         <script
           type="application/ld+json"
@@ -202,6 +215,8 @@ export default function RootLayout({
         />
       </head>
       <body className={`${syne.variable} ${inter.variable}`}>
+        {/* GTM noscript fallback — visiteurs sans JavaScript */}
+        <GoogleTagManagerNoscript gtmId={GTM_ID} />
         {/* Lien d'évitement pour lecteurs d'écran (WCAG 2.2) */}
         <a
           href="#contenu-principal"
