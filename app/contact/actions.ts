@@ -48,6 +48,26 @@ export async function submitContact(
   _prev: ContactActionState,
   formData: FormData,
 ): Promise<ContactActionState> {
+  try {
+    return await submitContactInner(formData)
+  } catch (err) {
+    // Filet global : toute exception non prévue (ex: env var manquante,
+    // headers() qui throw, etc.) est convertie en ContactActionState
+    // d'erreur. Sans ce wrap, un throw remonte au error boundary
+    // `app/error.tsx` et l'utilisateur voit "Erreur interne" sans retour
+    // formulaire. Le digest reste visible dans les logs Vercel Runtime.
+    console.error('[contact] submitContact crash non capturé', err)
+    return {
+      status: 'error',
+      message:
+        "Une erreur technique est survenue. Merci de réessayer dans un instant, ou écrivez-nous directement à contact@mossinedigital.com.",
+    }
+  }
+}
+
+async function submitContactInner(
+  formData: FormData,
+): Promise<ContactActionState> {
   // 1. Extraction & validation
   const raw = {
     name:    formData.get('name'),

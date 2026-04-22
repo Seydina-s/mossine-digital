@@ -14,7 +14,7 @@
 //  introduit un risque de drift (fallback différent par fichier).
 // ─────────────────────────────────────────────────────────────────
 
-const FALLBACK_SITE_URL = 'https://mossine-digital.com'
+const FALLBACK_SITE_URL = 'https://mossinedigital.com'
 
 const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()
 
