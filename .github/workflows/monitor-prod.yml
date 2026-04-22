@@ -1,0 +1,70 @@
+name: Monitor Prod
+
+# ─────────────────────────────────────────────────────────────────
+#  Surveillance du site en production.
+#
+#  Déclenchements :
+#    1. Cron quotidien à 08:00 UTC (10h Paris l'hiver, 9h Dakar).
+#    2. Déclenchement manuel depuis l'onglet Actions.
+#
+#  Principe : on joue la suite Playwright contre l'URL publique du
+#  site (pas de dev server local). Ça détecte toute régression
+#  visible par un vrai utilisateur — contenu manquant, page 500,
+#  violation a11y apparue après déploiement, SEO cassé, etc.
+#
+#  Variables d'environnement utilisées :
+#    - PLAYWRIGHT_BASE_URL : force playwright.config.ts à pointer
+#      vers la prod au lieu de localhost (et désactive le webServer
+#      qui ferait planter le runner).
+#
+#  Notifications : GitHub email natif sur failure. La phase 2
+#  (Resend custom avec détails erreur) sera ajoutée quand Resend
+#  sera configuré côté projet.
+# ─────────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    # À 08:00 UTC tous les jours.
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'URL à tester (défaut : prod)'
+        required: false
+        default: 'https://mossinedigital.com'
+
+concurrency:
+  group: monitor-prod
+  cancel-in-progress: false
+
+jobs:
+  e2e-prod:
+    name: Playwright contre prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Playwright E2E contre prod
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ github.event.inputs.target_url || 'https://mossinedigital.com' }}
+        run: npm run test:e2e
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-prod
+          path: playwright-report/
+          retention-days: 30

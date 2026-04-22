@@ -1,0 +1,102 @@
+name: CI
+
+# ─────────────────────────────────────────────────────────────────
+#  Pipeline de validation à chaque push / pull-request sur `main`.
+#  But : empêcher tout merge qui casserait typecheck, tests unitaires,
+#  tests E2E ou build de production.
+#
+#  Pourquoi pas juste `npm run check` ?
+#    - On veut aussi Playwright (nécessite browsers installés).
+#    - Séparer les jobs permet de voir lequel casse en un coup d'œil
+#      dans l'onglet Actions GitHub.
+#
+#  Notifications : GitHub envoie automatiquement un email au propriétaire
+#  du repo sur chaque workflow failed. Aucune config à ajouter ici.
+# ─────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Permet un déclenchement manuel depuis l'onglet Actions.
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Désactive la télémétrie Next côté CI.
+  NEXT_TELEMETRY_DISABLED: 1
+  # Placeholder pour que le build ne warn pas sur l'URL manquante.
+  # La vraie URL prod est configurée dans les env vars Vercel.
+  NEXT_PUBLIC_SITE_URL: https://mossinedigital.com
+
+jobs:
+  typecheck-and-unit:
+    name: Typecheck + tests unitaires
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript strict
+        run: npm run typecheck
+
+      - name: Vitest (unitaires)
+        run: npm run test -- --run
+
+  build:
+    name: Build Next.js
+    runs-on: ubuntu-latest
+    needs: typecheck-and-unit
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Next.js build
+        run: npm run build
+
+  e2e:
+    name: Playwright E2E + axe-core
+    runs-on: ubuntu-latest
+    needs: typecheck-and-unit
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Playwright E2E
+        run: npm run test:e2e
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

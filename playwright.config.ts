@@ -16,7 +16,22 @@ import { defineConfig, devices } from '@playwright/test'
 // ─────────────────────────────────────────────────────────────────
 
 const PORT = 3000
-const BASE_URL = `http://localhost:${PORT}`
+const LOCAL_URL = `http://localhost:${PORT}`
+
+// ─────────────────────────────────────────────────────────────────
+//  `PLAYWRIGHT_BASE_URL` (ex: https://mossinedigital.com) permet au
+//  workflow cron GitHub Actions de tester la **prod déployée** sans
+//  démarrer un serveur local. Quand il est défini, on saute l'étape
+//  `webServer` — sinon Playwright resterait bloqué à attendre
+//  `localhost:3000` qui n'existe pas dans le runner CI minimal.
+//
+//  Usage :
+//    - dev local            → rien, utilise localhost + next dev
+//    - CI sur push/PR       → rien, même chose (next dev dans runner)
+//    - CI cron contre prod  → PLAYWRIGHT_BASE_URL=https://mossinedigital.com
+// ─────────────────────────────────────────────────────────────────
+const REMOTE_URL = process.env.PLAYWRIGHT_BASE_URL
+const BASE_URL = REMOTE_URL ?? LOCAL_URL
 
 const CROSS_BROWSER =
   !!process.env.CI || process.env.PLAYWRIGHT_CROSS_BROWSER === '1'
@@ -43,12 +58,15 @@ export default defineConfig({
       ]
     : [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 
-  webServer: {
-    command: 'npm run dev',
-    url: BASE_URL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-    stdout: 'ignore',
-    stderr: 'pipe',
-  },
+  // Pas de webServer quand on teste une URL distante (cron prod).
+  webServer: REMOTE_URL
+    ? undefined
+    : {
+        command: 'npm run dev',
+        url: LOCAL_URL,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+        stdout: 'ignore',
+        stderr: 'pipe',
+      },
 })
