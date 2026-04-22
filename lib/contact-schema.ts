@@ -6,12 +6,11 @@ import { z } from 'zod'
 // ─────────────────────────────────────────────────────────────────
 
 export const SERVICE_OPTIONS = [
-  { value: 'identite',  label: 'Identité visuelle & Branding' },
+  { value: 'identite',  label: 'Branding & identité visuelle' },
   { value: 'web',       label: 'Création de site web' },
-  { value: 'social',    label: 'Community Management' },
-  { value: 'ads',       label: 'Campagnes Ads' },
-  { value: 'seo',       label: 'SEO & SEA' },
-  { value: 'strategie', label: 'Stratégie communication & marketing digitale' },
+  { value: 'social',    label: 'Gestion des réseaux sociaux' },
+  { value: 'seo',       label: 'Référencement & campagnes publicitaires' },
+  { value: 'strategie', label: 'Stratégie communication & marketing digital' },
   { value: 'autre',     label: 'Autre / Je ne sais pas encore' },
 ] as const
 

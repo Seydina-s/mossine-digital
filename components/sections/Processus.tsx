@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import {
   BinocularsIcon,
   MapTrifoldIcon,
@@ -12,7 +12,19 @@ import { EASE_OUT_EXPR as EASE } from '@/lib/motion'
 import type { PhosphorIcon } from '@/lib/types'
 
 // ─────────────────────────────────────────────────────────────────
-//  DONNÉES — Les 4 étapes du processus Mossine Digital
+//  Processus — roadmap animée scroll-triggered (style Stripe / Vercel).
+//
+//  Architecture anti-jank (⚠️ vaccin dette v3.3, cf. CLAUDE.md) :
+//  un SEUL `useScroll({ target })` au niveau de la section. Chaque
+//  étape dérive sa progression individuelle via `useTransform` sur le
+//  même MotionValue racine — zéro `getBoundingClientRect()` par étape
+//  à chaque frame. Interdit d'ajouter un `useScroll` par STEP sous
+//  peine de réintroduire le layout thrash documenté sur Services.
+//
+//  Path SVG : ligne verticale qui se "dessine" (strokeDashoffset 1→0)
+//  au fur et à mesure du scroll. Nœuds scalent + fade à leur seuil
+//  respectif (threshold calculé depuis l'index). Prefers-reduced-motion :
+//  path entièrement dessiné + nœuds statiques, zéro animation.
 // ─────────────────────────────────────────────────────────────────
 
 interface Step {
@@ -21,16 +33,18 @@ interface Step {
   title: string
   description: string
   detail: string
+  accent: 'blue' | 'red'
 }
 
-const STEPS: Step[] = [
+const STEPS: readonly Step[] = [
   {
     number: '01',
     icon: BinocularsIcon,
     title: 'Découverte & Audit',
     description: 'On commence par vous écouter vraiment.',
     detail:
-      'Analyse de votre marché, de vos concurrents, de vos objectifs et de vos contraintes. Un diagnostic complet avant toute action.',
+      'Analyse du marché, des concurrents, des objectifs et des contraintes. Un diagnostic complet avant toute action — pas de livrable sans cadrage préalable.',
+    accent: 'blue',
   },
   {
     number: '02',
@@ -38,7 +52,8 @@ const STEPS: Step[] = [
     title: 'Stratégie & Planning',
     description: 'Une roadmap claire, sans jargon.',
     detail:
-      "Co-construction d'un plan d'action sur mesure avec jalons, livrables et budget définis. Vous validez chaque étape.",
+      "Co-construction d'un plan d'action sur mesure : jalons, livrables, budget et KPIs définis ensemble. Vous validez chaque étape avant qu'on passe à la suivante.",
+    accent: 'blue',
   },
   {
     number: '03',
@@ -46,151 +61,270 @@ const STEPS: Step[] = [
     title: 'Création & Développement',
     description: "L'expertise à l'œuvre.",
     detail:
-      'Conception et production de vos actifs digitaux par nos experts : design, code, contenu et campagnes. Itérations rapides, résultats concrets.',
+      'Production de vos actifs digitaux : design, code, contenus, campagnes. Itérations rapides avec revues hebdomadaires pour ajuster dès les premiers signaux.',
+    accent: 'red',
   },
   {
     number: '04',
     icon: RocketLaunchIcon,
     title: 'Lancement & Suivi',
-    description: 'On ne disparaît pas après livraison.',
+    description: 'On ne disparaît pas après la livraison.',
     detail:
-      'Déploiement soigné, suivi des performances, ajustements continus et reporting transparent. Votre succès est notre indicateur.',
+      'Déploiement soigné, suivi des performances, ajustements continus et reporting transparent. Votre succès est notre seul indicateur de réussite.',
+    accent: 'red',
   },
 ]
 
-// ─────────────────────────────────────────────────────────────────
-//  COMPOSANT PRINCIPAL : Processus
-// ─────────────────────────────────────────────────────────────────
+// Position verticale (%) de chaque nœud sur le path — répartis
+// uniformément avec marges haut/bas pour respirer.
+const NODE_POSITIONS = STEPS.map((_, i) => 0.08 + (i / (STEPS.length - 1)) * 0.84)
 
 export function Processus() {
   const reduced = useReducedMotion() ?? false
+  const sectionRef = React.useRef<HTMLElement>(null)
+
+  // UN SEUL useScroll pour toute la section — cf. vaccin en haut du fichier.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start 0.85', 'end 0.15'],
+  })
+
+  // Path : strokeDashoffset de 1 (invisible) à 0 (entièrement tracé).
+  const pathDrawProgress = useTransform(scrollYProgress, [0, 1], [1, 0])
 
   return (
     <section
       id="processus"
+      ref={sectionRef}
       aria-label="Notre processus de travail"
-      className="bg-[var(--md-bg)]"
+      className="relative bg-[var(--md-bg)]"
       style={{
         paddingTop: 'var(--md-space-section)',
         paddingBottom: 'var(--md-space-section)',
       }}
     >
-      <div className="container-md">
+      <div className="container-md relative">
         {/* En-tête */}
         <motion.div
-          className="mb-16 max-w-2xl"
+          className="mx-auto mb-20 max-w-2xl text-center"
           initial={reduced ? false : { opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '0px 0px -15% 0px' }}
+          transition={{ duration: 0.7, ease: EASE }}
         >
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary-text)]">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--md-secondary-text)]">
             Comment on travaille
           </p>
           <h2
             className="font-[family-name:var(--md-font-display)] text-[var(--md-primary)]"
             style={{
-              fontSize: 'clamp(1.75rem, 3vw + 0.5rem, 2.75rem)',
+              fontSize: 'clamp(2rem, 3.5vw + 0.3rem, 3.25rem)',
               fontWeight: 700,
-              letterSpacing: '-0.025em',
-              lineHeight: 1.15,
+              letterSpacing: '-0.035em',
+              lineHeight: 1.05,
             }}
           >
             Un processus{' '}
-            <span className="text-[var(--md-secondary-text)]">transparent</span>
-            {', '}de bout en bout
+            <span className="italic text-[var(--md-secondary-text)]">
+              transparent
+            </span>
+            , de bout en bout.
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-[var(--md-text-muted)]">
-            Pas de surprise, pas de dérive. Chaque projet suit une méthode
-            éprouvée pour livrer dans les délais, dans le budget et au-delà
-            de vos attentes.
+          <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-[var(--md-text-muted)] sm:text-base">
+            Pas de surprise, pas de dérive. Chaque projet suit les mêmes quatre
+            temps — pour livrer dans les délais, dans le budget, et au-delà
+            des attentes.
           </p>
         </motion.div>
 
-        {/* Grille des étapes — stagger séquentiel */}
-        <motion.div
-          className="relative grid grid-cols-1 gap-0 md:grid-cols-4"
-          initial={reduced ? false : 'hidden'}
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
-          }}
-        >
-
-          {/* Ligne connectrice horizontale (desktop uniquement)
-              — position calculée dynamiquement : centre de la 1re col → centre de la dernière,
-              décalée du rayon du cercle (20px). Robuste à un changement de STEPS.length. */}
-          <div
+        {/* Roadmap — SVG path + cards alternées */}
+        <div className="relative mx-auto max-w-5xl">
+          {/* Path SVG desktop (ligne verticale centrale qui se dessine) */}
+          <svg
             aria-hidden
-            className="absolute top-[52px] hidden h-[2px] md:block"
-            style={{
-              left: `calc(${100 / STEPS.length / 2}% + 20px)`,
-              right: `calc(${100 / STEPS.length / 2}% + 20px)`,
-              background:
-                'linear-gradient(to right, var(--md-secondary-light), var(--md-secondary), var(--md-secondary-light))',
-            }}
-          />
+            className="pointer-events-none absolute left-1/2 top-0 hidden h-full -translate-x-1/2 md:block"
+            width="40"
+            viewBox="0 0 40 1000"
+            preserveAspectRatio="none"
+            style={{ height: '100%' }}
+          >
+            <defs>
+              <linearGradient id="processus-gradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--md-secondary)" />
+                <stop offset="50%" stopColor="var(--md-secondary)" />
+                <stop offset="100%" stopColor="var(--md-accent)" />
+              </linearGradient>
+            </defs>
 
-          {STEPS.map((step, index) => {
-            const Icon = step.icon
-            return (
-              <motion.div
+            {/* Rail de fond (toujours visible, discret) */}
+            <line
+              x1="20"
+              y1="0"
+              x2="20"
+              y2="1000"
+              stroke="var(--md-border)"
+              strokeWidth="2"
+            />
+
+            {/* Rail progressif (dessiné au scroll) */}
+            <motion.line
+              x1="20"
+              y1="0"
+              x2="20"
+              y2="1000"
+              stroke="url(#processus-gradient)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              pathLength={1}
+              style={{
+                strokeDasharray: 1,
+                strokeDashoffset: reduced ? 0 : pathDrawProgress,
+              }}
+            />
+          </svg>
+
+          {/* Rail mobile (vertical à gauche, simple) */}
+          <svg
+            aria-hidden
+            className="pointer-events-none absolute left-[20px] top-0 h-full md:hidden"
+            width="4"
+            viewBox="0 0 4 1000"
+            preserveAspectRatio="none"
+            style={{ height: '100%' }}
+          >
+            <line x1="2" y1="0" x2="2" y2="1000" stroke="var(--md-border)" strokeWidth="2" />
+            <motion.line
+              x1="2"
+              y1="0"
+              x2="2"
+              y2="1000"
+              stroke="var(--md-secondary)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              pathLength={1}
+              style={{
+                strokeDasharray: 1,
+                strokeDashoffset: reduced ? 0 : pathDrawProgress,
+              }}
+            />
+          </svg>
+
+          {/* Liste des étapes */}
+          <ol role="list" className="relative flex flex-col gap-24 md:gap-28">
+            {STEPS.map((step, i) => (
+              <RoadmapStep
                 key={step.number}
-                className="relative flex flex-col md:items-center md:text-center"
-                variants={{
-                  hidden: { opacity: 0, y: 24 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: EASE } },
-                }}
-              >
-                {/* Numéro + Icône */}
-                <div className="relative z-10 mb-6 flex items-center gap-4 md:flex-col md:gap-3">
-                  {/* Cercle numéroté */}
-                  <div
-                    className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border-2 border-[var(--md-secondary)] bg-white font-[family-name:var(--md-font-display)] text-sm font-bold text-[var(--md-secondary-text)]"
-                    aria-hidden
-                  >
-                    {step.number}
-                  </div>
-
-                  {/* Trait vertical (mobile) */}
-                  {index < STEPS.length - 1 && (
-                    <div
-                      aria-hidden
-                      className="absolute left-[25px] top-[52px] h-full w-[2px] translate-x-[-50%] bg-[var(--md-secondary-light)] md:hidden"
-                    />
-                  )}
-
-                  {/* Icône */}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--md-secondary-light)] text-[var(--md-secondary-text)] md:hidden">
-                    <Icon size={20} weight="regular" />
-                  </div>
-                </div>
-
-                {/* Icône desktop (centrée) */}
-                <div className="mb-4 hidden h-10 w-10 items-center justify-center rounded-xl bg-[var(--md-secondary-light)] text-[var(--md-secondary-text)] md:flex">
-                  <Icon size={20} weight="regular" />
-                </div>
-
-                {/* Contenu textuel */}
-                <div className="pb-12 pl-[calc(52px+1rem+10px)] md:pb-0 md:pl-0 md:px-5">
-                  <h3
-                    className="mb-1 font-[family-name:var(--md-font-display)] font-semibold text-[var(--md-primary)]"
-                    style={{ fontSize: 'clamp(0.95rem, 1vw + 0.5rem, 1.1rem)' }}
-                  >
-                    {step.title}
-                  </h3>
-                  <p className="mb-2 text-sm font-medium text-[var(--md-secondary-text)]">
-                    {step.description}
-                  </p>
-                  <p className="text-sm leading-relaxed text-[var(--md-text-muted)]">
-                    {step.detail}
-                  </p>
-                </div>
-              </motion.div>
-            )
-          })}
-        </motion.div>
+                step={step}
+                index={i}
+                threshold={NODE_POSITIONS[i]}
+                scrollYProgress={scrollYProgress}
+                reduced={reduced}
+              />
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  RoadmapStep — une étape de la roadmap.
+//  Reçoit le MotionValue parent (scrollYProgress) — NE CRÉE PAS
+//  son propre useScroll (cf. vaccin dette v3.3).
+// ─────────────────────────────────────────────────────────────────
+
+interface RoadmapStepProps {
+  step: Step
+  index: number
+  threshold: number
+  scrollYProgress: ReturnType<typeof useScroll>['scrollYProgress']
+  reduced: boolean
+}
+
+function RoadmapStep({
+  step,
+  index,
+  threshold,
+  scrollYProgress,
+  reduced,
+}: RoadmapStepProps) {
+  const Icon = step.icon
+  const isLeft = index % 2 === 0
+
+  // Fenêtre d'activation : le nœud s'active au seuil + 5% d'avance.
+  const start = Math.max(0, threshold - 0.08)
+  const nodeOpacity = useTransform(scrollYProgress, [start, threshold], [0.3, 1])
+  const nodeScale = useTransform(scrollYProgress, [start, threshold], [0.7, 1])
+
+  const accentVar =
+    step.accent === 'blue' ? 'var(--md-secondary)' : 'var(--md-accent)'
+  const accentText =
+    step.accent === 'blue' ? 'var(--md-secondary-text)' : 'var(--md-accent-solid)'
+  const accentLight =
+    step.accent === 'blue'
+      ? 'var(--md-secondary-light)'
+      : 'rgba(255,89,100,0.12)'
+
+  return (
+    <li
+      className="relative grid grid-cols-1 items-center gap-0 md:grid-cols-2 md:gap-16"
+      aria-labelledby={`step-${step.number}-title`}
+    >
+      {/* Nœud central (desktop : sur le rail) + mobile (sur le rail gauche) */}
+      <motion.div
+        aria-hidden
+        className="absolute left-[20px] top-4 z-10 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full border-[3px] bg-white shadow-[0_4px_20px_rgba(27,31,59,0.08)] md:left-1/2 md:top-1/2 md:-translate-y-1/2"
+        style={{
+          borderColor: accentVar,
+          color: accentText,
+          opacity: reduced ? 1 : nodeOpacity,
+          scale: reduced ? 1 : nodeScale,
+        }}
+      >
+        <Icon size={18} weight="regular" />
+      </motion.div>
+
+      {/* Card contenu — alternance gauche/droite desktop */}
+      <motion.div
+        className={[
+          'pl-16 md:pl-0',
+          isLeft ? 'md:col-start-1 md:pr-12 md:text-right' : 'md:col-start-2 md:pl-12',
+        ].join(' ')}
+        initial={reduced ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
+      >
+        <span
+          className="inline-flex items-center gap-2 rounded-full px-3 py-1 font-mono text-[11px] font-semibold tracking-[0.2em]"
+          style={{ backgroundColor: accentLight, color: accentText }}
+        >
+          Étape {step.number}
+        </span>
+        <h3
+          id={`step-${step.number}-title`}
+          className="mt-4 font-[family-name:var(--md-font-display)] text-[var(--md-primary)]"
+          style={{
+            fontSize: 'clamp(1.35rem, 1.8vw + 0.5rem, 1.75rem)',
+            fontWeight: 700,
+            letterSpacing: '-0.025em',
+            lineHeight: 1.15,
+          }}
+        >
+          {step.title}
+        </h3>
+        <p
+          className="mt-3 text-[15px] font-medium sm:text-base"
+          style={{ color: accentText }}
+        >
+          {step.description}
+        </p>
+        <p className="mt-3 text-[15px] leading-relaxed text-[var(--md-text-muted)] sm:text-base">
+          {step.detail}
+        </p>
+      </motion.div>
+
+    </li>
   )
 }

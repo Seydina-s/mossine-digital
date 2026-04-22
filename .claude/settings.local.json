@@ -10,7 +10,16 @@
       "Read(//c//**)",
       "Bash(node -e \"const p=require\\('./package.json'\\); const deps={...p.dependencies,...p.devDependencies}; console.log\\('framer-motion:', deps['framer-motion']||'non'\\); console.log\\('motion:', deps['motion']||'non'\\)\")",
       "Bash(git add:*)",
-      "Bash(git commit -m ':*)"
+      "Bash(git commit -m ':*)",
+      "Bash(node -e \"const icons = require\\('@phosphor-icons/react'\\); const check = ['BinocularsIcon','MapTrifoldIcon','PencilRulerIcon','RocketLaunchIcon','MegaphoneSimpleIcon','ChartLineUpIcon','InstagramLogoIcon','LinkedinLogoIcon','FacebookLogoIcon','XLogoIcon','EnvelopeSimpleIcon','QuotesIcon','UsersThreeIcon','GlobeHemisphereWestIcon']; check.forEach\\(n => console.log\\(n, !!icons[n]\\)\\)\")",
+      "Bash(node -e \"const icons = require\\('@phosphor-icons/react'\\); const keys = Object.keys\\(icons\\).filter\\(k => k.endsWith\\('Icon'\\)\\); console.log\\('Total:', keys.length\\); console.log\\(keys.slice\\(0,30\\).join\\('\\\\n'\\)\\);\")",
+      "Bash(node -e \"const icons = require\\('@phosphor-icons/react'\\); console.log\\(typeof icons\\); console.log\\(Object.keys\\(icons\\).slice\\(0,30\\).join\\('\\\\n'\\)\\);\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(node -e \"const Lenis = require\\('lenis'\\); console.log\\('lenis ok'\\);\")",
+      "Bash(git reset:*)",
+      "Bash(npx eslint:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001)"
     ]
   }
 }

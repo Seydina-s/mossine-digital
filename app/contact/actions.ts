@@ -4,6 +4,7 @@ import { Resend } from 'resend'
 import { headers } from 'next/headers'
 import { contactSchema } from '@/lib/contact-schema'
 import { buildContactNotification } from '@/lib/email/contact-notification'
+import { verifyHCaptcha, isHCaptchaEnabled } from '@/lib/hcaptcha'
 
 // ─────────────────────────────────────────────────────────────────
 //  Rate limit léger, in-memory par IP (MVP).
@@ -83,12 +84,41 @@ export async function submitContact(
     return { status: 'success', message: 'Merci, nous avons bien reçu votre message.' }
   }
 
-  // 3. Rate limit
+  // 3. hCaptcha — validation serveur du token client.
+  //    Mode gracieux : si HCAPTCHA_SECRET_KEY est absente, verifyHCaptcha()
+  //    retourne 'skipped' et on laisse passer (cohérent avec Resend).
+  //    Si le captcha est armé mais le token manquant/invalide → refus.
   const hdrs = await headers()
   const ip =
     hdrs.get('x-forwarded-for')?.split(',')[0]?.trim() ??
     hdrs.get('x-real-ip') ??
     'anonymous'
+
+  if (isHCaptchaEnabled()) {
+    const token = formData.get('hcaptcha-token')
+    const captchaResult = await verifyHCaptcha(
+      typeof token === 'string' ? token : '',
+      ip !== 'anonymous' ? ip : undefined,
+    )
+    if (captchaResult.status === 'missing') {
+      return {
+        status: 'error',
+        message: 'Merci de valider la vérification anti-robot ci-dessous.',
+        fieldErrors: { hcaptcha: 'Cochez la case de vérification avant d\'envoyer.' },
+      }
+    }
+    if (captchaResult.status === 'failure') {
+      console.error('[contact] hCaptcha failure', captchaResult.errorCodes)
+      return {
+        status: 'error',
+        message: 'La vérification anti-robot a échoué. Merci de réessayer.',
+        fieldErrors: { hcaptcha: 'Vérification expirée ou invalide, recommencez.' },
+      }
+    }
+    // 'success' ou 'skipped' → on continue.
+  }
+
+  // 4. Rate limit
   if (!checkRateLimit(ip)) {
     return {
       status: 'error',
@@ -96,7 +126,7 @@ export async function submitContact(
     }
   }
 
-  // 4. Envoi email via Resend
+  // 5. Envoi email via Resend
   const apiKey = process.env.RESEND_API_KEY
   const fromEmail = process.env.RESEND_FROM_EMAIL // ex: "Mossine Digital <noreply@mossinedigital.com>"
   const toEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'contact@mossinedigital.com'

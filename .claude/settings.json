@@ -6,7 +6,22 @@
       "Bash(npx shadcn@latest add \"https://21st.dev/r/ibelick/menu-toggle-icon\" --yes)",
       "Bash(rm -f public/file.svg public/globe.svg public/next.svg public/vercel.svg public/window.svg)",
       "Bash(rm -rf types/)",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "Bash(npm audit:*)",
+      "Bash(ls .env*)",
+      "Bash(ls app/*.tsx)",
+      "Bash(ls sanity*)",
+      "Bash(ls -la .env*)",
+      "Bash(git commit -m ':*)",
+      "Bash(node -e \"console.log\\('next:', require\\('./node_modules/next/package.json'\\).version\\)\")",
+      "Read(//tmp/claude/c--Users-HP-mossine-digital/ccd412d1-5bd3-489f-b0fb-401676d85b81/tasks/**)",
+      "Bash(npm test:*)",
+      "Bash(find public/ -type f \\\\\\( -name \"*.png\" -o -name \"*.jpg\" -o -name \"*.jpeg\" -o -name \"*.webp\" -o -name \"*.avif\" -o -name \"*.svg\" -o -name \"*.ico\" \\\\\\) -exec ls -lh {} \\\\;)",
+      "Bash(npx playwright:*)",
+      "Read(//c/Users/HP/AppData/Local/Temp/claude/c--Users-HP-mossine-digital/ccd412d1-5bd3-489f-b0fb-401676d85b81/tasks/**)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\HP\\mossine-digital\\app\\studio"
     ]
   }
 }

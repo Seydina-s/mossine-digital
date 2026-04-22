@@ -9,12 +9,18 @@ import {
   TiktokLogoIcon,
   WhatsappLogoIcon,
   EnvelopeSimpleIcon,
+  PhoneIcon,
+  MapPinIcon,
+  ClockIcon,
   ArrowUpRightIcon,
 } from '@phosphor-icons/react'
 
 // ─────────────────────────────────────────────────────────────────
-//  DONNÉES — ⚠️ TODO_CLIENT : confirmer les informations de contact
-//  (adresse, téléphone, email, liens réseaux sociaux)
+//  DONNÉES — Coordonnées contact confirmées (2026-04-21).
+//  Réseaux sociaux : URLs non livrées côté client → les entrées
+//  avec `href: '#'` sont automatiquement filtrées au rendu. Dès
+//  qu'une URL réelle est fournie, remplacer la valeur et le lien
+//  réapparaît (zéro changement de structure).
 // ─────────────────────────────────────────────────────────────────
 
 const NAV_LINKS = [
@@ -26,15 +32,16 @@ const NAV_LINKS = [
 ]
 
 const SERVICE_LINKS = [
-  { label: 'Identité visuelle & Branding', href: '/services' },
-  { label: 'Création de site web', href: '/services' },
-  { label: 'Community Management', href: '/services' },
-  { label: 'Campagnes Ads', href: '/services' },
-  { label: 'SEO & SEA', href: '/services' },
-  { label: 'Stratégie communication & marketing digitale', href: '/services' },
+  { label: 'Branding & identité visuelle', href: '/services#identite' },
+  { label: 'Création de site web', href: '/services#web' },
+  { label: 'Gestion des réseaux sociaux', href: '/services#social' },
+  { label: 'Référencement & campagnes publicitaires', href: '/services#seo' },
+  { label: 'Stratégie communication & marketing digital', href: '/services#strategie' },
 ]
 
-// ⚠️ TODO_CLIENT : liens réels à fournir (Facebook, Instagram, TikTok, LinkedIn, WhatsApp)
+// ⚠️ TODO_CLIENT : URLs réseaux sociaux à livrer (en attente 2026-04-21).
+// Les entrées avec `href: '#'` sont filtrées à l'affichage (cf. rendu plus bas) —
+// elles réapparaissent automatiquement dès qu'une URL réelle est injectée.
 const SOCIAL_LINKS = [
   { label: 'Facebook',  href: '#', icon: FacebookLogoIcon },
   { label: 'Instagram', href: '#', icon: InstagramLogoIcon },
@@ -52,8 +59,8 @@ type PhosphorIcon = React.ComponentType<{
 interface ContactItem {
   icon: PhosphorIcon
   label: string
-  href: string
-  external?: boolean
+  // href optionnel : si absent, rendu en <span> (adresse + horaires non cliquables).
+  href?: string
 }
 
 const CONTACT_ITEMS: ContactItem[] = [
@@ -62,17 +69,20 @@ const CONTACT_ITEMS: ContactItem[] = [
     label: 'contact@mossinedigital.com',
     href: 'mailto:contact@mossinedigital.com',
   },
-  // ⚠️ TODO_CLIENT : téléphone et adresse à confirmer avant réactivation
-  // {
-  //   icon: PhoneIcon,
-  //   label: '+XX X XX XX XX XX',
-  //   href: 'tel:+XXXXXXXXXXX',
-  // },
-  // {
-  //   icon: MapPinIcon,
-  //   label: 'Ville, Pays',
-  //   href: '#',
-  // },
+  {
+    icon: PhoneIcon,
+    label: '+221 77 187 18 18',
+    // RFC 3966 : téléphone sans espaces dans le tel: URI.
+    href: 'tel:+221771871818',
+  },
+  {
+    icon: MapPinIcon,
+    label: 'Pôle Urbain de Diamniadio, Sortie 11 du péage',
+  },
+  {
+    icon: ClockIcon,
+    label: 'Lun-Ven · 9h-18h (GMT)',
+  },
 ]
 
 // ─────────────────────────────────────────────────────────────────
@@ -110,29 +120,38 @@ export function Footer() {
 
             <p className="mb-6 max-w-[260px] text-sm leading-relaxed text-white/60">
               Agence de communication et marketing digital 360°. Branding,
-              web, social media, Ads et SEO réunis pour construire votre
-              marque et amplifier votre visibilité.
+              web, réseaux sociaux, référencement et publicité réunis pour
+              construire votre marque et amplifier votre visibilité.
             </p>
 
-            {/* Réseaux sociaux */}
-            <div className="flex gap-3" role="list" aria-label="Nos réseaux sociaux">
-              {SOCIAL_LINKS.map((social) => {
-                const Icon = social.icon
-                return (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.label}
-                    role="listitem"
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/65 transition-colors duration-200 hover:border-[var(--md-secondary)]/40 hover:text-[var(--md-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-bg-darker)]"
-                  >
-                    <Icon size={16} weight="regular" />
-                  </a>
-                )
-              })}
-            </div>
+            {/* Réseaux sociaux — filtrés : seuls les liens avec URL réelle
+                (href !== '#') sont rendus. Si toutes les URLs sont vides,
+                le bloc disparaît entièrement plutôt que d'afficher des
+                liens cassés qui remontent en haut de page. */}
+            {(() => {
+              const liveSocials = SOCIAL_LINKS.filter((s) => s.href !== '#')
+              if (liveSocials.length === 0) return null
+              return (
+                <div className="flex gap-3" role="list" aria-label="Nos réseaux sociaux">
+                  {liveSocials.map((social) => {
+                    const Icon = social.icon
+                    return (
+                      <a
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={social.label}
+                        role="listitem"
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/65 transition-colors duration-200 hover:border-[var(--md-secondary)]/40 hover:text-[var(--md-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-bg-darker)]"
+                      >
+                        <Icon size={16} weight="regular" />
+                      </a>
+                    )
+                  })}
+                </div>
+              )
+            })()}
           </div>
 
           {/* ── Colonne 2 : Navigation ── */}
@@ -183,19 +202,31 @@ export function Footer() {
             <ul className="mb-6 flex flex-col gap-4">
               {CONTACT_ITEMS.map((item) => {
                 const Icon = item.icon
+                // Adresse et horaires : pas de href → rendu en <span>,
+                // sans états hover/focus (non-interactif = pas de confusion).
+                const iconEl = (
+                  <Icon
+                    size={15}
+                    weight="regular"
+                    className="mt-0.5 shrink-0 text-[var(--md-secondary)] opacity-60 group-hover:opacity-100"
+                  />
+                )
                 return (
                   <li key={item.label}>
-                    <a
-                      href={item.href}
-                      className="group flex items-start gap-3 rounded-sm text-sm text-white/50 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-bg-darker)]"
-                    >
-                      <Icon
-                        size={15}
-                        weight="regular"
-                        className="mt-0.5 shrink-0 text-[var(--md-secondary)] opacity-60 group-hover:opacity-100"
-                      />
-                      {item.label}
-                    </a>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        className="group flex items-start gap-3 rounded-sm text-sm text-white/50 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-secondary)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--md-bg-darker)]"
+                      >
+                        {iconEl}
+                        {item.label}
+                      </a>
+                    ) : (
+                      <span className="group flex items-start gap-3 text-sm text-white/50">
+                        {iconEl}
+                        {item.label}
+                      </span>
+                    )}
                   </li>
                 )
               })}

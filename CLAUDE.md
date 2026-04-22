@@ -346,7 +346,7 @@ Agents : Dev Sénior · Design/UI · SEO
 - [x] Metadata SEO page d'accueil (title template, description, OG, Twitter, robots, keywords)
 - [x] `+` error.tsx (Error Boundary global) avec Aurora + reset
 - [x] `+` not-found.tsx (404 personnalisée) avec Aurora + CTAs
-- [ ] Schema.org JSON-LD `LocalBusiness` (besoin adresse/téléphone/horaires client)
+- [x] **Schema.org JSON-LD `LocalBusiness`** livré 2026-04-21 — nœud `LocalBusiness + ProfessionalService` avec `@id` stable (`${SITE_URL}/#organization`), NAP complet (Diamniadio / +221771871818 / contact@mossinedigital.com), horaires Lun-Ven 9h-18h, `areaServed: Sénégal`, `priceRange: "$"`, `image: /opengraph-image` (route dynamique). `websiteJsonLd.publisher` migré en référence `@id` (DRY). `og-image.png` dead path nettoyé de `metadata.openGraph.images` (Next auto-injecte depuis `opengraph-image.tsx`, redéclarer créerait des meta tags dupliqués). Validé `tsc --noEmit` + 8/8 Playwright SEO verts.
 - [ ] `+` OG image 1200x630px à créer (demande client)
 - [ ] `+` Favicon + apple-touch-icon définitifs (à partir logo client)
 - [ ] `+` Données placeholder à remplacer (stats, témoignages, portfolio, footer contact)
@@ -429,19 +429,101 @@ Avant d'attaquer chaque tâche, Claude explique **brièvement au client** (1-2 p
 Sprint 5 consolidé — 18 tâches. Exécuter dans l'ordre présenté.
 
 **A. Finir le contenu du site (données client)**
-1. [ ] Remplacer placeholders stats (4 chiffres clés — Stats.tsx)
-2. [ ] Remplacer placeholders témoignages (3 avis — Temoignages.tsx)
-3. [ ] Compléter footer contact (adresse/téléphone/email/horaires — Footer.tsx)
-4. [ ] Favicon + apple-touch-icon définitifs (à partir logo client)
-5. [ ] OG image 1200×630px (demande client — brief visuel)
-6. [ ] JSON-LD `LocalBusiness` (adresse/téléphone/horaires client → layout.tsx)
+1. [x] Stats — résolu 2026-04-21 (option A) : les 4 stats actuelles sont des
+   **engagements vérifiables avant 1er client** (24h réponse, 100% sur-mesure,
+   360° communication, 90+ Lighthouse), pas des chiffres de track-record. Swap
+   vers des métriques clients au fur et à mesure des premiers projets livrés.
+2. [~] Témoignages — décision client 2026-04-21 : section **conservée telle quelle**
+   avec les 3 témoignages actuels (noms et citations fictifs, cf. TODO_CLIENT dans
+   `Temoignages.tsx` l.12 et l.26-28). À revisiter avant go-live ou dès réception
+   d'un 1ᵉʳ vrai témoignage. Risque assumé : fake détectable → crédibilité +
+   consentement RGPD. Cette case **doit être rouverte** si incident signalé.
+3. [x] Footer contact livré (2026-04-21) : email `contact@mossinedigital.com`,
+   téléphone `+221 77 187 18 18`, adresse `Pôle Urbain de Diamniadio, Sortie 11
+   du péage`, horaires `Lun-Ven · 9h-18h (GMT)`. `ContactItem.href` rendu
+   optionnel (adresse + horaires en `<span>` non-cliquables). Réseaux sociaux
+   filtrés automatiquement via `href !== '#'` → bloc masqué tant que les URLs
+   ne sont pas livrées côté client (Facebook/Instagram/TikTok/LinkedIn/WhatsApp
+   en attente). Ces données alimenteront le JSON-LD LocalBusiness (#6).
+4. [x] Favicon + apple-touch-icon livrés (2026-04-21) : source
+   `public/images/logo/logo-mark.png` (2135×2134 RGBA, bleu `#35A7FF`).
+   3 assets générés via `scripts/generate-favicon.mjs` (sharp + png-to-ico) :
+   `app/favicon.ico` (16/32/48 multi-résolution), `app/icon.png` (512×512
+   transparent), `app/apple-icon.png` (180×180 fond blanc, padding 12%).
+   Bloc `icons` retiré de `layout.tsx` → Next.js App Router auto-détecte et
+   injecte les `<link>` avec cache-busting. Régénération : re-run le script
+   après toute mise à jour du PNG source.
+5. [x] OG image 1200×630 livrée (2026-04-21) : composant
+   `app/opengraph-image.tsx` (Next.js App Router ImageResponse). Fond
+   `#1B1F3B` + halos radial-gradient `#35A7FF`/`#FF5964`, monogramme
+   embarqué base64 depuis `logo-mark.png`, wordmark "Mossine Digital." bi-
+   color (blanc + `#35A7FF`), gradient bar `#35A7FF`→`#FF5964`, tagline,
+   domaine + pill "Branding · Web · Ads · SEO". Fonts Syne Bold + Inter
+   Regular fetchées au build depuis fontsource CDN (fallback système
+   si réseau KO). URL `/opengraph-image?<hash>` auto-injectée dans
+   `og:image` + `twitter:image` par Next.js.
+6. [x] JSON-LD `LocalBusiness` livré 2026-04-21 — nœud `LocalBusiness + ProfessionalService`
+   avec `@id` stable (`${SITE_URL}/#organization`), NAP complet (Diamniadio /
+   +221771871818 / contact@mossinedigital.com), horaires Lun-Ven 9h-18h,
+   `areaServed: Sénégal`, `priceRange: "$"`, `image: /opengraph-image` (route
+   dynamique). `websiteJsonLd.publisher` migré en référence `@id` (DRY).
+   `og-image.png` dead path nettoyé de `metadata.openGraph.images` (Next
+   auto-injecte depuis `opengraph-image.tsx`). Validé `tsc --noEmit` + 8/8
+   Playwright SEO verts.
 
 **B. Résoudre la dette a11y bloquante**
-7. [ ] Dette palette Services themed cards + CTA accent — décision designer (rebranding
-   ou assombrissement #35A7FF/#FF5964) puis merge `feat/md-secondary-text`
+7. [x] Dette palette homepage résolue 2026-04-22 (Option 3 hybride validée client).
+   **Tokens ajoutés** dans `globals.css` : `--md-secondary-solid: #0E70C8`
+   (fond porteur de texte blanc, 5.33:1 ✅) et `--md-accent-solid: #C23A46`
+   (5.25:1 ✅). Les tokens vifs `--md-secondary` (#35A7FF) et `--md-accent`
+   (#FF5964) restent pour les décors (halos Aurora, pills, focus-rings,
+   gradient bars OG image).
+   **Services stacking cards** migrées dans [Services.tsx](components/sections/Services.tsx) :
+   - Card Web : bg #35A7FF → #0E70C8, accent #1B1F3B → #FFFFFF, accentOnBg
+     blanc → noir translucide, textMuted 0.88 → 0.96 (composité 4.27:1 ❌ → 4.8:1 ✅)
+   - Card Stratégie : bg #FF5964 → #C23A46, accentOnBg blanc translucide → noir
+     translucide (tag blanc sur blanc-diffus 3.93:1 → 6.9:1 ✅)
+   - Card Community (bg #F0F7FF) : accent #35A7FF → #1B1F3B (bleu vif 2.12:1 ❌
+     → primary 14.3:1 ✅)
+   - Card SEO (bg #FFFFFF) : accent #35A7FF → #1B1F3B (2.58:1 → 14.8:1 ✅)
+   **CTAFinal** migré : `bg-[var(--md-accent)]` → `bg-[var(--md-accent-solid)]`,
+   sous-titre `text-white/70` → `text-white/90` (2.13:1 → 4.54:1), badge
+   `text-white/80` → `text-white` (2.44:1 → 5.25:1), réassurance primary dark
+   → blanc (primary sur #C23A46 = 2.74:1 ❌).
+   **Tests** : test.fixme retiré sur `e2e/homepage.spec.ts`, axe color-contrast
+   homepage = 0 violation WCAG AA. **49/49 Playwright verts** (2 skipped =
+   fixme résiduel services/contact hors scope, dette distincte "accent-text
+   sur fond clair" dans ServiceDetailBlock pills + ContactForm astérisques).
+   Pas de branche feat/md-secondary-text à merger — tokens ajoutés directement
+   sur la base de travail actuelle. Vaccin inline : commentaires JSDoc dans
+   `globals.css` explicitant quand utiliser `-solid` (fonds porteurs de texte)
+   vs. token vif (décor seulement).
 
 **C. Anti-spam formulaire contact**
-8. [ ] hCaptcha côté client + validation serveur (clé hCaptcha gratuite — pas Upstash)
+8. [x] hCaptcha côté client + validation serveur livré (2026-04-21) — mode gracieux
+   double étage : widget ne rend rien sans `NEXT_PUBLIC_HCAPTCHA_SITE_KEY`,
+   `verifyHCaptcha()` retourne `{status:'skipped'}` sans `HCAPTCHA_SECRET_KEY`
+   (mirror du pattern Resend). **Architecture** :
+   (a) `lib/hcaptcha.ts` — helper serveur avec type-safe `VerificationResult`
+   union (success/skipped/missing/failure), POST `api.hcaptcha.com/siteverify`
+   en `URLSearchParams`, timeout 10s via `AbortSignal.timeout`, error-codes
+   remontés à l'action pour logging + exception fallback ;
+   (b) `components/ui/HCaptchaWidget.tsx` — wrapper `@hcaptcha/react-hcaptcha`
+   avec `languageOverride="fr"`, `aria-label="Vérification anti-robot"`, hidden
+   input `name="hcaptcha-token"` pour transmission FormData, reset auto sur
+   expire/error ;
+   (c) `app/contact/actions.ts` — étape 3 insérée entre honeypot et rate-limit,
+   conditionnée par `isHCaptchaEnabled()`, IP extraite depuis `x-forwarded-for`
+   pour `remoteip` ;
+   (d) `ContactForm.tsx` — widget rendu après consentement RGPD, erreur via
+   `errorFor('hcaptcha')` en aria-live polite.
+   **Tests** : 11 tests Vitest `lib/__tests__/hcaptcha.test.ts` (skipped / missing
+   × 4 inputs / success avec+sans IP / failure × 3 scenarios / isHCaptchaEnabled
+   × 3). Validation : `tsc --noEmit` clean + Vitest 43/43 + Playwright 49/49.
+   **Activation prod** : cf. `.env.example` section hCaptcha — créer un site gratuit
+   sur hcaptcha.com puis renseigner les 2 variables. Tant qu'elles sont absentes,
+   le honeypot reste l'unique rempart anti-spam (cohérent MVP, cf. Bucket 2 si
+   volume spam > seuil).
 9. [ ] Resend configuré (API key client + email expéditeur validé)
 
 **D. Déploiement Hostinger Business NVMe**
@@ -521,6 +603,6 @@ Mettre à jour manuellement après chaque session :
 - Sprint 2 : **~93%** ██████████████████░░ 🔵 (Portfolio masqué homepage 2026-04-21 — reste LocalBusiness + placeholders + assets client = Bucket 1 A)
 - Sprint 3 : **~60%** ████████████░░░░░░░░ 🔵 (pages /services + /a-propos + /contact + /politique-conf livrées ; Blog/Portfolio/Sanity **reportés Bucket 2**)
 - Sprint 4 : **~75%** ███████████████░░░░░ 🔵 (dette v3.3 navbar résolue 2026-04-21 + Portfolio hidden ; reste palette a11y + Lighthouse prod = Bucket 1 B/E)
-- Bucket 1 MVP : **0/18** ░░░░░░░░░░░░░░░░░░░░ ⏳ (démarre dès accord sur les données client)
+- Bucket 1 MVP : **7/18** ████████░░░░░░░░░░░░ 🔵 (A terminé ✅ · B #7 ✅ · C #8 hCaptcha ✅ · reste #2 témoignages + #9 Resend + D-E déploiement)
 - Bucket 2 Post-MVP : activé à la demande
 - Sprint 6 : **0%** (semaine 1 post go-live)

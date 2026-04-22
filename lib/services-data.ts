@@ -26,7 +26,6 @@ export type ServiceIconKey =
   | 'palette'
   | 'globe'
   | 'chat'
-  | 'megaphone'
   | 'magnifier'
   | 'chart'
 
@@ -66,8 +65,8 @@ export const SERVICES_DETAIL: ServiceDetail[] = [
   {
     id: 'identite',
     number: '01',
-    title: 'Identité visuelle & Branding',
-    eyebrow: 'Identité · Branding',
+    title: 'Branding & identité visuelle',
+    eyebrow: 'Branding · Identité',
     navLabel: 'Branding',
     problem:
       '75 % des décisions d\u2019achat se jouent sur la perception de marque, avant même le produit.',
@@ -89,7 +88,7 @@ export const SERVICES_DETAIL: ServiceDetail[] = [
     timeline: '3 à 5 semaines',
     image: '/images/hero/service-identite.webp',
     imageAlt:
-      'Illustration du service Identité visuelle & Branding — construction d\u2019un système de marque cohérent : logo, palette, typographie et guidelines.',
+      'Illustration du service Branding & identité visuelle — construction d\u2019un système de marque cohérent : logo, palette, typographie et guidelines.',
     iconKey: 'palette',
     accent: '#35A7FF',
   },
@@ -127,106 +126,75 @@ export const SERVICES_DETAIL: ServiceDetail[] = [
   {
     id: 'social',
     number: '03',
-    title: 'Community Management',
-    eyebrow: 'Social · Éditorial',
-    navLabel: 'Gestion communauté',
+    title: 'Gestion des réseaux sociaux',
+    eyebrow: 'Réseaux sociaux · Éditorial',
+    navLabel: 'Réseaux sociaux',
     problem:
-      'Vos followers scrollent 90 publications par minute. La vôtre retient-elle leur pouce ?',
+      'Vos abonnés scrollent 90 publications par minute sur Instagram, TikTok et LinkedIn. La vôtre retient-elle leur pouce ?',
     promise:
-      'On construit une ligne éditoriale qui parle comme vos clients et répond comme vous — et on tient le rythme, mois après mois.',
+      'On gère vos réseaux sociaux de bout en bout — stratégie éditoriale, création de contenus, animation de communauté et reporting — pour transformer vos abonnés en clients.',
     approach: [
-      'Stratégie éditoriale — piliers de contenu, ton, plateformes prioritaires',
-      'Calendrier 30 / 60 / 90 jours validé à l\u2019avance',
-      'Création de contenus — visuels, carrousels, reels, stories',
-      'Animation de communauté — réponses quotidiennes, DM, modération',
-      'Reporting mensuel avec KPIs clairs (reach, engagement, conversion)',
+      'Stratégie éditoriale — piliers de contenu, ton de marque, plateformes prioritaires (Instagram, Facebook, LinkedIn, TikTok)',
+      'Calendrier éditorial 30 / 60 / 90 jours validé à l\u2019avance',
+      'Création de contenus — visuels, carrousels, reels, stories, posts LinkedIn',
+      'Animation de communauté — réponses quotidiennes, DM, modération 7j/7',
+      'Reporting mensuel avec KPIs clairs (reach, engagement, abonnés, conversions)',
     ],
     deliverables: [
       'Ligne éditoriale formalisée + charte de ton',
-      'Calendrier éditorial mensuel en amont',
-      '12 à 20 contenus / mois (selon forfait)',
+      'Calendrier éditorial mensuel validé en amont',
+      '12 à 20 contenus / mois (visuels, reels, carrousels — selon forfait)',
       'Modération 7j/7 sur les canaux prioritaires',
-      'Reporting performance mensuel PDF + visio',
+      'Reporting performance mensuel PDF + visio de debrief',
     ],
     timeline: 'Engagement mensuel (3 mois minimum)',
     image: '/images/hero/service-community.webp',
     imageAlt:
-      'Illustration du service Community Management — animation éditoriale régulière sur les réseaux sociaux, création de contenus et modération.',
+      'Illustration du service Gestion des réseaux sociaux — animation éditoriale sur Instagram, Facebook, LinkedIn et TikTok, création de contenus et modération.',
     iconKey: 'chat',
     accent: '#35A7FF',
   },
   {
-    id: 'ads',
+    id: 'seo',
     number: '04',
-    title: 'Campagnes Ads',
-    eyebrow: 'Ads · Acquisition',
-    navLabel: 'Publicité',
+    title: 'Référencement & campagnes publicitaires',
+    eyebrow: 'SEO · SEA · Ads',
+    navLabel: 'Référencement & Ads',
     problem:
-      'Chaque franc CFA mal investi en Ads, c\u2019est dix francs de chiffre d\u2019affaires raté.',
+      'Vous dépensez en publicité sans savoir ce qui rapporte. Vous rêvez d\u2019arriver en tête de Google sans payer à chaque clic. Les deux sont possibles — mais pas sans méthode.',
     promise:
-      'On pilote vos campagnes Meta, Google et TikTok à la donnée : chaque franc CFA dépensé est tracé, chaque A/B test documenté, chaque optimisation argumentée.',
+      'On combine référencement naturel (SEO), référencement payant (SEA) et campagnes publicitaires sociales (Meta, LinkedIn, TikTok Ads) dans une seule stratégie d\u2019acquisition pilotée par la donnée.',
     approach: [
-      'Audit de vos comptes publicitaires existants',
-      'Personas + parcours d\u2019achat + stratégie multi-canaux',
-      'Setup tracking avancé — pixel, events, conversions serveur',
-      'Création de visuels + copies + landing pages dédiées',
-      'Optimisation hebdomadaire — budget, audiences, créations',
+      'Audit technique 360° — crawl, Core Web Vitals, indexation, comptes publicitaires existants',
+      'Stratégie de mots-clés SEO + cocon sémantique + personas SEA/Ads',
+      'Optimisations on-page — balises, structure Hn, maillage interne, contenus optimisés',
+      'Setup tracking avancé — Google Ads, Meta Pixel, LinkedIn Insight Tag, TikTok Pixel, Conversion API',
+      'Pilotage des campagnes Meta, Google, LinkedIn et TikTok Ads — A/B tests hebdomadaires, optimisation ROI',
     ],
     deliverables: [
-      'Audit compte existant (si applicable)',
-      'Structure de campagnes Meta / Google / TikTok',
-      'Tracking complet — Pixel + Conversion API',
-      'Créations A/B testées chaque mois',
-      'Reporting hebdomadaire + point mensuel',
+      'Audit SEO complet (80–100 points) + audit comptes publicitaires',
+      'Arborescence sémantique + 20 à 50 mots-clés priorisés',
+      'Structure de campagnes Meta / Google / LinkedIn / TikTok Ads',
+      'Tracking complet cross-canal (Pixel + Conversion API serveur)',
+      'Dashboard unifié + reporting mensuel (positions SEO, trafic, ROAS, CPL, conversions)',
     ],
-    timeline: 'Setup 2 à 3 semaines + gestion mensuelle',
-    image: '/images/hero/service-social-media.webp',
+    timeline: 'Setup 3 à 4 semaines · premiers signaux Ads à 4-6 semaines · résultats SEO solides 3 à 6 mois',
+    image: '/images/hero/service-logo.webp',
     imageAlt:
-      'Illustration du service Campagnes Ads — pilotage de campagnes publicitaires Meta, Google et TikTok avec tracking avancé.',
-    iconKey: 'megaphone',
+      'Illustration du service Référencement & campagnes publicitaires — SEO organique, SEA Google Ads et campagnes publicitaires Meta, LinkedIn, TikTok pilotées par la donnée.',
+    iconKey: 'magnifier',
     accent: '#FF5964',
   },
   {
-    id: 'seo',
-    number: '05',
-    title: 'SEO & SEA',
-    eyebrow: 'Référencement · Trafic',
-    navLabel: 'Référencement',
-    promise:
-      'On construit un trafic organique durable — audit technique, contenus optimisés, netlinking qualifié, suivi transparent.',
-    problem:
-      'Vous apparaissez sur Google. Apparaissez-vous au bon moment, sur les bonnes requêtes, devant les bonnes personnes ?',
-    approach: [
-      'Audit technique 360° — crawl, Core Web Vitals, erreurs indexation',
-      'Stratégie de mots-clés + cocon sémantique',
-      'Optimisations on-page — balises, structure Hn, maillage interne',
-      'Production de contenus SEO-friendly (si demandé)',
-      'Netlinking qualifié — pas de PBN, pas de spam',
-    ],
-    deliverables: [
-      'Audit SEO complet (80–100 points)',
-      'Arborescence sémantique + 20 à 50 mots-clés priorisés',
-      'Optimisations techniques et éditoriales',
-      'Acquisition de 5 à 15 backlinks qualifiés / mois',
-      'Dashboard + reporting mensuel (positions, trafic, conversions)',
-    ],
-    timeline: 'Résultats visibles 3 à 6 mois — engagement 6 mois minimum',
-    image: '/images/hero/service-logo.webp',
-    imageAlt:
-      'Illustration du service Référencement SEO & SEA — construction d\u2019un trafic organique durable, audit technique et stratégie de mots-clés.',
-    iconKey: 'magnifier',
-    accent: '#35A7FF',
-  },
-  {
     id: 'strategie',
-    number: '06',
-    title: 'Stratégie communication & marketing digitale',
+    number: '05',
+    title: 'Stratégie communication & marketing digital',
     eyebrow: 'Stratégie · 360° · Flagship',
     navLabel: 'Stratégie',
     problem:
-      'Six outils, six prestataires, six visions différentes. Comment avancer vraiment ?',
+      'Cinq leviers, cinq prestataires, cinq visions différentes. Comment avancer vraiment ?',
     promise:
-      'L\u2019approche signature Mossine : une roadmap sur-mesure qui aligne branding, web, social, SEO et ads autour de vos objectifs business. Pilotée par la donnée.',
+      'L\u2019approche signature Mossine : une roadmap sur-mesure qui aligne branding, web, réseaux sociaux, référencement et publicité autour de vos objectifs business. Pilotée par la donnée.',
     approach: [
       'Diagnostic 360° — marque, audiences, concurrence, maturité digitale',
       'Objectifs SMART alignés avec votre plan business',
@@ -244,7 +212,7 @@ export const SERVICES_DETAIL: ServiceDetail[] = [
     timeline: 'Mission stratégique 6 à 8 semaines + accompagnement annuel',
     image: '/images/hero/service-strategie.webp',
     imageAlt:
-      'Illustration du service Stratégie communication & marketing digitale — roadmap 360° alignant branding, web, social, SEO et ads.',
+      'Illustration du service Stratégie communication & marketing digital — roadmap 360° alignant branding, web, réseaux sociaux, référencement et publicité.',
     iconKey: 'chart',
     accent: '#FF5964',
     flagship: true,
@@ -269,7 +237,7 @@ export const SERVICES_FAQ: FAQItem[] = [
   {
     question: 'Peut-on prendre un seul service ou faut-il tout prendre ?',
     answer:
-      'Chaque service est accessible en autonomie. Vous pouvez démarrer par une refonte de site, une campagne Ads ciblée ou un audit SEO. Si plusieurs leviers sont engagés en parallèle, l\u2019offre Stratégie les coordonne pour maximiser l\u2019impact.',
+      'Chaque service est accessible en autonomie. Vous pouvez démarrer par une refonte de site, un audit SEO ou une campagne Ads ciblée. Si plusieurs leviers sont engagés en parallèle, l\u2019offre Stratégie les coordonne pour maximiser l\u2019impact.',
   },
   {
     question: 'Quels sont vos délais de réponse ?',

@@ -14,7 +14,6 @@ import {
   PaletteIcon,
   GlobeIcon,
   ChatCircleDotsIcon,
-  MegaphoneSimpleIcon,
   MagnifyingGlassIcon,
   ChartLineUpIcon,
   ArrowUpRightIcon,
@@ -22,7 +21,7 @@ import {
 import { EASE_OUT_EXPR as EASE } from '@/lib/motion'
 
 // ─────────────────────────────────────────────────────────────────
-//  DONNÉES — 6 services + thèmes de couleur Mossine Digital
+//  DONNÉES — 5 services + thèmes de couleur Mossine Digital
 // ─────────────────────────────────────────────────────────────────
 
 type PhosphorIcon = React.ComponentType<{
@@ -52,7 +51,7 @@ interface Service {
 const SERVICES: Service[] = [
   {
     id: 'identite',
-    title: 'Identité visuelle & Branding',
+    title: 'Branding & identité visuelle',
     summary:
       'Logo, charte graphique et système de marque cohérent pour imposer votre signature visuelle partout où vos clients vous rencontrent.',
     href: '/services',
@@ -75,18 +74,24 @@ const SERVICES: Service[] = [
     image: '/images/hero/service-web.webp',
     icon: GlobeIcon,
     theme: {
-      bg: '#35A7FF',
+      // #0E70C8 (token --md-secondary-solid) au lieu de #35A7FF pour WCAG AA :
+      // blanc sur #0E70C8 = 5.33:1 ✅ vs 2.58:1 ❌ sur le bleu vif.
+      bg: '#0E70C8',
       text: '#FFFFFF',
-      textMuted: 'rgba(255,255,255,0.85)',
-      accent: '#1B1F3B',
-      accentOnBg: 'rgba(27,31,59,0.14)',
+      // 0.96 (au lieu de 0.88) : composited white@0.88 sur #0E70C8 = 4.27:1 ❌.
+      // Seuil strict AA 4.5:1 atteint à partir de 0.95.
+      textMuted: 'rgba(255,255,255,0.96)',
+      // Accent blanc + fond noir translucide (pattern cohérent avec card Stratégie)
+      // — primary dark #1B1F3B sur #0E70C8 = 3.19:1 ❌, blanc = 5.33:1 ✅.
+      accent: '#FFFFFF',
+      accentOnBg: 'rgba(0,0,0,0.22)',
     },
   },
   {
-    id: 'community',
-    title: 'Community Management',
+    id: 'social',
+    title: 'Gestion des réseaux sociaux',
     summary:
-      'Stratégie éditoriale, création de contenus et animation de communauté au quotidien. On parle comme vos clients, on répond comme vous.',
+      'Stratégie éditoriale, création de contenus et animation de communauté sur Instagram, Facebook, LinkedIn et TikTok. On parle comme vos clients, on répond comme vous.',
     href: '/services',
     image: '/images/hero/service-community.webp',
     icon: ChatCircleDotsIcon,
@@ -94,56 +99,48 @@ const SERVICES: Service[] = [
       bg: '#F0F7FF',
       text: '#1B1F3B',
       textMuted: 'rgba(27,31,59,0.7)',
-      accent: '#35A7FF',
-      accentOnBg: 'rgba(53,167,255,0.14)',
-    },
-  },
-  {
-    id: 'ads',
-    title: 'Campagnes Ads',
-    summary:
-      'Campagnes Meta, Google et TikTok Ads ciblées, pilotées par la donnée, optimisées ROI. Chaque franc CFA investi est tracé, mesuré, amplifié.',
-    href: '/services',
-    image: '/images/hero/service-social-media.webp',
-    icon: MegaphoneSimpleIcon,
-    theme: {
-      bg: '#10132A',
-      text: '#FFFFFF',
-      textMuted: 'rgba(255,255,255,0.7)',
-      accent: '#FF5964',
-      accentOnBg: 'rgba(255,89,100,0.16)',
+      // Primary au lieu de #35A7FF : bleu vif sur bleu très clair = 2.12:1 ❌,
+      // primary #1B1F3B sur #F0F7FF = 14.3:1 ✅. Hiérarchie préservée : le bleu
+      // vif reste utilisé sur les cards à fond sombre (cf. card Identité).
+      accent: '#1B1F3B',
+      accentOnBg: 'rgba(27,31,59,0.10)',
     },
   },
   {
     id: 'seo',
-    title: 'SEO & SEA',
+    title: 'Référencement & campagnes publicitaires',
     summary:
-      'Audit technique, contenus optimisés, gestion campagne, optimisation ROI et netlinking pour un trafic organique durable. Le Graal : apparaître avant vos concurrents.',
+      'SEO organique, Google Ads, Meta Ads, LinkedIn Ads et TikTok Ads pilotés dans une seule stratégie d\u2019acquisition. Chaque franc CFA investi est tracé, chaque position Google suivie, chaque optimisation argumentée.',
     href: '/services',
     image: '/images/hero/service-logo.webp',
     icon: MagnifyingGlassIcon,
     theme: {
-      bg: '#FFFFFF',
-      text: '#1B1F3B',
-      textMuted: 'rgba(27,31,59,0.65)',
-      accent: '#35A7FF',
-      accentOnBg: 'rgba(53,167,255,0.12)',
+      // #C23A46 (token --md-accent-solid) — cohérent WCAG AA (blanc sur #C23A46 = 5.25:1).
+      // Rouge = signal visuel fort pour le levier d'acquisition mixte SEO/SEA/Ads.
+      bg: '#C23A46',
+      text: '#FFFFFF',
+      textMuted: 'rgba(255,255,255,0.92)',
+      accent: '#FFFFFF',
+      // Noir translucide (pattern uniforme avec Web + Stratégie).
+      accentOnBg: 'rgba(0,0,0,0.22)',
     },
   },
   {
     id: 'strategie',
-    title: 'Stratégie communication & marketing digitale',
+    title: 'Stratégie communication & marketing digital',
     summary:
-      'Une roadmap sur-mesure qui aligne branding, web, social media, SEO et ads autour de vos objectifs business — l\u2019approche signature Mossine, 360° et pilotée par la donnée.',
+      'Une roadmap sur-mesure qui aligne branding, web, réseaux sociaux, référencement et publicité autour de vos objectifs business — l\u2019approche signature Mossine, 360° et pilotée par la donnée.',
     href: '/services',
     image: '/images/hero/service-strategie.webp',
     icon: ChartLineUpIcon,
     theme: {
-      bg: '#FF5964',
+      // Dark deep (footer-level) pour clôturer le stacking avec impact
+      // flagship. Accent bleu vif #35A7FF sur fond très sombre = 9.08:1 ✅.
+      bg: '#10132A',
       text: '#FFFFFF',
-      textMuted: 'rgba(255,255,255,0.88)',
-      accent: '#FFFFFF',
-      accentOnBg: 'rgba(255,255,255,0.16)',
+      textMuted: 'rgba(255,255,255,0.72)',
+      accent: '#35A7FF',
+      accentOnBg: 'rgba(53,167,255,0.16)',
     },
   },
 ]

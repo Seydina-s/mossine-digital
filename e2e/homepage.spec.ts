@@ -56,12 +56,13 @@ test.describe('Homepage /', () => {
     ).toEqual([])
   })
 
-  // Dette palette "secondary as text" résolue via `--md-secondary-text: #0E70C8`
-  // (branche feat/md-secondary-text).
-  // Dette résiduelle : Services stacking cards themed (#35A7FF bg + white text = 2.58:1)
-  // et CTA accent (#FF5964 bg + white text = 3.05:1). Demande rebranding ou texte assombri.
-  // Doc : .claude/session/AUDIT_OWASP.md §Dette palette + Services themed.
-  test.fixme('a11y color-contrast (dette themed cards + accent CTA)', async ({ page }) => {
+  // Dette palette résolue 2026-04-21 (Bucket 1 #7, Option 3 hybride) :
+  //   - Card Web : bg migré #35A7FF → #0E70C8 (token --md-secondary-solid), blanc = 5.33:1
+  //   - Card Stratégie : bg migré #FF5964 → #C23A46 (token --md-accent-solid), blanc = 5.25:1
+  //   - CTAFinal : bg migré + opacités textes remontées (sous-titre 0.70→0.90, badge 0.80→1.0)
+  // Les couleurs vives #35A7FF et #FF5964 restent utilisées comme décor (halos Aurora,
+  // pills, liens, focus-rings, gradient bars) où le contraste de texte ne s'applique pas.
+  test('a11y color-contrast (après migration tokens solid)', async ({ page }) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
 
@@ -70,7 +71,12 @@ test.describe('Homepage /', () => {
       .withRules(['color-contrast'])
       .analyze()
 
-    expect(results.violations).toEqual([])
+    expect(
+      results.violations,
+      results.violations
+        .flatMap((v) => v.nodes.map((n) => `${v.id} @ ${n.target.join(' ')}: ${n.failureSummary}`))
+        .join('\n'),
+    ).toEqual([])
   })
 
   test('metadata SEO présente et cohérente', async ({ page }) => {
@@ -85,8 +91,12 @@ test.describe('Homepage /', () => {
     const canonical = await page.locator('link[rel="canonical"]').getAttribute('href')
     expect(canonical).toMatch(/^https?:\/\//)
 
-    // JSON-LD WebSite schema attendu (layout.tsx).
-    const ldJson = await page.locator('script[type="application/ld+json"]').first().textContent()
-    expect(ldJson).toContain('WebSite')
+    // JSON-LD : 2 nœuds attendus dans layout.tsx — LocalBusiness (NAP + horaires)
+    // et WebSite (référencé par @id). L'ordre du DOM ne doit pas être vérouillé
+    // en dur car il peut changer selon l'ordre d'injection dans <head>.
+    const ldJsonBlocks = await page.locator('script[type="application/ld+json"]').allTextContents()
+    const joined = ldJsonBlocks.join('\n')
+    expect(joined).toContain('LocalBusiness')
+    expect(joined).toContain('WebSite')
   })
 })

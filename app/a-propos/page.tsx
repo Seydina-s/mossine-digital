@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { AboutHero } from '@/components/about/AboutHero'
 import { AboutManifesto } from '@/components/about/AboutManifesto'
+import { AboutMissionVision } from '@/components/about/AboutMissionVision'
 import { AboutValues } from '@/components/about/AboutValues'
 import { AboutMethod } from '@/components/about/AboutMethod'
 import { CTAFinal } from '@/components/sections/CTAFinal'
@@ -12,7 +13,7 @@ import { SITE_URL } from '@/lib/site-config'
 // ─────────────────────────────────────────────────────────────────
 
 const PAGE_DESCRIPTION =
-  "Mossine Digital est une agence de communication et marketing digital 360° pensée pour aligner branding, web, SEO, ads et community autour d'un même objectif business. Pour les marques, les causes et les ONG qui veulent rendre visible ce qui compte."
+  "Mossine Digital est une agence de communication digitale et de branding basée à Dakar, au Sénégal. Nous accompagnons les entreprises, institutions et organisations qui veulent affirmer leur présence en ligne, construire une image forte et transformer leur communication en levier de croissance — en Afrique comme à l'international."
 
 export const metadata: Metadata = {
   title: "L'agence",
@@ -66,7 +67,7 @@ const aboutJsonLd = {
         name: 'Mossine Digital',
         url: SITE_URL,
         description:
-          "Agence de communication et marketing digital 360° pour les marques, les causes et les ONG qui veulent rendre visible ce qui compte.",
+          "Agence de communication digitale et de branding basée à Dakar (Sénégal). Nous accompagnons les entreprises, les institutions et les organisations qui veulent affirmer leur présence en ligne, construire une image forte et transformer leur communication en levier de croissance.",
       },
     },
   ],
@@ -94,6 +95,7 @@ export default function AProposPage() {
       <main>
         <AboutHero />
         <AboutManifesto />
+        <AboutMissionVision />
         <AboutValues />
         <AboutMethod />
         <CTAFinal />

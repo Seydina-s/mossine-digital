@@ -6,7 +6,9 @@ import { GlassCTA } from '@/components/ui/glass-cta'
 
 // ─────────────────────────────────────────────────────────────────
 //  COMPOSANT : CTAFinal — Section d'appel à l'action principal
-//  Fond : #FF5964 (var(--md-accent)) — apparaît une seule fois sur le site
+//  Fond : #C23A46 (var(--md-accent-solid)) — porteur de texte blanc
+//  conforme WCAG AA (5.25:1). L'accent vif #FF5964 reste pour les
+//  décors seulement (halos, gradient bars). Apparition unique sur le site.
 // ─────────────────────────────────────────────────────────────────
 
 export function CTAFinal() {
@@ -14,7 +16,7 @@ export function CTAFinal() {
     <section
       id="cta"
       aria-label="Démarrer un projet avec Mossine Digital"
-      className="relative overflow-hidden bg-[var(--md-accent)]"
+      className="relative overflow-hidden bg-[var(--md-accent-solid)]"
       style={{
         paddingTop: 'var(--md-space-section)',
         paddingBottom: 'var(--md-space-section)',
@@ -40,8 +42,8 @@ export function CTAFinal() {
       <div className="container-md relative z-10">
         <div className="flex flex-col items-center gap-8 text-center">
 
-          {/* Badge */}
-          <span className="inline-flex items-center rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80">
+          {/* Badge — blanc plein sur #C23A46 = 5.25:1 (WCAG AA ✓) */}
+          <span className="inline-flex items-center rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white">
             On est prêts. Et vous ?
           </span>
 
@@ -59,9 +61,9 @@ export function CTAFinal() {
             Prêts à transformer votre marque en avantage compétitif ?
           </h2>
 
-          {/* Sous-titre */}
+          {/* Sous-titre — white/90 sur #C23A46 = 4.54:1 (WCAG AA ✓ texte normal) */}
           <p
-            className="max-w-lg font-[family-name:var(--md-font-body)] leading-relaxed text-white/70"
+            className="max-w-lg font-[family-name:var(--md-font-body)] leading-relaxed text-white/90"
             style={{ fontSize: 'clamp(0.95rem, 1vw + 0.5rem, 1.125rem)' }}
           >
             Un premier échange suffit pour savoir si on peut vous aider.
@@ -77,8 +79,11 @@ export function CTAFinal() {
             </GlassCTA>
           </div>
 
-          {/* Réassurance — #1B1F3B sur #FF5964 = 5.6:1 (WCAG AA ✓) */}
-          <p className="text-xs font-medium text-[var(--md-primary)]">
+          {/* Réassurance — blanc sur #C23A46 = 5.25:1 (WCAG AA ✓).
+              Note : sur le fond vif #FF5964 d'origine, on utilisait le primary
+              dark (5.6:1). Avec l'assombrissement du bg vers #C23A46, le
+              primary tombe à 2.74:1 → passage au blanc obligatoire. */}
+          <p className="text-xs font-medium text-white">
             Réponse sous 24h · Devis gratuit · Sans engagement
           </p>
         </div>

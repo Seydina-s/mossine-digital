@@ -126,8 +126,9 @@ export function AboutMethod() {
         <div className="mx-auto mt-14 flex max-w-3xl flex-col items-center gap-4 text-center">
           <p className="text-[15px] text-[var(--md-primary)]/70 sm:text-base">
             Cette méthode se décline différemment selon le levier — branding,
-            web, SEO, ads, community, stratégie. Chaque offre détaille sa
-            propre approche.
+            site web, réseaux sociaux, référencement & campagnes
+            publicitaires, stratégie 360°. Chaque offre détaille sa propre
+            approche.
           </p>
           <Link
             href="/services"

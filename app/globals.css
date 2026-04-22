@@ -7,6 +7,12 @@
     --md-accent:           #FF5964;
     --md-accent-hover:     #E8424D;
     --md-accent-light:     #FFE8E9;
+    /* Fond porteur de texte blanc — #C23A46 donne 5.25:1 avec blanc (AA
+       texte normal). #FF5964 échoue 3.05:1 (juste limite texte large).
+       Usage : section CTAFinal et card Services "Stratégie". --md-accent
+       (#FF5964) reste réservé aux décors (halos Aurora, gradient bars,
+       liens hover, ring focus sur fond clair). */
+    --md-accent-solid:     #C23A46;
     --md-primary:          #1B1F3B;
     --md-primary-light:    #E8EAF6;
     --md-secondary:        #35A7FF;
@@ -15,6 +21,12 @@
        --md-secondary pour les focus rings / icônes décoratives / fonds sombres
        (où l'éclat reste lisible). Ref : .claude/session/AUDIT_OWASP.md §Annexe. */
     --md-secondary-text:   #0E70C8;
+    /* Fond porteur de texte blanc — #0E70C8 donne 5.33:1 sur #FFFFFF et
+       5.33:1 pour blanc sur #0E70C8 (symétrique). Usage : cards Services
+       et tout bloc où du texte blanc se pose sur fond "brand bleu".
+       --md-secondary (#35A7FF) reste réservé aux décors (halos Aurora,
+       gradient bars, pills, focus-rings, liens sur fond sombre). */
+    --md-secondary-solid:  #0E70C8;
     --md-secondary-hover:  #1A97F5;
     --md-secondary-light:  #F0F7FF;
     --md-bg:               #FFFFFF;

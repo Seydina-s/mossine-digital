@@ -22,6 +22,7 @@ import {
   type ContactActionState,
 } from '@/app/contact/actions'
 import { EASE_OUT_EXPR as EASE } from '@/lib/motion'
+import { HCaptchaWidget } from '@/components/ui/HCaptchaWidget'
 
 // ─────────────────────────────────────────────────────────────────
 //  ContactForm
@@ -209,6 +210,11 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
             {errorFor('consent')}
           </p>
         )}
+
+        {/* ── hCaptcha anti-spam ── Widget gracieux : ne rend rien sans
+             NEXT_PUBLIC_HCAPTCHA_SITE_KEY. Le token est transmis via
+             hidden input `hcaptcha-token` capturé par le server action. */}
+        <HCaptchaWidget error={errorFor('hcaptcha')} />
 
         {/* ── Feedback global ── */}
         {state.status === 'success' && (

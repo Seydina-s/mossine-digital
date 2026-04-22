@@ -1,16 +1,18 @@
 import {
-  CompassIcon,
-  ShieldCheckIcon,
-  EyeIcon,
+  MedalIcon,
   HandshakeIcon,
+  LightbulbFilamentIcon,
+  TargetIcon,
+  MapPinIcon,
+  TrendUpIcon,
 } from '@phosphor-icons/react/dist/ssr'
 import type { PhosphorIcon } from '@/lib/types'
 
 // ─────────────────────────────────────────────────────────────────
-//  AboutValues — 4 piliers qui guident chaque décision.
-//  Server component, contenu 100 % basé sur les standards non-
-//  négociables documentés dans CLAUDE.md (qualité, sécurité OWASP,
-//  a11y WCAG, transparence).
+//  AboutValues — 6 valeurs qui guident chaque projet.
+//  Contenu aligné avec la vision Mossine Digital (présentation
+//  client 2026-04-22) : excellence, confiance, créativité, impact,
+//  ancrage local, amélioration continue.
 // ─────────────────────────────────────────────────────────────────
 
 interface Value {
@@ -22,31 +24,45 @@ interface Value {
 
 const VALUES: readonly Value[] = [
   {
-    icon: CompassIcon,
-    title: 'Clarté avant tout',
+    icon: MedalIcon,
+    title: 'Excellence',
     description:
-      "Une idée simple, bien formulée, vaut mieux qu'une construction brillante mais illisible. Chaque livrable doit passer l'épreuve des cinq secondes — qui, pour qui, pourquoi.",
+      "Nous visons le niveau le plus haut sur chaque livrable — design, code, copy, performance. Pas d'approximation, pas de raccourci : ce qui sort de chez nous doit tenir la comparaison avec ce qui se fait de mieux, ici comme ailleurs.",
     accent: '#35A7FF',
-  },
-  {
-    icon: ShieldCheckIcon,
-    title: 'Rigueur technique',
-    description:
-      "Code TypeScript strict, tests automatisés, sécurité OWASP, accessibilité WCAG 2.2 AA, performance mesurée. La qualité n'est pas un bonus — c'est un prérequis.",
-    accent: '#35A7FF',
-  },
-  {
-    icon: EyeIcon,
-    title: 'Transparence totale',
-    description:
-      "Vous voyez les chiffres bruts, pas seulement les slides qui les résument. Dashboards ouverts, rapports détaillés, arbitrages expliqués. Aucune magie noire.",
-    accent: '#FF5964',
   },
   {
     icon: HandshakeIcon,
-    title: 'Engagement long terme',
+    title: 'Confiance',
     description:
-      "Nous travaillons avec peu de clients pour avancer vite avec chacun, pas avec beaucoup pour remplir des heures. Une relation se construit dans la durée — pas dans les KPIs trimestriels.",
+      "Une relation claire, tenue dans la durée. Nous parlons vrai sur ce qui marche, ce qui ne marche pas, ce qui coûte et ce qui paie. Vos données sont protégées, vos décisions respectées, vos budgets utilisés avec discernement.",
+    accent: '#35A7FF',
+  },
+  {
+    icon: LightbulbFilamentIcon,
+    title: 'Créativité',
+    description:
+      "Nous refusons les modèles copiés-collés. Chaque marque, chaque cause, chaque campagne mérite une réponse pensée pour elle — ancrée dans sa culture, différenciante sur son marché, mémorable pour son audience.",
+    accent: '#FF5964',
+  },
+  {
+    icon: TargetIcon,
+    title: 'Impact',
+    description:
+      "Nous ne livrons pas des projets, nous livrons des résultats : visibilité qui se mesure, audiences qui se convertissent, causes qui se financent, marques qui se reconnaissent. Si ça ne bouge pas l'aiguille, ça ne quitte pas l'atelier.",
+    accent: '#FF5964',
+  },
+  {
+    icon: MapPinIcon,
+    title: 'Ancrage local',
+    description:
+      "Nous sommes à Dakar, nous pensons l'Afrique. Nous connaissons les langues, les codes, les habitudes digitales, les canaux qui performent ici — et nous les utilisons pour parler juste aux audiences sénégalaises et africaines.",
+    accent: '#35A7FF',
+  },
+  {
+    icon: TrendUpIcon,
+    title: 'Amélioration continue',
+    description:
+      "Le digital ne s'arrête jamais. Nouveaux formats, nouveaux algorithmes, nouveaux usages. Nous apprenons, testons, ajustons — pour que vos dispositifs restent performants demain, pas seulement le jour de la livraison.",
     accent: '#FF5964',
   },
 ]
@@ -77,18 +93,19 @@ export function AboutValues() {
               lineHeight: 1.05,
             }}
           >
-            Quatre convictions, tenues à chaque projet.
+            Six convictions, tenues à chaque projet.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-[var(--md-primary)]/70 sm:text-base">
-            Ces principes décident des clients qu&rsquo;on accepte, des projets
-            qu&rsquo;on refuse, des méthodes qu&rsquo;on impose. Ils sont le
-            filtre de toutes nos décisions.
+            Ces valeurs décident des clients que nous accompagnons, des projets
+            que nous refusons, de la manière dont nous travaillons. Elles sont
+            le filtre de toutes nos décisions — et votre garantie sur la
+            qualité de la collaboration.
           </p>
         </div>
 
         <ul
           role="list"
-          className="mx-auto mt-14 grid max-w-5xl gap-6 sm:grid-cols-2 lg:gap-8"
+          className="mx-auto mt-14 grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8"
         >
           {VALUES.map((value) => {
             const Icon = value.icon

@@ -85,7 +85,7 @@ export function AboutHero() {
             variants={item}
             className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--md-secondary)] sm:text-xs"
           >
-            L&rsquo;agence · Mossine Digital
+            L&rsquo;agence · Dakar, Sénégal
           </motion.p>
 
           <motion.h1
@@ -99,19 +99,22 @@ export function AboutHero() {
               lineHeight: 1.02,
             }}
           >
-            Une agence construite autour d&rsquo;une{' '}
-            <span className="italic text-[var(--md-secondary)]">idée</span>&nbsp;:
-            rendre visible ce qui compte.
+            Depuis Dakar, pour{' '}
+            <span className="italic text-[var(--md-secondary)]">
+              l&rsquo;Afrique qui se transforme
+            </span>
+            .
           </motion.h1>
 
           <motion.p
             variants={item}
             className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/60 sm:text-[17px]"
           >
-            Pas une galaxie de prestataires qui ne se parlent pas. Pas un
-            catalogue de services sans cohérence. Une équipe restreinte qui
-            pense chaque levier — branding, web, contenu, acquisition, SEO —
-            comme une seule conversation avec votre audience.
+            Mossine Digital est une agence de communication digitale et de
+            branding basée à Dakar, au Sénégal. Nous accompagnons les
+            entreprises, les institutions et les organisations qui souhaitent
+            affirmer leur présence en ligne, construire une image forte et
+            transformer leur communication en levier de croissance.
           </motion.p>
 
           <motion.div

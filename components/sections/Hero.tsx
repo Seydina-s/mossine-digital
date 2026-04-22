@@ -11,7 +11,6 @@ import {
   ArrowUpRightIcon,
   GlobeIcon,
   PaletteIcon,
-  RocketIcon,
   ChatCircleDotsIcon,
   ChartLineUpIcon,
   MagnifyingGlassIcon,
@@ -31,12 +30,12 @@ interface Service {
   image: string
 }
 
-// Showcase Hero — 6 services canoniques, alignés sur SERVICES_DETAIL.
-// Ordre pensé pour la rotation : identité → web → community → ads →
-// SEO → stratégie (la flagship en fin pour clôturer la promesse 360°).
+// Showcase Hero — 5 services canoniques, alignés sur SERVICES_DETAIL.
+// Ordre pensé pour la rotation : branding → web → réseaux sociaux →
+// référencement & Ads → stratégie (flagship en fin pour clôturer la promesse 360°).
 const SERVICES: Service[] = [
   {
-    label: 'Identité visuelle & Branding',
+    label: 'Branding & identité visuelle',
     tag: '01 — Branding',
     icon: PaletteIcon,
     image: '/images/hero/service-identite.webp',
@@ -48,26 +47,20 @@ const SERVICES: Service[] = [
     image: '/images/hero/service-web.webp',
   },
   {
-    label: 'Community Management',
-    tag: '03 — Gestion communauté',
+    label: 'Gestion des réseaux sociaux',
+    tag: '03 — Réseaux sociaux',
     icon: ChatCircleDotsIcon,
     image: '/images/hero/service-community.webp',
   },
   {
-    label: 'Campagnes Ads',
-    tag: '04 — Publicité',
-    icon: RocketIcon,
-    image: '/images/hero/service-social-media.webp',
-  },
-  {
-    label: 'SEO & SEA',
-    tag: '05 — Référencement',
+    label: 'Référencement & campagnes publicitaires',
+    tag: '04 — Référencement & Ads',
     icon: MagnifyingGlassIcon,
     image: '/images/hero/service-logo.webp',
   },
   {
-    label: 'Stratégie communication & marketing digitale',
-    tag: '06 — Stratégie',
+    label: 'Stratégie communication & marketing digital',
+    tag: '05 — Stratégie',
     icon: ChartLineUpIcon,
     image: '/images/hero/service-strategie.webp',
   },
@@ -159,7 +152,7 @@ export function Hero() {
           variants={item}
           className="mx-auto mt-5 max-w-2xl text-center font-[family-name:var(--md-font-body)] text-base leading-relaxed text-white/60 sm:text-[17px]"
         >
-          Branding, site web, SEO, ads et community management. De
+          Branding, site web, réseaux sociaux, référencement et publicité. De
           l&apos;entreprise ambitieuse à l&apos;ONG engagée, on transforme
           votre présence en influence concrète.
         </motion.p>

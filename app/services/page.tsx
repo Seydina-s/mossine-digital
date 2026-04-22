@@ -12,7 +12,7 @@ import { SITE_URL } from '@/lib/site-config'
 // ─────────────────────────────────────────────────────────────────
 
 const PAGE_DESCRIPTION =
-  'Six leviers complémentaires pour rendre visibles les marques, les causes et les organisations engagées. Identité visuelle, site web, community management, campagnes Ads, SEO et stratégie 360° — méthode, livrables et délais détaillés.'
+  'Cinq leviers complémentaires pour rendre visibles les marques, les causes et les organisations engagées. Branding, site web, gestion des réseaux sociaux, référencement & campagnes publicitaires et stratégie 360° — méthode, livrables et délais détaillés.'
 
 export const metadata: Metadata = {
   title: 'Services',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  JSON-LD : Service × 6 + BreadcrumbList + FAQPage
+//  JSON-LD : Service × 5 + BreadcrumbList + FAQPage
 //  Provider Organization = Mossine Digital (cross-ref layout.tsx)
 // ─────────────────────────────────────────────────────────────────
 

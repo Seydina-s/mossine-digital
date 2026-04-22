@@ -17,7 +17,6 @@ import {
   PaletteIcon,
   GlobeIcon,
   ChatCircleDotsIcon,
-  MegaphoneSimpleIcon,
   MagnifyingGlassIcon,
   ChartLineUpIcon,
 } from '@phosphor-icons/react'
@@ -28,7 +27,6 @@ export const SERVICE_ICON_MAP: Record<ServiceIconKey, PhosphorIcon> = {
   palette: PaletteIcon,
   globe: GlobeIcon,
   chat: ChatCircleDotsIcon,
-  megaphone: MegaphoneSimpleIcon,
   magnifier: MagnifyingGlassIcon,
   chart: ChartLineUpIcon,
 }

@@ -10,9 +10,9 @@ import { QuotesIcon } from '@phosphor-icons/react/dist/ssr'
 // ─────────────────────────────────────────────────────────────────
 
 const PARAGRAPHS: readonly string[] = [
-  "La plupart des marques n'ont pas un problème de communication — elles ont un problème de cohérence. Leur site raconte une histoire, leurs publications en racontent une autre, leurs campagnes une troisième. Résultat : beaucoup de bruit, peu de signal.",
-  "Mossine Digital existe pour résoudre ça. Nous construisons des systèmes de communication où chaque levier parle la même langue — celle de votre marque, adressée à la bonne audience, au bon moment, avec le bon objectif.",
-  "Nous travaillons autant avec des entreprises commerciales qu'avec des ONG, des institutions et des organisations engagées. La méthode ne change pas : comprendre le message, choisir les canaux qui le servent, mesurer ce qui compte.",
+  "L'Afrique se digitalise à deux vitesses. D'un côté, des marques et des organisations qui ont une vraie histoire à raconter, un impact réel à défendre, des publics qui ne demandent qu'à être touchés. De l'autre, des agences qui livrent des sites génériques, des posts recyclés et des campagnes qui ne comprennent ni le marché local, ni le contexte culturel, ni les enjeux réels du client.",
+  "Mossine Digital est née à Dakar pour combler cet écart. Nous combinons une connaissance fine du terrain africain — langues, codes visuels, habitudes de consommation digitale — avec les standards de rigueur, de performance et d'accessibilité attendus sur les marchés internationaux. Ni copier-coller occidental, ni bricolage : une exécution pensée pour ici, tenue au niveau d'ailleurs.",
+  "Nous accompagnons trois familles d'organisations qui partagent le même besoin de clarté. Les PME et entreprises sénégalaises ou africaines qui veulent passer du bouche-à-oreille à une présence digitale structurée. Les ONG, associations et institutions qui portent des causes et cherchent à mobiliser durablement. Les startups et grandes entreprises qui ont besoin d'une agence capable de livrer vite, juste et mesurable.",
 ]
 
 export function AboutManifesto() {
@@ -42,11 +42,11 @@ export function AboutManifesto() {
                 lineHeight: 1.05,
               }}
             >
-              Nous croyons que la clarté est plus{' '}
+              Ancrés à Dakar, rigoureux comme{' '}
               <span className="italic text-[var(--md-secondary-text)]">
-                précieuse
+                les meilleurs
               </span>{' '}
-              que la performance.
+              d&rsquo;ailleurs.
             </h2>
 
             <figure className="mt-10 rounded-2xl border border-[var(--md-border)] bg-[var(--md-secondary-light)] p-6 sm:p-7">
@@ -64,8 +64,9 @@ export function AboutManifesto() {
                   letterSpacing: '-0.01em',
                 }}
               >
-                Une marque qu&rsquo;on comprend en 5 secondes vaut mieux que
-                dix campagnes qu&rsquo;on optimise pendant six mois.
+                Une marque ancrée dans sa culture parle plus fort, plus
+                longtemps et plus juste qu&rsquo;une marque qui essaie de
+                ressembler à toutes les autres.
               </blockquote>
               <figcaption className="mt-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--md-primary)]/50">
                 Principe fondateur · Mossine Digital
@@ -99,7 +100,7 @@ export function AboutManifesto() {
                 className="h-px flex-1 bg-[var(--md-border)]"
               />
               <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[var(--md-primary)]/40">
-                Agence de communication et marketing international
+                Agence Dakar · Portée Afrique & international
               </span>
               <span
                 aria-hidden

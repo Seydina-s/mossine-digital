@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@hcaptcha/react-hcaptcha": "^2.0.2",
     "@phosphor-icons/react": "^2.1.10",
     "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "^5.21.0",

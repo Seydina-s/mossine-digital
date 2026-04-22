@@ -62,8 +62,11 @@ test.describe('Page /contact', () => {
     ).toEqual([])
   })
 
-  // Dette résiduelle : voir homepage.spec.ts.
-  test.fixme('a11y color-contrast (dette themed cards + accent CTA)', async ({ page }) => {
+  // Dette résiduelle hors scope Bucket 1 #7 : ContactForm utilise
+  // `text-[var(--md-accent)]` pour astérisques champs requis + messages d'erreur
+  // Zod sur fond blanc = 3.05:1 ❌. À traiter dans le lot "accent-text sur fond
+  // clair" (commun avec ServiceDetailBlock pills dans /services).
+  test.fixme('a11y color-contrast (dette accent-text sur fond clair)', async ({ page }) => {
     await page.goto('/contact')
     await page.waitForLoadState('networkidle')
 
