@@ -92,6 +92,10 @@ const baseSecurityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  // Vercel gère le build output nativement (serverless + edge) —
+  // pas besoin de `output: 'standalone'`. La platform détecte
+  // automatiquement les routes dynamiques et static.
+
   turbopack: {
     root: path.resolve(__dirname),
   },
