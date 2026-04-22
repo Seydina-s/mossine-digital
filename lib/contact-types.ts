@@ -14,6 +14,12 @@ export interface ContactActionState {
   status: 'idle' | 'success' | 'error'
   message?: string
   fieldErrors?: Partial<Record<string, string>>
+  /**
+   * Valeurs soumises renvoyées au client en cas d'erreur de validation.
+   * Permet au formulaire de restaurer ce que l'utilisateur avait déjà
+   * tapé plutôt que de tout vider. Omis en cas de succès (reset).
+   */
+  values?: Partial<Record<string, string>>
 }
 
 export const INITIAL_CONTACT_STATE: ContactActionState = { status: 'idle' }

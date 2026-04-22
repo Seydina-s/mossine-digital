@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { useActionState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
 import {
   CheckCircleIcon,
@@ -12,6 +13,7 @@ import {
 import {
   SERVICE_OPTIONS,
   BUDGET_OPTIONS,
+  contactSchema,
 } from '@/lib/contact-schema'
 import type { ContactPayload } from '@/lib/contact-schema'
 import { SERVICES_DETAIL } from '@/lib/services-data'
@@ -25,6 +27,18 @@ import { EASE_OUT_EXPR as EASE } from '@/lib/motion'
 import { HCaptchaWidget } from '@/components/ui/HCaptchaWidget'
 
 // ─────────────────────────────────────────────────────────────────
+//  Pré-sélection service — le query param ?service=<id> est validé
+//  côté client par le MÊME schéma Zod que le form (source unique de
+//  vérité). Toute valeur invalide retombe silencieusement à undefined.
+// ─────────────────────────────────────────────────────────────────
+
+function parseServiceParam(raw: string | null): ContactPayload['service'] | undefined {
+  if (!raw) return undefined
+  const parsed = contactSchema.shape.service.safeParse(raw)
+  return parsed.success ? parsed.data : undefined
+}
+
+// ─────────────────────────────────────────────────────────────────
 //  ContactForm
 //  Props :
 //    - initialService : service pré-sélectionné quand l'utilisateur arrive
@@ -34,25 +48,71 @@ import { HCaptchaWidget } from '@/components/ui/HCaptchaWidget'
 //      côté page.tsx (voir vaccin RSC + validation boundary).
 // ─────────────────────────────────────────────────────────────────
 
-interface ContactFormProps {
-  initialService?: ContactPayload['service']
-}
-
-export function ContactForm({ initialService }: ContactFormProps = {}) {
+export function ContactForm() {
   const reduced = useReducedMotion() ?? false
+
+  // Lecture client du query param ?service= — permet à la page Contact
+  // d'être 100% statique (pas de searchParams côté server component).
+  // ⚠️ useSearchParams() doit être wrappé dans <Suspense> par l'appelant
+  // pour ne pas opt-out la page du pre-render.
+  const searchParams = useSearchParams()
+  const initialService = parseServiceParam(searchParams.get('service'))
   const [state, formAction, isPending] = useActionState<
     ContactActionState,
     FormData
   >(submitContact, INITIAL_CONTACT_STATE)
 
-  const formRef = React.useRef<HTMLFormElement>(null)
+  // ─── État contrôlé ───
+  // React 19 + useActionState re-render le composant après chaque
+  // soumission. Avec des inputs non-controlled, le form conserve ses
+  // valeurs tant que `<form>` n'est pas démonté — SAUF que certaines
+  // MAJ (FormData sérialisée côté serveur puis re-render avec une
+  // nouvelle `state`) peuvent provoquer un reset silencieux selon la
+  // version React. On bascule donc en mode controlled, et on restaure
+  // explicitement les valeurs depuis `state.values` renvoyé par le
+  // serveur en cas d'erreur. Le reset après succès est explicite.
+  const initialValues = React.useMemo(
+    () => ({
+      name: '',
+      email: '',
+      phone: '',
+      company: '',
+      service: initialService ?? '',
+      budget: '',
+      message: '',
+    }),
+    [initialService],
+  )
+  const [values, setValues] = React.useState<Record<string, string>>(initialValues)
 
-  // Reset du champ message uniquement après succès
+  // Après erreur serveur : restaurer ce que l'utilisateur avait tapé
+  // (state.values contient le snapshot envoyé au serveur).
+  React.useEffect(() => {
+    if (state.status === 'error' && state.values) {
+      const restored: Record<string, string> = {}
+      for (const [k, v] of Object.entries(state.values)) {
+        if (typeof v === 'string') restored[k] = v
+      }
+      setValues((prev) => ({ ...prev, ...restored }))
+    }
+  }, [state])
+
+  // Après succès : reset complet (sauf pré-sélection service qui
+  // pourrait être utile si l'utilisateur veut envoyer un 2e message).
   React.useEffect(() => {
     if (state.status === 'success') {
-      formRef.current?.reset()
+      setValues(initialValues)
     }
-  }, [state.status])
+  }, [state.status, initialValues])
+
+  const updateValue = React.useCallback(
+    (field: string) =>
+      (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const v = e.target.value
+        setValues((prev) => (prev[field] === v ? prev : { ...prev, [field]: v }))
+      },
+    [],
+  )
 
   const errorFor = (field: string) => state.fieldErrors?.[field]
 
@@ -104,7 +164,7 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
         </div>
       )}
 
-      <form ref={formRef} action={formAction} className="flex flex-col gap-5" noValidate>
+      <form action={formAction} className="flex flex-col gap-5" noValidate>
         {/* Honeypot — caché visuellement mais atteignable par les bots */}
         <input
           type="text"
@@ -124,6 +184,8 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
             autoComplete="name"
             error={errorFor('name')}
             placeholder="Ex. Awa Diallo"
+            value={values.name}
+            onChange={updateValue('name')}
           />
           <Field
             label="Email"
@@ -133,6 +195,8 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
             autoComplete="email"
             error={errorFor('email')}
             placeholder="vous@exemple.com"
+            value={values.email}
+            onChange={updateValue('email')}
           />
           <Field
             label="Téléphone"
@@ -142,6 +206,8 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
             optional
             error={errorFor('phone')}
             placeholder="+221 ..."
+            value={values.phone}
+            onChange={updateValue('phone')}
           />
           <Field
             label="Entreprise"
@@ -150,6 +216,8 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
             optional
             error={errorFor('company')}
             placeholder="Nom de votre structure"
+            value={values.company}
+            onChange={updateValue('company')}
           />
         </div>
 
@@ -162,7 +230,8 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
             error={errorFor('service')}
             options={SERVICE_OPTIONS}
             placeholder="Choisir un service"
-            defaultValue={initialService}
+            value={values.service}
+            onChange={updateValue('service')}
           />
           <Select
             label="Budget indicatif"
@@ -171,6 +240,8 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
             error={errorFor('budget')}
             options={BUDGET_OPTIONS}
             placeholder="Fourchette budgétaire"
+            value={values.budget}
+            onChange={updateValue('budget')}
           />
         </div>
 
@@ -181,8 +252,10 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
           required
           error={errorFor('message')}
           placeholder="Décrivez votre projet, vos objectifs et votre délai souhaité…"
-          minLength={20}
+          minLength={3}
           maxLength={4000}
+          value={values.message}
+          onChange={updateValue('message')}
         />
 
         {/* ── Consentement RGPD ── */}
@@ -320,7 +393,8 @@ function Field({
 interface SelectProps extends FieldBaseProps {
   options: readonly { value: string; label: string }[]
   placeholder: string
-  defaultValue?: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
 function Select({
@@ -331,7 +405,8 @@ function Select({
   error,
   options,
   placeholder,
-  defaultValue,
+  value,
+  onChange,
 }: SelectProps) {
   return (
     <div className="flex flex-col">
@@ -341,7 +416,8 @@ function Select({
           id={name}
           name={name}
           required={required}
-          defaultValue={defaultValue ?? ''}
+          value={value}
+          onChange={onChange}
           aria-invalid={!!error}
           aria-describedby={error ? `${name}-error` : undefined}
           className={`${fieldClass(!!error)} cursor-pointer appearance-none pr-10`}
@@ -376,19 +452,22 @@ function TextArea({
   placeholder,
   minLength,
   maxLength,
+  value,
+  onChange,
 }: FieldBaseProps & {
   placeholder: string
   minLength?: number
   maxLength?: number
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
 }) {
-  const [count, setCount] = React.useState(0)
   return (
     <div className="flex flex-col">
       <div className="flex items-end justify-between">
         <Label name={name} label={label} required={required} />
         {maxLength && (
           <span className="mb-1.5 text-xs tabular-nums text-[var(--md-text-light)]">
-            {count} / {maxLength}
+            {value.length} / {maxLength}
           </span>
         )}
       </div>
@@ -400,7 +479,8 @@ function TextArea({
         minLength={minLength}
         maxLength={maxLength}
         rows={5}
-        onChange={(e) => setCount(e.target.value.length)}
+        value={value}
+        onChange={onChange}
         aria-invalid={!!error}
         aria-describedby={error ? `${name}-error` : undefined}
         className={`${fieldClass(!!error)} resize-y min-h-[140px]`}

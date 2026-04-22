@@ -154,10 +154,10 @@ describe('contactSchema — champ budget (optionnel)', () => {
 })
 
 describe('contactSchema — champ message', () => {
-  it('rejette un message de moins de 20 caractères', () => {
+  it('rejette un message de moins de 3 caractères', () => {
     const result = contactSchema.safeParse({
       ...validPayload,
-      message: 'Trop court.',
+      message: 'ab',
     })
     expect(result.success).toBe(false)
   })
@@ -170,10 +170,10 @@ describe('contactSchema — champ message', () => {
     expect(result.success).toBe(false)
   })
 
-  it('accepte exactement 20 caractères', () => {
+  it('accepte exactement 3 caractères', () => {
     const result = contactSchema.safeParse({
       ...validPayload,
-      message: 'a'.repeat(20),
+      message: 'abc',
     })
     expect(result.success).toBe(true)
   })

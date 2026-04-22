@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import {
   ClockClockwiseIcon,
@@ -6,7 +7,6 @@ import {
 } from '@phosphor-icons/react/dist/ssr'
 import { ContactForm } from '@/components/sections/ContactForm'
 import { Footer } from '@/components/layout/Footer'
-import { contactSchema, type ContactPayload } from '@/lib/contact-schema'
 import { SITE_URL } from '@/lib/site-config'
 
 // ─────────────────────────────────────────────────────────────────
@@ -92,28 +92,16 @@ const REASSURANCE = [
 ]
 
 // ─────────────────────────────────────────────────────────────────
-//  Pré-sélection service depuis /contact?service=<id>
-//  🛡️ Vaccin boundary : le query param est validé par le MÊME schéma
-//  Zod que le form lui-même (`contactSchema.shape.service`). Toute
-//  valeur absente, mal orthographiée ou retirée de SERVICE_OPTIONS
-//  retombe silencieusement à `undefined` → le form s'affiche comme
-//  une arrivée directe. Aucun drift possible entre URL et schéma.
+//  Page 100% statique : pas de searchParams côté server component.
+//  La pré-sélection `?service=<id>` est lue client-side par
+//  ContactForm via `useSearchParams()`, ce qui permet à Vercel de
+//  servir la page depuis le CDN (TTFB < 50ms) au lieu d'un
+//  serverless function cold-start (~500ms). Le ContactForm est
+//  wrappé dans <Suspense> — requis pour que `useSearchParams()` ne
+//  force pas toute la page en rendu dynamique.
 // ─────────────────────────────────────────────────────────────────
 
-function parseServiceParam(raw: unknown): ContactPayload['service'] | undefined {
-  if (typeof raw !== 'string') return undefined
-  const parsed = contactSchema.shape.service.safeParse(raw)
-  return parsed.success ? parsed.data : undefined
-}
-
-export default async function ContactPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>
-}) {
-  const params = await searchParams
-  const initialService = parseServiceParam(params.service)
-
+export default function ContactPage() {
   return (
     <>
       <script
@@ -152,7 +140,9 @@ export default async function ContactPage({
 
         {/* ─── Grille formulaire + réassurance ─── */}
         <div className="mx-auto mt-14 grid max-w-5xl gap-10 lg:grid-cols-[1fr_320px] lg:items-start lg:gap-12">
-          <ContactForm initialService={initialService} />
+          <Suspense fallback={<ContactFormSkeleton />}>
+            <ContactForm />
+          </Suspense>
 
           <aside
             aria-label="Nos engagements"
@@ -186,5 +176,26 @@ export default async function ContactPage({
 
       <Footer />
     </>
+  )
+}
+
+// Skeleton minimal pendant l'hydratation du ContactForm (Suspense
+// fallback). Conserve les dimensions pour éviter les layout shifts.
+function ContactFormSkeleton() {
+  return (
+    <div
+      aria-hidden
+      className="rounded-2xl border border-[var(--md-border)] bg-white p-6 shadow-[0_4px_24px_-8px_rgba(16,19,42,0.06)] sm:p-8 lg:p-10"
+      style={{ minHeight: 720 }}
+    >
+      <div className="flex flex-col gap-5">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="flex flex-col gap-2">
+            <div className="h-3.5 w-24 animate-pulse rounded bg-[var(--md-border)]" />
+            <div className="h-10 w-full animate-pulse rounded-lg bg-[var(--md-border)]/60" />
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }

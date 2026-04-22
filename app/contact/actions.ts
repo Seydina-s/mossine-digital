@@ -84,6 +84,20 @@ async function submitContactInner(
     consent: formData.get('consent'),
   }
 
+  // Snapshot des valeurs saisies — renvoyé au client en cas d'erreur
+  // pour que le formulaire puisse restaurer ce que l'utilisateur
+  // avait déjà tapé. On ne persiste JAMAIS le honeypot (website) ni
+  // le consent (checkbox, reset naturellement).
+  const submittedValues: Record<string, string> = {
+    name:    typeof raw.name    === 'string' ? raw.name    : '',
+    email:   typeof raw.email   === 'string' ? raw.email   : '',
+    phone:   typeof raw.phone   === 'string' ? raw.phone   : '',
+    company: typeof raw.company === 'string' ? raw.company : '',
+    service: typeof raw.service === 'string' ? raw.service : '',
+    budget:  typeof raw.budget  === 'string' ? raw.budget  : '',
+    message: typeof raw.message === 'string' ? raw.message : '',
+  }
+
   const parsed = contactSchema.safeParse(raw)
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {}
@@ -97,6 +111,7 @@ async function submitContactInner(
       status: 'error',
       message: 'Merci de corriger les champs en rouge.',
       fieldErrors,
+      values: submittedValues,
     }
   }
 
@@ -128,6 +143,7 @@ async function submitContactInner(
         status: 'error',
         message: 'Merci de valider la vérification anti-robot ci-dessous.',
         fieldErrors: { hcaptcha: 'Cochez la case de vérification avant d\'envoyer.' },
+        values: submittedValues,
       }
     }
     if (captchaResult.status === 'failure') {
@@ -136,6 +152,7 @@ async function submitContactInner(
         status: 'error',
         message: 'La vérification anti-robot a échoué. Merci de réessayer.',
         fieldErrors: { hcaptcha: 'Vérification expirée ou invalide, recommencez.' },
+        values: submittedValues,
       }
     }
     // 'success' ou 'skipped' → on continue.
@@ -146,6 +163,7 @@ async function submitContactInner(
     return {
       status: 'error',
       message: 'Trop de tentatives. Merci de réessayer dans quelques minutes.',
+      values: submittedValues,
     }
   }
 
@@ -155,10 +173,23 @@ async function submitContactInner(
   const toEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'contact@mossinedigital.com'
 
   if (!apiKey || !fromEmail) {
-    console.error('[contact] RESEND_API_KEY ou RESEND_FROM_EMAIL manquant')
+    // Mode gracieux MVP : Resend pas encore configuré.
+    // On log le lead complet dans Vercel Runtime Logs pour consultation
+    // manuelle avant go-live, et on retourne un succès pour ne pas
+    // frustrer l'utilisateur (message identique au vrai succès).
+    console.warn('[contact] Resend non configuré — lead loggué seulement', {
+      name: data.name,
+      email: data.email,
+      phone: data.phone || '—',
+      company: data.company || '—',
+      service: data.service,
+      budget: data.budget || '—',
+      message: data.message,
+      receivedAt: new Date().toISOString(),
+    })
     return {
-      status: 'error',
-      message: 'Configuration email indisponible. Merci de nous écrire directement à contact@mossinedigital.com.',
+      status: 'success',
+      message: 'Message bien reçu. On vous revient sous 24h ouvrées.',
     }
   }
 
@@ -179,6 +210,7 @@ async function submitContactInner(
       return {
         status: 'error',
         message: 'Échec de l\'envoi. Réessayez dans un instant ou écrivez-nous directement.',
+        values: submittedValues,
       }
     }
   } catch (err) {
@@ -186,6 +218,7 @@ async function submitContactInner(
     return {
       status: 'error',
       message: 'Une erreur inattendue est survenue. Merci de réessayer.',
+      values: submittedValues,
     }
   }
 

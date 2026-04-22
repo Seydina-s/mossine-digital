@@ -66,7 +66,7 @@ export const contactSchema = z.object({
   message: z
     .string()
     .trim()
-    .min(20, 'Votre message doit contenir au moins 20 caractères.')
+    .min(3, 'Votre message doit contenir au moins 3 caractères.')
     .max(4000, 'Message trop long (4 000 caractères max).'),
   // Honeypot — doit rester vide (piège à bots)
   website: z.string().max(0).optional().or(z.literal('')),
