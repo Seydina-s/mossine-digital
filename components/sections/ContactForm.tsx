@@ -16,11 +16,11 @@ import {
 import type { ContactPayload } from '@/lib/contact-schema'
 import { SERVICES_DETAIL } from '@/lib/services-data'
 import { SERVICE_ICON_MAP } from '@/components/services/service-icons'
+import { submitContact } from '@/app/contact/actions'
 import {
-  submitContact,
-  initialContactState,
+  INITIAL_CONTACT_STATE,
   type ContactActionState,
-} from '@/app/contact/actions'
+} from '@/lib/contact-types'
 import { EASE_OUT_EXPR as EASE } from '@/lib/motion'
 import { HCaptchaWidget } from '@/components/ui/HCaptchaWidget'
 
@@ -43,7 +43,7 @@ export function ContactForm({ initialService }: ContactFormProps = {}) {
   const [state, formAction, isPending] = useActionState<
     ContactActionState,
     FormData
-  >(submitContact, initialContactState)
+  >(submitContact, INITIAL_CONTACT_STATE)
 
   const formRef = React.useRef<HTMLFormElement>(null)
 

@@ -30,15 +30,18 @@ function checkRateLimit(ip: string) {
 
 // ─────────────────────────────────────────────────────────────────
 //  Types de retour
+//
+//  ⚠️ VACCIN : un fichier `'use server'` ne peut exporter QUE des
+//  async functions (Next.js 15+). Tout `export const` / `export let`
+//  déclenche l'erreur build `A "use server" file can only export
+//  async functions, found object.` Les types/interfaces sont stripped
+//  au compile — OK tant qu'on utilise `import type`. Ne JAMAIS
+//  exporter d'objet runtime (état initial, constantes, helpers
+//  synchrones) depuis ce fichier. Les types partagés vivent dans
+//  `lib/contact-types.ts`.
 // ─────────────────────────────────────────────────────────────────
 
-export interface ContactActionState {
-  status: 'idle' | 'success' | 'error'
-  message?: string
-  fieldErrors?: Partial<Record<string, string>>
-}
-
-const IDLE: ContactActionState = { status: 'idle' }
+import type { ContactActionState } from '@/lib/contact-types'
 
 // ─────────────────────────────────────────────────────────────────
 //  Server action — soumission formulaire
@@ -191,5 +194,3 @@ async function submitContactInner(
     message: 'Message bien reçu. On vous revient sous 24h ouvrées.',
   }
 }
-
-export const initialContactState = IDLE
