@@ -73,7 +73,13 @@ export function CTAFinal() {
           {/* CTA principal — secondaire "Voir nos réalisations" retiré en attendant
               d'avoir des cas clients publiables (cf. commentaire app/page.tsx) */}
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <GlassCTA href="/contact" tone="accent" size="lg">
+            <GlassCTA
+              href="/contact"
+              tone="accent"
+              size="lg"
+              trackingLocation="cta_final"
+              trackingLabel="Démarrer un projet"
+            >
               Démarrer un projet
               <ArrowUpRightIcon size={15} weight="bold" />
             </GlassCTA>

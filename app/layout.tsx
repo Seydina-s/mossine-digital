@@ -7,6 +7,7 @@ import {
   GoogleTagManagerScript,
   GoogleTagManagerNoscript,
 } from '@/components/analytics/GoogleTagManager'
+import { ScrollDepthTracker } from '@/components/analytics/ScrollDepthTracker'
 import './globals.css'
 
 // GTM container ID — public, injecté côté client. `undefined` en local
@@ -227,6 +228,8 @@ export default function RootLayout({
         <Navbar />
         {children}
         <BackToTop />
+        {/* Tracker scroll depth 25/50/75/100 % — reset par route */}
+        <ScrollDepthTracker />
       </body>
     </html>
   )

@@ -162,7 +162,13 @@ export function Hero() {
           variants={item}
           className="mt-7 flex flex-col items-center gap-3"
         >
-          <GlassCTA href="/contact" tone="dark" size="default">
+          <GlassCTA
+            href="/contact"
+            tone="dark"
+            size="default"
+            trackingLocation="hero"
+            trackingLabel="Démarrer un projet"
+          >
             Démarrer un projet
             <ArrowUpRightIcon size={16} weight="bold" />
           </GlassCTA>
@@ -298,6 +304,7 @@ function Atmosphere({ reduced }: { reduced: boolean }) {
 
 function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
   const [index, setIndex] = React.useState(0)
+  const containerRef = React.useRef<HTMLDivElement>(null)
 
   // 🛡️ Vaccin jank navbar homepage (dette v3.3, suite du fix Services) :
   // - Auto-rotation retirée : la boucle Framer Motion continue (crossfade image
@@ -315,6 +322,17 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
 
   const go = (i: number) => {
     if (i !== index) setIndex(i)
+  }
+
+  // Navigation clavier — flèches gauche/droite sur le conteneur du carousel
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault()
+      setIndex((i) => (i - 1 + SERVICES.length) % SERVICES.length)
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault()
+      setIndex((i) => (i + 1) % SERVICES.length)
+    }
   }
 
   return (
@@ -437,11 +455,14 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
 
       {/* ─── Navigation : une icône Phosphor par service ───
            Carrés arrondis glass, état actif = fond white/12 + border marquée
-           + icône en weight régulier. Transitions CSS pures (zéro Framer). */}
+           + icône en weight régulier. Transitions CSS pures (zéro Framer).
+           Flèches gauche/droite gérées sur le conteneur pour la navigation clavier. */}
       <div
+        ref={containerRef}
         className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5"
         role="tablist"
-        aria-label="Naviguer entre les services"
+        aria-label="Naviguer entre les services (← →)"
+        onKeyDown={handleKeyDown}
       >
         {SERVICES.map((s, i) => {
           const isActive = i === index

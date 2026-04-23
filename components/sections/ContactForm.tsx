@@ -25,6 +25,7 @@ import {
 } from '@/lib/contact-types'
 import { EASE_OUT_EXPR as EASE } from '@/lib/motion'
 import { HCaptchaWidget } from '@/components/ui/HCaptchaWidget'
+import { track } from '@/lib/analytics'
 
 // ─────────────────────────────────────────────────────────────────
 //  Pré-sélection service — le query param ?service=<id> est validé
@@ -85,22 +86,45 @@ export function ContactForm() {
   )
   const [values, setValues] = React.useState<Record<string, string>>(initialValues)
 
-  // Après erreur serveur : restaurer ce que l'utilisateur avait tapé
-  // (state.values contient le snapshot envoyé au serveur).
+  // Ref pour lire les valeurs courantes dans un useEffect sans les
+  // mettre en dépendances (évite de refire track() à chaque keystroke).
+  const valuesRef = React.useRef(values)
+  valuesRef.current = values
+
+  // Après erreur serveur : restaurer les valeurs tapées + tracker
+  // l'événement d'échec (granularité par raison pour analyse funnel).
   React.useEffect(() => {
-    if (state.status === 'error' && state.values) {
-      const restored: Record<string, string> = {}
-      for (const [k, v] of Object.entries(state.values)) {
-        if (typeof v === 'string') restored[k] = v
+    if (state.status === 'error') {
+      const reason: 'validation' | 'hcaptcha' | 'rate_limit' | 'unknown' =
+        state.fieldErrors?.hcaptcha
+          ? 'hcaptcha'
+          : state.fieldErrors && Object.keys(state.fieldErrors).length > 0
+          ? 'validation'
+          : state.message?.toLowerCase().includes('tentatives')
+          ? 'rate_limit'
+          : 'unknown'
+      track({ event: 'form_submit_error', form_id: 'contact', reason })
+
+      if (state.values) {
+        const restored: Record<string, string> = {}
+        for (const [k, v] of Object.entries(state.values)) {
+          if (typeof v === 'string') restored[k] = v
+        }
+        setValues((prev) => ({ ...prev, ...restored }))
       }
-      setValues((prev) => ({ ...prev, ...restored }))
     }
   }, [state])
 
-  // Après succès : reset complet (sauf pré-sélection service qui
-  // pourrait être utile si l'utilisateur veut envoyer un 2e message).
+  // Après succès : tracker la conversion puis reset complet (sauf la
+  // pré-sélection service qui peut re-servir pour un 2e message).
   React.useEffect(() => {
     if (state.status === 'success') {
+      track({
+        event: 'form_submit_success',
+        form_id: 'contact',
+        service: valuesRef.current.service || undefined,
+        budget: valuesRef.current.budget || undefined,
+      })
       setValues(initialValues)
     }
   }, [state.status, initialValues])

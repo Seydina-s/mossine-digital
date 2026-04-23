@@ -227,7 +227,13 @@ export function Navbar() {
           </nav>
 
           {/* ─── CTA — pas de magnetic, pas de spring ─── */}
-          <GlassCTA href="/contact" tone="brand" size="sm">
+          <GlassCTA
+            href="/contact"
+            tone="brand"
+            size="sm"
+            trackingLocation="navbar_desktop"
+            trackingLabel="Démarrer un projet"
+          >
             Démarrer un projet
             <ArrowUpRightIcon size={14} weight="bold" />
           </GlassCTA>
@@ -315,6 +321,8 @@ export function Navbar() {
               size="lg"
               fullWidth
               onClick={closeMenu}
+              trackingLocation="navbar_mobile"
+              trackingLabel="Démarrer un projet"
             >
               Démarrer un projet
               <ArrowUpRightIcon size={18} weight="bold" />
