@@ -302,20 +302,26 @@ function Atmosphere({ reduced }: { reduced: boolean }) {
 //  Pause au survol. Clic/tap pour avancer. Progress bar liée au timer.
 // ─────────────────────────────────────────────────────────────────
 
+// Durée d'affichage par slide — setTimeout (pas une boucle Framer Motion ×∞).
+// Un seul setState toutes les 4s = main thread libre entre les transitions.
+// 🛡️ Vaccin : ne JAMAIS remplacer par animate/repeat:Infinity Framer Motion
+// ni animer `width` en continu (cf. dette v3.3 documentée dans CLAUDE.md).
+const CAROUSEL_INTERVAL_MS = 4000
+
 function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
   const [index, setIndex] = React.useState(0)
+  const [isPaused, setIsPaused] = React.useState(false)
   const containerRef = React.useRef<HTMLDivElement>(null)
 
-  // 🛡️ Vaccin jank navbar homepage (dette v3.3, suite du fix Services) :
-  // - Auto-rotation retirée : la boucle Framer Motion continue (crossfade image
-  //   + tag + label toutes les 2s) tick sur le main thread même pour les props
-  //   GPU-composées (MV update → style assignment).
-  // - Progress bar retirée : animait `width` en linéaire sur 2s ×∞ → `width`
-  //   n'est pas composé, force un SYNCHRONOUS LAYOUT à chaque frame, saturait
-  //   le main thread en permanence, retardait le rAF callback du useScroll
-  //   custom de la Navbar.
-  // Navigation manuelle via les dots reste disponible : crossfade ponctuel au
-  // clic = main thread libre 99% du temps.
+  // Auto-rotation sûre : setTimeout unique par cycle, pas de tick continu.
+  React.useEffect(() => {
+    if (reduced || isPaused) return
+    const id = setTimeout(
+      () => setIndex((i) => (i + 1) % SERVICES.length),
+      CAROUSEL_INTERVAL_MS,
+    )
+    return () => clearTimeout(id)
+  }, [index, isPaused, reduced])
 
   const active = SERVICES[index]
   const ActiveIcon = active.icon
@@ -342,6 +348,10 @@ function ShowcaseCarousel({ reduced }: { reduced: boolean }) {
       animate={{ opacity: 1, y: 0, rotateX: 0 }}
       transition={{ duration: 1.1, ease: EASE, delay: 0.5 }}
       style={{ transformPerspective: 1200 }}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocus={() => setIsPaused(true)}
+      onBlur={() => setIsPaused(false)}
     >
       {/* Halo derrière le showcase */}
       <div

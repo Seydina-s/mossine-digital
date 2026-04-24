@@ -14,6 +14,7 @@ import {
   ClockIcon,
   ArrowUpRightIcon,
 } from '@phosphor-icons/react'
+import type { PhosphorIcon } from '@/lib/types'
 
 // ─────────────────────────────────────────────────────────────────
 //  DONNÉES — Coordonnées contact confirmées (2026-04-21).
@@ -49,12 +50,6 @@ const SOCIAL_LINKS = [
   { label: 'LinkedIn',  href: '#', icon: LinkedinLogoIcon },
   { label: 'WhatsApp',  href: '#', icon: WhatsappLogoIcon },
 ]
-
-type PhosphorIcon = React.ComponentType<{
-  size?: number
-  weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone'
-  className?: string
-}>
 
 interface ContactItem {
   icon: PhosphorIcon

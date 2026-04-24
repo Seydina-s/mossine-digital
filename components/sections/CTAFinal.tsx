@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
 import { ArrowUpRightIcon } from '@phosphor-icons/react'
 import { GlassCTA } from '@/components/ui/glass-cta'
 
@@ -70,8 +71,6 @@ export function CTAFinal() {
             C&apos;est gratuit, sans engagement et souvent révélateur.
           </p>
 
-          {/* CTA principal — secondaire "Voir nos réalisations" retiré en attendant
-              d'avoir des cas clients publiables (cf. commentaire app/page.tsx) */}
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <GlassCTA
               href="/contact"
@@ -83,6 +82,17 @@ export function CTAFinal() {
               Démarrer un projet
               <ArrowUpRightIcon size={15} weight="bold" />
             </GlassCTA>
+            <Link
+              href="/services"
+              className="group inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:border-white/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-accent-solid)]"
+            >
+              Voir nos services
+              <ArrowUpRightIcon
+                size={14}
+                weight="bold"
+                className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </Link>
           </div>
 
           {/* Réassurance — blanc sur #C23A46 = 5.25:1 (WCAG AA ✓).
