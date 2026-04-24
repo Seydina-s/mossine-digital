@@ -69,6 +69,8 @@ export function Temoignages() {
   const [current, setCurrent] = React.useState(0)
   const [direction, setDirection] = React.useState<1 | -1>(1)
   const [isPaused, setIsPaused] = React.useState(false)
+  // progressKey force le reset de l'animation CSS de la barre à chaque changement de slide
+  const [progressKey, setProgressKey] = React.useState(0)
   const reducedMotion = useReducedMotion() ?? false
 
   const total = TESTIMONIALS.length
@@ -76,6 +78,7 @@ export function Temoignages() {
   const goTo = (index: number, dir: 1 | -1) => {
     setDirection(dir)
     setCurrent(index)
+    setProgressKey((k) => k + 1)
   }
 
   const prev = () => goTo((current - 1 + total) % total, -1)
@@ -189,7 +192,7 @@ export function Temoignages() {
             >
               {/* Texte du témoignage */}
               <blockquote
-                className="mb-10 font-[family-name:var(--md-font-body)] italic leading-relaxed text-white/80"
+                className="mb-10 font-[family-name:var(--md-font-body)] leading-relaxed text-white/80"
                 style={{
                   fontSize: 'clamp(1rem, 1.5vw + 0.25rem, 1.25rem)',
                 }}
@@ -223,7 +226,9 @@ export function Temoignages() {
         <div className="mt-8 flex items-center justify-between">
 
           {/* Points de navigation — hit area 24×24 (WCAG 2.2 target-size)
-              tout en gardant un visuel compact via un indicateur enfant. */}
+              tout en gardant un visuel compact via un indicateur enfant.
+              La barre active contient une animation de progression CSS
+              qui se réinitialise via progressKey à chaque changement de slide. */}
           <div className="flex items-center" role="tablist" aria-label="Indicateurs de position">
             {TESTIMONIALS.map((_, i) => (
               <button
@@ -234,14 +239,35 @@ export function Temoignages() {
                 onClick={() => goTo(i, i > current ? 1 : -1)}
                 className="group flex h-6 w-6 items-center justify-center"
               >
-                <span
-                  aria-hidden
-                  className={`rounded-full transition-all duration-300 ${
-                    i === current
-                      ? 'h-2 w-8 bg-[var(--md-secondary)]'
-                      : 'h-2 w-2 bg-white/20 group-hover:bg-white/40'
-                  }`}
-                />
+                {i === current ? (
+                  // Barre active avec progression temporelle animée
+                  <span
+                    aria-hidden
+                    className="relative h-2 w-8 overflow-hidden rounded-full bg-white/20"
+                  >
+                    {!reducedMotion && !isPaused && (
+                      <span
+                        key={progressKey}
+                        aria-hidden
+                        className="absolute inset-y-0 left-0 rounded-full bg-[var(--md-secondary)]"
+                        style={{
+                          animation: `md-progress-fill ${AUTO_INTERVAL_MS}ms linear forwards`,
+                        }}
+                      />
+                    )}
+                    {(reducedMotion || isPaused) && (
+                      <span
+                        aria-hidden
+                        className="absolute inset-y-0 left-0 w-full rounded-full bg-[var(--md-secondary)]"
+                      />
+                    )}
+                  </span>
+                ) : (
+                  <span
+                    aria-hidden
+                    className="h-2 w-2 rounded-full bg-white/20 transition-colors duration-300 group-hover:bg-white/40"
+                  />
+                )}
               </button>
             ))}
           </div>

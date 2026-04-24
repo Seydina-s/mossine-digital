@@ -215,6 +215,15 @@
   100% { stroke-dashoffset: -32; opacity: 0; }
 }
 
+/* ─── Témoignages — progression temporelle de la barre active ───
+   Remplit la barre de 0→100% sur la durée AUTO_INTERVAL_MS.
+   Key forcée via `progressKey` dans le composant pour reset à chaque slide.
+   Bloqué par le @media reduced-motion via le layer base global. */
+@keyframes md-progress-fill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    GLASS CTA — Glassmorphism button pour les CTA "Démarrer un projet"
    Variantes : tone "dark" (sur fond sombre) / "light" (sur fond clair)

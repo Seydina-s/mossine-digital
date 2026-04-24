@@ -74,6 +74,8 @@ function ProjectCard({ project, reduced }: { project: Project; reduced: boolean 
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
       className="group relative overflow-hidden rounded-2xl bg-white shadow-[0_2px_16px_-4px_rgba(16,19,42,0.08)] transition-shadow duration-300 hover:shadow-[0_12px_40px_-8px_rgba(16,19,42,0.18)]"
     >
       {/* Visuel — gradient placeholder (⚠️ TODO_CLIENT: remplacer par <Image>) */}

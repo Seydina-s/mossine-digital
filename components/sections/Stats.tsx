@@ -60,8 +60,8 @@ const STATS: Stat[] = [
     label: 'Score Lighthouse',
     description: 'Performance, SEO et accessibilité audités avant chaque mise en ligne',
     icon: ShieldCheckIcon,
-    iconBg: 'var(--md-secondary-light)',
-    iconColor: 'var(--md-secondary-hover)',
+    iconBg: 'var(--md-primary-light)',
+    iconColor: 'var(--md-primary)',
   },
 ]
 
@@ -205,8 +205,9 @@ export function Stats() {
         <motion.div
           className="mb-14 text-center"
           initial={reduced ? false : { opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+          transition={{ duration: 0.7, ease: EASE }}
         >
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--md-secondary-text)]">
             Nos engagements
@@ -235,7 +236,8 @@ export function Stats() {
         <motion.div
           className="grid grid-cols-1 divide-y divide-[var(--md-border)] sm:grid-cols-2 sm:divide-y-0 sm:[&>*:nth-child(n+3)]:border-t sm:[&>*:nth-child(n+3)]:border-[var(--md-border)] md:grid-cols-4 md:[&>*:nth-child(n+3)]:border-t-0 md:divide-x"
           initial={reduced ? false : 'hidden'}
-          animate="visible"
+          whileInView="visible"
+          viewport={{ once: true, margin: '0px 0px -5% 0px' }}
           variants={{
             hidden: {},
             visible: {

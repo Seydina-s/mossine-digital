@@ -235,7 +235,7 @@ export function Footer() {
             {/* CTA contact */}
             <Link
               href="/contact"
-              className="group inline-flex items-center gap-2 rounded-full bg-[var(--md-accent)] px-5 py-2.5 text-sm font-bold text-[var(--md-primary)] transition-colors duration-200 hover:bg-[var(--md-accent-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-bg-darker)]"
+              className="group inline-flex items-center gap-2 rounded-full bg-[var(--md-accent-solid)] px-5 py-2.5 text-sm font-bold text-white transition-colors duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-bg-darker)]"
             >
               Nous contacter
               <ArrowUpRightIcon

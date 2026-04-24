@@ -20,7 +20,10 @@
       "Bash(npx playwright:*)",
       "Read(//c/Users/HP/AppData/Local/Temp/claude/c--Users-HP-mossine-digital/ccd412d1-5bd3-489f-b0fb-401676d85b81/tasks/**)",
       "Read(//c/Program Files/**)",
-      "Bash(where gh.exe)"
+      "Bash(where gh.exe)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git restore *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\HP\\mossine-digital\\app\\studio"
