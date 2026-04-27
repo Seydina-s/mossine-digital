@@ -68,3 +68,11 @@ jobs:
           name: playwright-report-prod
           path: playwright-report/
           retention-days: 30
+
+      - name: Send Resend alert
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
+          CI_ALERT_EMAIL: ${{ secrets.CI_ALERT_EMAIL }}
+        run: node scripts/notify-ci-failure.mjs

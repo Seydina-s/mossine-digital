@@ -100,3 +100,20 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
+
+  notify:
+    name: Alerte email Resend (failure)
+    needs: [typecheck-and-unit, build, e2e]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Send Resend alert
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
+          CI_ALERT_EMAIL: ${{ secrets.CI_ALERT_EMAIL }}
+        run: node scripts/notify-ci-failure.mjs

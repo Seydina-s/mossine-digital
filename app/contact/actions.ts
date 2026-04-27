@@ -170,7 +170,10 @@ async function submitContactInner(
   // 5. Envoi email via Resend
   const apiKey = process.env.RESEND_API_KEY
   const fromEmail = process.env.RESEND_FROM_EMAIL // ex: "Mossine Digital <noreply@mossinedigital.com>"
-  const toEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'contact@mossinedigital.com'
+  // Destinataire temporaire — `contact@mossine.com` est l'inbox client
+  // opérationnelle. Switch vers `contact@mossinedigital.com` dès que le
+  // DNS du domaine officiel est prêt (cf. .env.example).
+  const toEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'contact@mossine.com'
 
   if (!apiKey || !fromEmail) {
     // Mode gracieux MVP : Resend pas encore configuré.
